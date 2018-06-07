@@ -1,7 +1,10 @@
 // @flow
 import * as React from 'react';
+import { View } from 'react-native';
 
 import InfoBox from '../components/InfoBox';
+
+type Props = {};
 
 type State = {
   jobs: number,
@@ -20,19 +23,11 @@ export default class Info extends React.Component<Props, State> {
     const { jobs, tokens, status } = this.state;
 
     return (
-      <footer>
-        <div className="left">
-          <InfoBox prefix="Jobs completed: " data={jobs} />
-          <InfoBox
-            prefix="Path mined: "
-            data={tokens}
-            style={{ marginLeft: '10px' }}
-          />
-        </div>
-        <div className="right">
-          <InfoBox prefix="Status: " data={status} />
-        </div>
-      </footer>
+      <View>
+        <InfoBox prefix="Jobs completed: " data={jobs} />
+        <InfoBox prefix="Path mined: " data={tokens} />
+        <InfoBox prefix="Status: " data={status} />
+      </View>
     );
   }
 }

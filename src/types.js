@@ -30,13 +30,13 @@ export type JobRequest = {
 
 export type JobRequestMessage = {
   topic: string,
-  value: string
+  value: string,
   offset: number,
   partition: number,
   highWaterOffset: number,
   key: ?string,
   timestamp: Date
-}
+};
 
 export type JobResult = {
   result_uuid: string, // @TODO: subtype uuids as opaque data types
