@@ -7,3 +7,7 @@ it('renders without crashing', () => {
   const rendered = renderer.create(<App />).toJSON();
   expect(rendered).toBeTruthy();
 });
+
+// test to check if loading screen displays if assets haven't loaded
+
+// Test to check if app renders

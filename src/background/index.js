@@ -1,11 +1,13 @@
 // @flow
+import { AsyncStorage } from 'react-native';
+
 import io from 'socket.io-client';
 
 import configureStore from '../shared/store/configureStore';
 import initStorage from '../shared/initStorage';
 import createInitState from '../shared/helpers/createInitState';
 
-const storage = JSON.parse(localStorage.getItem('persistent')) || initStorage;
+const storage = JSON.parse(AsyncStorage.getItem('persistent')) || initStorage;
 const initialState = createInitState(storage);
 
 const store = configureStore(initialState);
@@ -37,5 +39,4 @@ socket.on('message-all', data => {
 
 socket.on('message-room', data => {
   console.info(data);
-  httpCheck(data);
 });

@@ -23,6 +23,8 @@
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/node_modules/react-native/\.buckd/
 
+<PROJECT_ROOT>/node_modules/react-native/*
+
 ; Ignore unexpected extra "@providesModule"
 .*/node_modules/.*/node_modules/fbjs/.*
 

@@ -1,18 +1,19 @@
+// @flow
+import { AsyncStorage } from 'react-native';
+import { combineReducers } from 'redux';
+
 import { UPDATE_STATE, SET_OPTIONS } from '../actions/api.js';
 
-export default function chromeExtension(
+export default function api(
   state = { persistent: { options: { initCount: 1 } } },
   action
 ) {
   switch (action.type) {
     case UPDATE_STATE:
       const newState = Object.assign({}, state, action.state);
-      if (
-        location.protocol == 'path-miner:' &&
-        chrome.extension.getBackgroundPage() === window
-      ) {
-        localStorage.setItem('persistent', JSON.stringify(newState.persistent));
-      }
+
+      AsyncStorage.setItem('persistent', JSON.stringify(newState.persistent));
+
       return newState;
     case SET_OPTIONS:
       return Object.assign({}, state, {

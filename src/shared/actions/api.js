@@ -20,7 +20,7 @@ export function updateState() {
   };
 }
 
-export function setOptions(options) {
+export function setOptions(options: any) {
   return {
     type: SET_OPTIONS,
     options
