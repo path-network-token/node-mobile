@@ -2,7 +2,7 @@
 import { AsyncStorage } from 'react-native';
 import { combineReducers } from 'redux';
 
-import { UPDATE_STATE, SET_OPTIONS } from '../actions/api.js';
+import { UPDATE_STATE, SET_OPTIONS } from '../actions';
 
 export default function api(
   state = { persistent: { options: { initCount: 1 } } },
