@@ -5,6 +5,7 @@ import jobs, * as fromJobs from './job';
 import socketClient, * as fromSocketClient from './socketClient';
 
 const reducers = combineReducers({
+  device,
   jobs,
   socketClient
 });
