@@ -10,10 +10,10 @@ import {
   StatusBar
 } from 'react-native';
 
+import reduxStore from './src/shared/store/reduxStore';
+
 import Banner from './src/components/Banner';
 import Info from './src/containers/Info';
-
-import reduxStore from './src/shared/store/reduxStore';
 
 let store = {};
 
