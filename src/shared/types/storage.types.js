@@ -1,5 +1,4 @@
 // @flow
-
 export type PersistantStorage = {
   // settings
   walletAddress: string,
