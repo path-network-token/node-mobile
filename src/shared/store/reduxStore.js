@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
 import type { PersistantStorage } from '../types/storage.types.js';
-import api from '../reducers/api';
+import api from '../reducers';
 
 import initStorage from './initStorage';
 import createInitState from './createInitState';
@@ -15,8 +15,6 @@ const reduxStore = async () => {
   if (storage == null) {
     storage = initStorage;
   }
-
-  // storage =
 
   const initialState = createInitState(storage);
   const middlewares = [thunk];
