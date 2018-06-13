@@ -24,7 +24,7 @@ type GeoData = {
     bounds?: number // used for filtration later in roadmap. miners don't report this.
   },
   city?: string,
-  country: string,
+  country?: string,
   [string]: string // this covers any other arbitrary address microdata
 };
 
@@ -70,7 +70,7 @@ export type JobResult = {
   customer_uuid: string,
   miner_id: string,
   job_uuid: string,
-  geo: string,
+  geo: GeoData,
   asn: number,
   ip_range: string,
   received_on: number,
