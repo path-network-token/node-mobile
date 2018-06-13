@@ -1,4 +1,6 @@
 // @flow
+// CODE PULLED FROM CHROME MINER
+//
 import axios from 'axios';
 
 export const UPDATE_STATE = 'UPDATE_STATE';

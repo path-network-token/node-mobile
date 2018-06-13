@@ -1,12 +1,11 @@
 // @flow
-import type { PersistantStorage } from '../types/storage.types.js';
+import type { DynamicStorage } from '../types/storage.types.js';
 
-export default function createInitState(storage: PersistantStorage) {
+export default function createInitState(storage: any) {
   return {
-    jobStatus: 'Inactive',
-    activeJob: null,
-    jobQueue: [],
-    count: 50,
+    job: {},
+    device: {},
+    socketClient: {},
     ...storage
   };
 }

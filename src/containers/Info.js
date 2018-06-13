@@ -27,9 +27,9 @@ class Info extends React.Component<Props> {
 
 const mapStateToProps = state => {
   return {
-    jobCompleteCount: state.jobCompleteCount,
-    pathMinedCount: state.pathMinedCount,
-    jobStatus: state.jobStatus
+    jobCompleteCount: state.stats.jobCompleteCount,
+    pathMinedCount: state.stats.pathMinedCount,
+    jobStatus: state.job.status
   };
 };
 

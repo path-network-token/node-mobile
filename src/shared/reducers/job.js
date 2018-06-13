@@ -3,7 +3,9 @@ import { combineReducers } from 'redux';
 
 import { JOB_PENDING, JOB_SUCCESS, JOB_FAILURE } from '../actions/constants';
 
-const initialJob = {};
+const initialJob = {
+  status: 'Inactive'
+};
 
 const jobInit = (state: any = initialJob, action: any) => {
   switch (action.type) {
