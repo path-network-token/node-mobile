@@ -2,9 +2,8 @@
 import { combineReducers } from 'redux';
 
 import {
-  STATS_PENDING,
-  STATS_SUCCESS,
-  STATS_FAILURE
+  STATS_SET_JOB_COUNT,
+  STATS_INCREMENT_JOB_COUNT
 } from '../actions/constants';
 
 const initialStats = {
@@ -12,47 +11,22 @@ const initialStats = {
   pathMinedCount: 0
 };
 
-const statsInit = (state: any = initialStats, action: any) => {
+const stats = (state: any = initialStats, action: any) => {
+  console.log(action.payload);
   switch (action.type) {
-    case STATS_SUCCESS:
-      return action.response.result;
+    case STATS_SET_JOB_COUNT:
+      return Object.assign({}, state, {
+        jobCompleteCount: action.jobCompleteCount
+      });
+    case STATS_INCREMENT_JOB_COUNT:
+      return Object.assign({}, state, {
+        jobCompleteCount: state.jobCompleteCount + 1
+      });
     default:
       return state;
   }
 };
-
-const statsPending = (state: boolean = false, action: any) => {
-  switch (action.type) {
-    case STATS_PENDING:
-      return true;
-    case STATS_SUCCESS:
-    case STATS_FAILURE:
-      return false;
-    default:
-      return state;
-  }
-};
-
-const errorMessage = (state: string = '', action: any) => {
-  switch (action.type) {
-    case STATS_FAILURE:
-      return action.message;
-    case STATS_PENDING:
-    case STATS_SUCCESS:
-      return '';
-    default:
-      return state;
-  }
-};
-
-const stats = combineReducers({
-  statsInit,
-  statsPending,
-  errorMessage
-});
 
 export default stats;
 
 export const getStats = (state: any) => state.stats;
-export const getStatsPending = (state: any) => state.statsPending;
-export const getErrorMessage = (state: any) => state.errorMessage;
