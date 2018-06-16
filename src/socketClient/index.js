@@ -1,7 +1,8 @@
 // @flow
 import { AsyncStorage } from 'react-native';
+import io from 'socket.io-client';
 
-const init = socket => {
+const init: (socket: io) => void = socket => {
   socket.on('connect', e => {
     console.log('CONNECTED:', e);
   });
