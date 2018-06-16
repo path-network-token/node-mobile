@@ -4,17 +4,17 @@ import { combineReducers } from 'redux';
 import { DEVICE_INFO_SUCCESS, DEVICE_INFO_FAILURE } from '../actions/constants';
 
 const initialInfo = {
+  asn: '',
   id: '',
-  lat: '',
-  lng: '',
   ip: '',
-  asn: ''
+  lat: '',
+  lng: ''
 };
 
 const info = (state: any = initialInfo, action: any) => {
   switch (action.type) {
     case DEVICE_INFO_SUCCESS:
-      return action.response.result;
+      return action.data;
     default:
       return state;
   }

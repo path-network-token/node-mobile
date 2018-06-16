@@ -3,16 +3,23 @@ import { combineReducers } from 'redux';
 
 import { JOB_PENDING, JOB_SUCCESS, JOB_FAILURE } from '../actions/constants';
 
-const initialJob = {
-  status: 'Inactive'
-};
-
-const jobInit = (state: any = initialJob, action: any) => {
+const jobSuccess = (state: any = {}, action: any) => {
   switch (action.type) {
     case JOB_SUCCESS:
-      return action.response.result;
+      return {
+        result_uuid: action.result_uuid,
+        customer_uuid: action.customer_uuid,
+        miner_id: action.miner_id,
+        job_uuid: action.job_uuid,
+        geo: action.geo,
+        asn: action.asn,
+        ip_range: action.ip_range,
+        received_on: action.received_on,
+        status: action.status,
+        response_time: action.response_time
+      };
     default:
-      return state;
+      return {};
   }
 };
 
@@ -41,13 +48,13 @@ const errorMessage = (state: string = '', action: any) => {
 };
 
 const job = combineReducers({
-  jobInit,
+  jobSuccess,
   jobPending,
   errorMessage
 });
 
 export default job;
 
-export const getJob = (state: any) => state.job;
+export const getJobSuccess = (state: any) => state.jobSuccess;
 export const getJobPending = (state: any) => state.jobPending;
 export const getErrorMessage = (state: any) => state.errorMessage;

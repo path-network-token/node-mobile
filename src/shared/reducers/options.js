@@ -8,10 +8,10 @@ const initialOptions = {
   wifiOnly: false
 };
 
-const optionsInit = (state: any = initialOptions, action: any) => {
+const userSettings = (state: any = initialOptions, action: any) => {
   switch (action.type) {
     case OPTIONS_SUCCESS:
-      return action.response.result;
+      return action.data;
     default:
       return state;
   }
@@ -29,7 +29,7 @@ const errorMessage = (state: string = '', action: any) => {
 };
 
 const options = combineReducers({
-  optionsInit,
+  userSettings,
   errorMessage
 });
 
