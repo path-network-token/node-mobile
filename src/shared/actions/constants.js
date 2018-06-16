@@ -17,12 +17,15 @@ export const OPTIONS_FAILURE = 'OPTIONS_FAILURE';
 // connections via socket client
 export const SOCKET_INIT_SUCCESS = 'SOCKET_INIT_SUCCESS';
 export const SOCKET_INIT_FAILURE = 'SOCKET_INIT_FAILURE';
+
 // update miner details via socket client
 export const SOCKET_UPDATE_LOCATION_SUCCESS = 'SOCKET_UPDATE_LOCATION_SUCCESS';
 export const SOCKET_UPDATE_LOCATION_FAILURE = 'SOCKET_UPDATE_LOCATION_FAILURE';
+
 // receive job via socket client
 export const SOCKET_RECEIVE_JOB_SUCCESS = 'SOCKET_RECEIVE_JOB_SUCCESS';
 export const SOCKET_RECEIVE_JOB_FAILURE = 'SOCKET_RECEIVE_JOB_FAILURE';
+
 // submit job result via socket client
 export const SOCKET_SUBMIT_JOB_SUCCESS = 'SOCKET_SUBMIT_JOB_SUCCESS';
 export const SOCKET_SUBMIT_JOB_FAILURE = 'SOCKET_SUBMIT_JOB_FAILURE';
