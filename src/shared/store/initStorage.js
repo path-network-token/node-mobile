@@ -1,17 +1,11 @@
 // @flow
 
 export default {
-  job: {
-    status: 'Inactive'
-  },
+  job: {},
   device: {},
   socketClient: {},
-  options: {
-    walletAddress: '',
-    wifiOnly: false
-  },
+  options: {},
   stats: {
-    jobCompleteCount: 0,
-    pathMinedCount: 0
+    jobCompleteCount: 0
   }
 };

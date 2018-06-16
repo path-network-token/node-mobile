@@ -16,9 +16,8 @@ const reduxStore = async () => {
   }
 
   const initialState = createInitState(storage);
-  const middlewares = [thunk];
 
-  return createStore(reducers, initialState, applyMiddleware(...middlewares));
+  return createStore(reducers, initialState, applyMiddleware(thunk));
 };
 
 export default reduxStore;
