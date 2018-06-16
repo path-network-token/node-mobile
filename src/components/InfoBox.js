@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   prefix: string,
-  data: number | string
+  data: number | boolean
 };
 
 class InfoBox extends React.Component<Props> {
