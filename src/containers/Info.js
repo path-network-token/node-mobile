@@ -17,11 +17,12 @@ type Props = {
 class Info extends React.Component<Props> {
   render() {
     const { jobCompleteCount, jobStatus } = this.props;
+    const jobActive = jobStatus ? 'Active' : 'Inactive';
 
     return (
       <View>
         <InfoBox prefix="Jobs completed: " data={jobCompleteCount} />
-        <InfoBox prefix="Status: " data={jobStatus} />
+        <InfoBox prefix="Status: " data={jobActive} />
       </View>
     );
   }
