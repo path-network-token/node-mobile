@@ -15,7 +15,9 @@ import {
 // ------------------------------------
 // Socket init
 //
-const initialSocketInit = {};
+const initialSocketInit = {
+  id: ''
+};
 
 const socketInit = (state: any = initialSocketInit, action: any) => {
   switch (action.type) {

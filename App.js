@@ -1,19 +1,17 @@
 // @flow
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import { StyleSheet, Text, ImageBackground, StatusBar } from 'react-native';
 import { AppLoading, Font } from 'expo';
-import {
-  StyleSheet,
-  Text,
-  ImageBackground,
-  AsyncStorage,
-  StatusBar
-} from 'react-native';
-
-import reduxStore from './src/shared/store/reduxStore';
+import io from 'socket.io-client';
 
 import Banner from './src/components/Banner';
 import Info from './src/containers/Info';
+
+import socketClient from './src/socketClient';
+import reduxStore from './src/shared/store/reduxStore';
+
+const socketURL = 'http://localhost:3000/';
 
 let store = {};
 
@@ -30,11 +28,12 @@ export default class App extends Component<Props, State> {
   };
 
   componentWillMount() {
-    this._loadAssets();
-    this._loadStore();
+    this.loadAssets();
+    this.initStore();
+    this.initSocketClient();
   }
 
-  _loadAssets = async () => {
+  loadAssets = async () => {
     await Font.loadAsync({
       'exo-light': require('./assets/fonts/Exo-Light.ttf'),
       'exo-medium': require('./assets/fonts/Exo-Medium.ttf'),
@@ -44,9 +43,14 @@ export default class App extends Component<Props, State> {
     this.setState({ assetsLoaded: true });
   };
 
-  _loadStore = async () => {
+  initStore = async () => {
     store = await reduxStore();
     this.setState({ storeLoaded: true });
+  };
+
+  initSocketClient = () => {
+    const socket = io(socketURL);
+    socketClient.init(socket);
   };
 
   render() {

@@ -10,6 +10,7 @@ import createInitState from './createInitState';
 
 const reduxStore = async () => {
   const storage = await AsyncStorage.getItem('persistent');
+  // need to parse settings from storage
   const initialState = createInitState(storage || initStorage);
 
   return createStore(reducers, initialState, applyMiddleware(thunk));
