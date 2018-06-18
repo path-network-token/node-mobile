@@ -8,14 +8,15 @@ import io from 'socket.io-client';
 import Banner from './src/components/Banner';
 import Info from './src/containers/Info';
 
+import jobRunner from './src/jobRunner';
 import socketClient from './src/socketClient';
 import reduxStore from './src/shared/store/reduxStore';
 
-const socketURL = 'http://localhost:3000/';
-
 let store = {};
+let socketHandle = {};
 
 type Props = {};
+
 type State = {
   assetsLoaded: boolean,
   storeLoaded: boolean
@@ -29,8 +30,7 @@ export default class App extends Component<Props, State> {
 
   componentWillMount() {
     this.loadAssets();
-    this.initStore();
-    this.initSocketClient();
+    this.initModules();
   }
 
   loadAssets = async () => {
@@ -43,14 +43,11 @@ export default class App extends Component<Props, State> {
     this.setState({ assetsLoaded: true });
   };
 
-  initStore = async () => {
+  initModules = async () => {
     store = await reduxStore();
     this.setState({ storeLoaded: true });
-  };
-
-  initSocketClient = () => {
-    const socket = io(socketURL);
-    socketClient.init(socket);
+    socketHandle = socketClient(store);
+    //jobHandle = jobRunner(store);
   };
 
   render() {
