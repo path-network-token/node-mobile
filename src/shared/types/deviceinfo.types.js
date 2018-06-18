@@ -1,6 +1,6 @@
 // @flow
 export type DeviceInfo = {
-  deviceId: string,
+  id: string,
   ip: string,
   asn: string,
   lat: string,
