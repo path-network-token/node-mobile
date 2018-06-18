@@ -28,6 +28,9 @@ export const getOptions = (state: any) => fromOptions.getOptions(state.options);
 export const getOptionsErrorMessage = (state: any) =>
   fromOptions.getErrorMessage(state.options);
 
+export const getSocketConnected = (state: any) =>
+  fromSocketClient.getSocketConnected(state.socketClient);
+
 export const getSocketInit = (state: any) =>
   fromSocketClient.getSocketInit(state.socketClient);
 export const getSocketInitErrorMessage = (state: any) =>
@@ -40,8 +43,6 @@ export const getSocketUpdateLocErrorMessage = (state: any) =>
 
 export const getSocketReceiveJob = (state: any) =>
   fromSocketClient.getSocketReceiveJob(state.socketClient);
-export const getSocketReceiveJobErrorMessage = (state: any) =>
-  fromSocketClient.getSocketReceiveJobErrorMessage(state.socketClient);
 
 export const getSocketSubmitJob = (state: any) =>
   fromSocketClient.getSocketSubmitJob(state.socketClient);

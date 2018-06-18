@@ -22,10 +22,12 @@ const defaultState = {
     }
   },
   socketClient: {
-    socketInit: {},
+    socketConnected: false,
+    socketInit: {
+      id: ''
+    },
     socketInitErrorMessage: '',
     socketReceiveJob: {},
-    socketReceiveJobErrorMessage: '',
     socketSubmitJob: {},
     socketSubmitJobErrorMessage: '',
     socketUpdateLoc: {},
