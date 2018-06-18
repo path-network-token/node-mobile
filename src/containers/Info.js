@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 
 import reducers from '../shared/reducers';
 
-import { incrementJobCount } from '../shared/actions';
-
 import InfoBox from '../components/InfoBox';
 
 type Props = {
