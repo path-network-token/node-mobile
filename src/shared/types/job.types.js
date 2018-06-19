@@ -1,4 +1,29 @@
-// @flow
+type Device = 'android' | 'ios' | 'chrome' | 'firefox' | 'desktop';
+
+type CheckIn = {
+  id: string,
+  type: 'check-in',
+  miner_id?: string,
+  cidr?: string,
+  asn?: string,
+  lat?: number,
+  lon?: number,
+  wallet: string,
+  device_type: Device
+};
+
+type Ack = {
+  id: string,
+  type: 'ack',
+  miner_id?: string
+};
+
+type Error = {
+  id: string,
+  type: 'error',
+  description: string
+};
+
 type Headers = {
   [string]: string
 };
@@ -8,38 +33,10 @@ type CriticalResponses = {
   body_contains: string
 };
 
-type Status = 'critical' | 'degraded' | 'ok' | 'unknown';
-
-type Device = 'android' | 'ios' | 'chrome' | 'firefox' | 'desktop';
-
-type ASN = {
-  value: string, // AS Number
-  amount?: number // amount of nodes to assign with this ASN
-};
-
-type GeoData = {
-  coords: {
-    lat: number,
-    lng: number,
-    bounds?: number // used for filtration later in roadmap. miners don't report this.
-  },
-  city?: string,
-  country: string,
-  [string]: string // this covers any other arbitrary address microdata
-};
-
-// 'amount' is spread across ASNs evenly unless "ASN.amount" is present,
-// in which case "Filters.amount" should == sum of all "ASN.amount" values.
-type Filters = {
-  amount?: number, // amount of nodes to perform job
-  ASN?: ASN[],
-  devices?: Device[], // hardware type of nodes to perform job
-};
-
-export type JobRequest = {
-  name: string,
-  type: string,
-  filters: Filters,
+export type MinerJobRequest = {
+  id: string,
+  type: 'job-request',
+  job_type: string,
   protocol: string,
   headers: Headers,
   payload: string,
@@ -50,32 +47,15 @@ export type JobRequest = {
   degraded_after: number,
   critical_after: number,
   critical_responses: CriticalResponses,
-  uuid: string,
-  customer_uuid?: string,
-  created_at: number
+  job_uuid: string
 };
 
-export type JobRequestMessage = {
-  topic: string,
-  value: string,
-  offset: number,
-  partition: number,
-  highWaterOffset: number,
-  key: ?string,
-  timestamp: Date
-};
+type Status = 'critical' | 'degraded' | 'ok' | 'unknown';
 
 export type JobResult = {
-  result_uuid: string, // @TODO: subtype uuids as opaque data types
-  customer_uuid: string,
-  miner_id: string,
+  id: string,
+  type: 'job-result',
   job_uuid: string,
-  geo: string,
-  asn: number,
-  ip_range: string,
-  received_on: number,
   status: Status,
   response_time: number
 };
-
-export type Emit = (io: Function, msg: JobRequest) => void;
