@@ -10,6 +10,7 @@ import Info from './src/containers/Info';
 
 import jobRunner from './src/jobRunner';
 import socketClient from './src/socketClient';
+import deviceHandle from './src/device';
 import reduxStore from './src/shared/store/reduxStore';
 
 let store = {};
@@ -46,7 +47,13 @@ export default class App extends Component<Props, State> {
   initModules = async () => {
     store = await reduxStore();
     this.setState({ storeLoaded: true });
-    socketHandle = socketClient(store);
+
+    // get the device info
+    await deviceHandle.setInfo(store);
+
+    // setup socket client
+    socketClient(store);
+
     //jobHandle = jobRunner(store);
   };
 
