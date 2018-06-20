@@ -1,81 +1,88 @@
 // @flow
-import { AsyncStorage } from 'react-native';
-import io from 'socket.io-client';
-
+import type { Store } from 'redux';
 import {
   socketConnected,
   socketDisconnected,
   receiveJob,
-  submitJob,
-  submitJobFail,
-  updateLocation,
-  updateLocationFail,
-  minerInitSuccess,
-  minerInitFail
+  submitJobSuccess,
+  minerSetId,
+  serverError,
+  serverPing,
+  serverPong
 } from '../shared/actions/socketClient';
 
-const socketURL = 'http://localhost:3000/';
+import { getDevice } from '../shared/reducers';
 
-const socket = io(socketURL);
+const socketURL =
+  'ws://devCluster-default-jobsapi-3bfa-787513993.us-west-2.elb.amazonaws.com/ws';
 
-const socketClient = store => {
+// socket message types
+const MINER_CHECK_IN = 'check-in';
+const RECEIVE_JOB = 'job-request';
+const SUBMIT_JOB = 'job-result';
+const SERVER_ACK = 'ack';
+const SERVER_PONG = 'pong';
+const SERVER_ERROR = 'error';
+
+const handleMessage = (data, dispatch) => {
+  const messageType = data.type;
+
+  // TODO parse data
+
+  switch (messageType) {
+    case RECEIVE_JOB:
+      dispatch(receiveJob(data));
+
+      // respond with ack
+      break;
+    case SERVER_ACK:
+      // TODO place 'miner_id' in some form of constant?
+      if ('miner_id' in data) {
+        dispatch(minerSetId(data));
+      } else {
+        dispatch(submitJobSuccess(data));
+      }
+
+      break;
+    case SERVER_ERROR:
+      dispatch(serverError(data));
+      break;
+  }
+};
+
+const socketClient: (store: Store) => void = store => {
   const { dispatch } = store;
 
-  socket.on('connect', e => {
-    console.log('CONNECTED:', e);
+  // map websocket 'readyState' to redux somehow?
+  const socket = new WebSocket(socketURL);
 
-    const data = {
-      deviceId: '123456'
-    };
+  socket.onopen = e => {
+    console.log('CONNECTED TO ELIXR');
     dispatch(socketConnected());
-  });
 
-  setupErrorHandlers(dispatch);
+    // now we're connected, get the device info
+    //const deviceData = getDevice();
 
-  // incoming job request
-  socket.on('job', e => {
-    console.log('JOB:', e);
-    dispatch(receiveJob(dispatch));
-  });
-};
+    // emit initialisation message
+    //socket.send('{"nah":"yeah"}');
+  };
 
-const emitInitMiner = data => {
-  socket.emit('init', data, response => {});
-};
+  socket.onmessage = event => {
+    const data = event.data;
+    // required for flow
+    if (typeof data === 'string') {
+      handleMessage(JSON.parse(data), dispatch);
+    }
+  };
 
-const emitNewLocation = data => {
-  socket.emit('miner_location', data);
-};
+  socket.onerror = event => {
+    console.log('SOCKET CONNECTION ERROR');
+  };
 
-const emitJobResult = data => {
-  socket.emit('results', data);
-};
-
-// TODO: Should we give user feedback if connection drops?
-const setupErrorHandlers = dispatch => {
-  socket.on('reconnect', e => {
-    console.log('RECONNECT:', e);
-    dispatch(socketConnected());
-  });
-
-  socket.on('connect_error', e => {
-    console.log('CONNECT ERROR:', e);
+  socket.onclose = event => {
+    console.log('SOCKET CONNECTION CLOSED');
     dispatch(socketDisconnected());
-  });
-
-  socket.on('connect_timeout', e => {
-    console.log('CONNECT TIMEOUT:', e);
-    dispatch(socketDisconnected());
-  });
-
-  socket.on('error', e => {
-    console.log('ERROR:', e);
-
-    // will depend on whether job or location or init
-    dispatch(minerInitFail({ message: 'Submit Job Failure' }));
-    dispatch(updateLocationFail({ message: 'Submit Job Failure' }));
-    dispatch(submitJobFail({ message: 'Submit Job Failure' }));
-  });
+  };
 };
 
 export default socketClient;
