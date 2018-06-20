@@ -30,23 +30,13 @@ export const getOptionsErrorMessage = (state: any) =>
 
 export const getSocketConnected = (state: any) =>
   fromSocketClient.getSocketConnected(state.socketClient);
-
-export const getSocketInit = (state: any) =>
-  fromSocketClient.getSocketInit(state.socketClient);
-export const getSocketInitErrorMessage = (state: any) =>
-  fromSocketClient.getSocketInitErrorMessage(state.socketClient);
-
-export const getSocketUpdateLoc = (state: any) =>
-  fromSocketClient.getSocketUpdateLoc(state.socketClient);
-export const getSocketUpdateLocErrorMessage = (state: any) =>
-  fromSocketClient.getSocketInitErrorMessage(state.socketClient);
-
+export const getSocketCheckIn = (state: any) =>
+  fromSocketClient.getSocketCheckIn(state.socketCheckIn);
 export const getSocketReceiveJob = (state: any) =>
   fromSocketClient.getSocketReceiveJob(state.socketClient);
-
-export const getSocketSubmitJob = (state: any) =>
-  fromSocketClient.getSocketSubmitJob(state.socketClient);
-export const getSocketSubmitJobErrorMessage = (state: any) =>
-  fromSocketClient.getSocketSubmitJobErrorMessage(state.socketClient);
+export const getSocketSubmitJobResults = (state: any) =>
+  fromSocketClient.getSocketSubmitJobResults(state.socketClient);
+export const getSocketErrorMessage = (state: any) =>
+  fromSocketClient.getSocketErrorMessage(state.socketClient);
 
 export const getStats = (state: any) => fromStats.getStats(state.stats);
