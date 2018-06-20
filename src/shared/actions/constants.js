@@ -14,23 +14,17 @@ export const JOB_FAILURE = 'JOB_FAILURE';
 export const OPTIONS_SUCCESS = 'OPTIONS_SUCCESS';
 export const OPTIONS_FAILURE = 'OPTIONS_FAILURE';
 
+// socket client state
 export const SOCKET_CONNECTED = 'SOCKET_CONNECTED';
 export const SOCKET_DISCONNECTED = 'SOCKET_DISCONNECTED';
-
-// connections via socket client
-export const SOCKET_INIT = 'SOCKET_INIT';
-export const SOCKET_INIT_FAILURE = 'SOCKET_INIT_FAILURE';
-
-// update miner details via socket client
-export const SOCKET_UPDATE_LOCATION = 'SOCKET_UPDATE_LOCATION';
-export const SOCKET_UPDATE_LOCATION_FAILURE = 'SOCKET_UPDATE_LOCATION_FAILURE';
-
-// receive job via socket client
+// messages via socket client
+export const SOCKET_SET_MINER_ID = 'SOCKET_SET_MINER_ID';
+export const SOCKET_CHECK_IN = 'SOCKET_CHECK_IN';
 export const SOCKET_RECEIVE_JOB = 'SOCKET_RECEIVE_JOB';
-
-// submit job result via socket client
-export const SOCKET_SUBMIT_JOB = 'SOCKET_SUBMIT_JOB';
-export const SOCKET_SUBMIT_JOB_FAILURE = 'SOCKET_SUBMIT_JOB_FAILURE';
+export const SOCKET_JOB_RESULTS = 'SOCKET_JOB_RESULTS';
+export const SOCKET_SERVER_ERROR = 'SOCKET_SERVER_ERROR';
+export const SOCKET_PING = 'SOCKET_PING';
+export const SOCKET_PONG = 'SOCKET_PONG';
 
 // options
 export const STATS_SET_JOB_COUNT = 'STATS_SET_JOB_COUNT';
