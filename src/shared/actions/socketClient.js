@@ -4,13 +4,13 @@
 import {
   SOCKET_CONNECTED,
   SOCKET_DISCONNECTED,
-  SOCKET_INIT,
-  SOCKET_INIT_FAILURE,
-  SOCKET_UPDATE_LOCATION,
-  SOCKET_UPDATE_LOCATION_FAILURE,
+  SOCKET_SET_MINER_ID,
+  SOCKET_CHECK_IN,
   SOCKET_RECEIVE_JOB,
-  SOCKET_SUBMIT_JOB,
-  SOCKET_SUBMIT_JOB_FAILURE
+  SOCKET_JOB_RESULTS,
+  SOCKET_SERVER_ERROR,
+  SOCKET_PING,
+  SOCKET_PONG
 } from './constants';
 
 export const socketConnected: () => any = () => ({
@@ -26,35 +26,33 @@ export const receiveJob: (data: any) => any = data => ({
   jobData: data.jobData
 });
 
-export const submitJob: (data: any) => any = data => ({
-  type: SOCKET_SUBMIT_JOB,
+export const submitJobSuccess: (data: any) => any = data => ({
+  type: SOCKET_JOB_RESULTS,
   results: data.results
 });
 
-export const submitJobFail: (data: any) => any = data => ({
-  type: SOCKET_SUBMIT_JOB_FAILURE,
-  message: data.message
-});
-
-export const updateLocation: (data: any) => any = data => ({
-  type: SOCKET_UPDATE_LOCATION,
+export const minerCheckIn: (data: any) => any = data => ({
+  type: SOCKET_CHECK_IN,
   deviceId: data.deviceId,
   asn: data.asn,
   lat: data.lat,
   lng: data.lng
 });
 
-export const updateLocationFail: (data: any) => any = data => ({
-  type: SOCKET_UPDATE_LOCATION_FAILURE,
-  message: data.message
-});
-
-export const minerInitSuccess: (data: any) => any = data => ({
-  type: SOCKET_INIT,
+export const minerSetId: (data: any) => any = data => ({
+  type: SOCKET_SET_MINER_ID,
   deviceId: data.deviceId
 });
 
-export const minerInitFail: (data: any) => any = data => ({
-  type: SOCKET_INIT_FAILURE,
+export const serverError: (data: any) => any = data => ({
+  type: SOCKET_SERVER_ERROR,
   message: data.message
+});
+
+export const serverPing: (data: any) => any = data => ({
+  type: SOCKET_PING
+});
+
+export const serverPong: (data: any) => any = data => ({
+  type: SOCKET_PONG
 });

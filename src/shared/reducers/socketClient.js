@@ -4,14 +4,27 @@ import { combineReducers } from 'redux';
 import {
   SOCKET_CONNECTED,
   SOCKET_DISCONNECTED,
-  SOCKET_INIT,
-  SOCKET_INIT_FAILURE,
-  SOCKET_UPDATE_LOCATION,
-  SOCKET_UPDATE_LOCATION_FAILURE,
+  SOCKET_SET_MINER_ID,
+  SOCKET_CHECK_IN,
   SOCKET_RECEIVE_JOB,
-  SOCKET_SUBMIT_JOB,
-  SOCKET_SUBMIT_JOB_FAILURE
+  SOCKET_JOB_RESULTS,
+  SOCKET_SERVER_ERROR,
+  SOCKET_PING,
+  SOCKET_PONG
 } from '../actions/constants';
+
+// TODO Have some way of keeping track of pings & pongs
+//      and handling if we stop getting pongs
+const socketPingPong = (state: boolean = false, action: any) => {
+  switch (action.type) {
+    case SOCKET_PING:
+      return true;
+    case SOCKET_PONG:
+      return false;
+    default:
+      return state;
+  }
+};
 
 // ------------------------------------
 // Socket connection
@@ -27,53 +40,39 @@ const socketConnected = (state: boolean = false, action: any) => {
   }
 };
 
+const socketErrorMessage = (state: string = '', action: any) => {
+  switch (action.type) {
+    case SOCKET_SERVER_ERROR:
+      return action.message;
+    case SOCKET_CHECK_IN:
+    case SOCKET_RECEIVE_JOB:
+    case SOCKET_SET_MINER_ID:
+    case SOCKET_CONNECTED:
+    case SOCKET_DISCONNECTED:
+      return '';
+    default:
+      return state;
+  }
+};
+
 // ------------------------------------
 // Socket init
 //
-const initialSocketInit = {
-  id: ''
+const initialSocketCheckIn = {
+  id: '',
+  wallet: '',
+  device_type: ''
 };
 
-const socketInit = (state: any = initialSocketInit, action: any) => {
+const socketCheckIn = (state: any = initialSocketCheckIn, action: any) => {
   switch (action.type) {
-    case SOCKET_INIT:
-      return action.response.result;
-    default:
-      return state;
-  }
-};
-
-const socketInitErrorMessage = (state: string = '', action: any) => {
-  switch (action.type) {
-    case SOCKET_INIT_FAILURE:
-      return action.message;
-    case SOCKET_INIT:
-      return '';
-    default:
-      return state;
-  }
-};
-
-// ------------------------------------
-// Socket update location
-//
-const initialSocketUpdateLoc = {};
-
-const socketUpdateLoc = (state: any = initialSocketUpdateLoc, action: any) => {
-  switch (action.type) {
-    case SOCKET_UPDATE_LOCATION:
-      return action.response.result;
-    default:
-      return state;
-  }
-};
-
-const socketUpdateLocErrorMessage = (state: string = '', action: any) => {
-  switch (action.type) {
-    case SOCKET_UPDATE_LOCATION_FAILURE:
-      return action.message;
-    case SOCKET_UPDATE_LOCATION:
-      return '';
+    case SOCKET_CHECK_IN:
+      return action.device;
+    case SOCKET_SET_MINER_ID:
+      return {
+        ...state,
+        miner_id: action.minerId
+      };
     default:
       return state;
   }
@@ -82,7 +81,24 @@ const socketUpdateLocErrorMessage = (state: string = '', action: any) => {
 // ------------------------------------
 // Socket receive job
 //
-const initialSocketReceiveJob = {};
+const initialSocketReceiveJob = {
+  id: '',
+  job_type: '',
+  protocol: '',
+  headers: {},
+  payload: '',
+  endpoint_address: '',
+  endpoint_port: -1,
+  endpoint_additional_params: '',
+  polling_interval: 0,
+  degraded_after: 0,
+  critical_after: 0,
+  critical_responses: {
+    header_status: '',
+    body_contains: ''
+  },
+  job_uuid: ''
+};
 
 const socketReceiveJob = (
   state: any = initialSocketReceiveJob,
@@ -90,7 +106,7 @@ const socketReceiveJob = (
 ) => {
   switch (action.type) {
     case SOCKET_RECEIVE_JOB:
-      return action.response.result;
+      return action.job;
     default:
       return state;
   }
@@ -99,23 +115,20 @@ const socketReceiveJob = (
 // ------------------------------------
 // Socket submit job
 //
-const initialSocketSubmitJob = {};
-
-const socketSubmitJob = (state: any = initialSocketSubmitJob, action: any) => {
-  switch (action.type) {
-    case SOCKET_SUBMIT_JOB:
-      return action.response.result;
-    default:
-      return state;
-  }
+const initialSocketSubmitJobResults = {
+  id: '',
+  job_uuid: '',
+  status: '',
+  response_time: -1
 };
 
-const socketSubmitJobErrorMessage = (state: string = '', action: any) => {
+const socketSubmitJobResults = (
+  state: any = initialSocketSubmitJobResults,
+  action: any
+) => {
   switch (action.type) {
-    case SOCKET_SUBMIT_JOB_FAILURE:
-      return action.message;
-    case SOCKET_SUBMIT_JOB:
-      return '';
+    case SOCKET_JOB_RESULTS:
+      return action.results;
     default:
       return state;
   }
@@ -123,29 +136,17 @@ const socketSubmitJobErrorMessage = (state: string = '', action: any) => {
 
 const socketClient = combineReducers({
   socketConnected,
-  socketInit,
-  socketInitErrorMessage,
-  socketUpdateLoc,
-  socketUpdateLocErrorMessage,
+  socketCheckIn,
+  socketErrorMessage,
   socketReceiveJob,
-  socketSubmitJob,
-  socketSubmitJobErrorMessage
+  socketSubmitJobResults
 });
 
 export default socketClient;
 
 export const getSocketConnected = (state: any) => state.socketConnected;
-
-export const getSocketInit = (state: any) => state.socketInit;
-export const getSocketInitErrorMessage = (state: any) =>
-  state.socketInitErrorMessage;
-
-export const getSocketUpdateLoc = (state: any) => state.socketUpdateLoc;
-export const getSocketUpdateLocErrorMessage = (state: any) =>
-  state.socketUpdateLocErrorMessage;
-
+export const getSocketCheckIn = (state: any) => state.socketCheckIn;
+export const getSocketErrorMessage = (state: any) => state.socketErrorMessage;
 export const getSocketReceiveJob = (state: any) => state.socketReceiveJob;
-
-export const getSocketSubmitJob = (state: any) => state.socketSubmitJob;
-export const getSocketSubmitJobErrorMessage = (state: any) =>
-  state.socketSubmitJobErrorMessage;
+export const getSocketSubmitJobResults = (state: any) =>
+  state.socketSubmitJobResults;
