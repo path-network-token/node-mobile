@@ -1,23 +1,23 @@
 const defaultState = {
   device: {
-    errorMessage: '',
     info: {
-      asn: '',
-      id: '',
-      ip: '',
-      lat: '',
-      lng: ''
+      miner_id: '',
+      device_type: ''
     }
   },
   job: {
-    errorMessage: '',
+    jobFailure: '',
     jobPending: false,
-    jobSuccess: {}
+    jobSuccess: {
+      job_uuid: '',
+      status: '',
+      response_time: -1
+    }
   },
   options: {
     errorMessage: '',
     userSettings: {
-      walletAddress: '',
+      wallet: '',
       wifi_only: false
     }
   },
@@ -31,20 +31,19 @@ const defaultState = {
     },
     socketReceiveJob: {
       id: '',
+      type: '',
       job_type: '',
       protocol: '',
+      method: '',
       headers: {},
       payload: '',
       endpoint_address: '',
-      endpoint_port: -1,
+      endpoint_port: '',
       endpoint_additional_params: '',
       polling_interval: 0,
       degraded_after: 0,
       critical_after: 0,
-      critical_responses: {
-        header_status: '',
-        body_contains: ''
-      },
+      critical_responses: {},
       job_uuid: ''
     },
     socketSubmitJobResults: {

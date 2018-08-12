@@ -53,7 +53,7 @@ describe('socketClient reducer', () => {
 
     const socketAction = {
       type: actions.SOCKET_SERVER_ERROR,
-      message: 'error'
+      description: 'error'
     };
     expect(reducers({}, socketAction)).toEqual(expectedState);
   });
@@ -107,14 +107,16 @@ describe('socketClient reducer', () => {
   it('should handle SOCKET_RECEIVE_JOB', () => {
     const jobData = {
       id: '213124321542354',
-      job_type: 'http',
-      protocol: '1234215',
+      type: 'job-request',
+      job_type: 'http-uptime-check',
+      protocol: 'http',
+      method: 'GET',
       headers: {
         'x-type': 'blablablaba'
       },
       payload: 'asfdbnaksjfbkasjf',
       endpoint_address: 'www.google.com',
-      endpoint_port: 80,
+      endpoint_port: '80',
       endpoint_additional_params: 'yes=no',
       polling_interval: 50,
       degraded_after: 60,
@@ -138,7 +140,7 @@ describe('socketClient reducer', () => {
 
     const socketAction = {
       type: actions.SOCKET_RECEIVE_JOB,
-      job: jobData
+      jobData
     };
     expect(reducers({}, socketAction)).toEqual(expectedState);
   });

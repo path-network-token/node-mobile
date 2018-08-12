@@ -2,9 +2,9 @@
 // Action constants
 
 // device related
-export const DEVICE_INFO_SUCCESS = 'DEVICE_INFO_SUCCESS';
-export const DEVICE_INFO_FAILURE = 'DEVICE_INFO_FAILURE';
-
+export const DEVICE_SET_LOCATION = 'DEVICE_SET_LOCATION';
+export const DEVICE_SET_MINER_ID = 'DEVICE_SET_MINER_ID';
+export const DEVICE_SET_DEVICE_TYPE = 'DEVICE_SET_DEVICE_TYPE';
 // job related actions
 export const JOB_PENDING = 'JOB_PENDING';
 export const JOB_SUCCESS = 'JOB_SUCCESS';
@@ -24,8 +24,6 @@ export const SOCKET_CHECK_IN = 'SOCKET_CHECK_IN';
 export const SOCKET_RECEIVE_JOB = 'SOCKET_RECEIVE_JOB';
 export const SOCKET_JOB_RESULTS = 'SOCKET_JOB_RESULTS';
 export const SOCKET_SERVER_ERROR = 'SOCKET_SERVER_ERROR';
-export const SOCKET_PING = 'SOCKET_PING';
-export const SOCKET_PONG = 'SOCKET_PONG';
 
 // options
 export const STATS_SET_JOB_COUNT = 'STATS_SET_JOB_COUNT';

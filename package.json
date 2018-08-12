@@ -4,33 +4,67 @@
   "private": true,
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "cavy": "^0.5.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "flow-bin": "^0.73.0",
-    "jest-expo": "~27.0.0",
-    "react-native-scripts": "1.14.0",
-    "react-test-renderer": "16.3.1"
+    "jest": "^23.2.0",
+    "jest-react-native": "^18.0.0",
+    "mock-socket": "^7.1.0",
+    "react-native-mock-render": "^0.0.26",
+    "react-test-renderer": "16.3.1",
+    "redux-mock-store": "^1.5.3",
+    "rn-nodeify": "^10.0.0",
+    "sinon": "^6.0.1"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "test": "jest"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "expo": "^27.0.2",
-    "ip-subnet-calculator": "^1.1.8",
     "lodash": "^4.17.10",
     "react": "16.3.1",
     "react-native": "~0.55.2",
+    "react-native-config": "^0.11.5",
+    "react-native-tcp": "^3.3.0",
+    "react-native-udp": "^2.3.1",
     "react-redux": "^5.0.7",
+    "readable-stream": "^2.3.6",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^2.1.1",
+    "stream": "^0.0.2",
+    "stream-browserify": "^2.0.1"
+  },
+  "react-native": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
+  },
+  "browser": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }

@@ -1,10 +1,10 @@
 // @flow
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: 'exo-regular',
+    fontFamily: 'Exo-Regular',
     color: 'white',
     fontSize: 20
   },
@@ -21,7 +21,7 @@ type Props = {
   data: number | string
 };
 
-class InfoBox extends React.Component<Props> {
+class InfoBox extends Component<Props> {
   render() {
     return (
       <View style={styles.button}>

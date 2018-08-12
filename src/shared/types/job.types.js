@@ -1,28 +1,18 @@
-type Device = 'android' | 'ios' | 'chrome' | 'firefox' | 'desktop';
+// @flow
+type DeviceOS = 'android' | 'ios' | 'chrome' | 'firefox' | 'desktop';
 
-type CheckIn = {
-  id: string,
-  type: 'check-in',
-  miner_id?: string,
-  cidr?: string,
-  asn?: string,
-  lat?: number,
-  lon?: number,
-  wallet: string,
-  device_type: Device
-};
-
-type Ack = {
-  id: string,
-  type: 'ack',
-  miner_id?: string
-};
-
-type Error = {
-  id: string,
-  type: 'error',
-  description: string
-};
+type Methods =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'PATCH'
+  | 'HEAD'
+  | 'DELETE'
+  | 'CONNECT'
+  | 'OPTIONS'
+  | 'TRACE'
+  | 'TRACEROUTE'
+  | 'PING';
 
 type Headers = {
   [string]: string
@@ -33,11 +23,14 @@ type CriticalResponses = {
   body_contains: string
 };
 
+export type Status = 'critical' | 'degraded' | 'ok' | 'unknown' | '';
+
 export type MinerJobRequest = {
   id: string,
   type: 'job-request',
   job_type: string,
   protocol: string,
+  method: Methods,
   headers: Headers,
   payload: string,
   endpoint_address: string,
@@ -50,8 +43,6 @@ export type MinerJobRequest = {
   job_uuid: string
 };
 
-type Status = 'critical' | 'degraded' | 'ok' | 'unknown';
-
 export type JobResult = {
   id: string,
   type: 'job-result',
@@ -59,3 +50,5 @@ export type JobResult = {
   status: Status,
   response_time: number
 };
+
+export type Emit = (io: Function, msg: MinerJobRequest) => void;
