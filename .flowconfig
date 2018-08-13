@@ -19,6 +19,31 @@
 ; Ignore metro
 .*/node_modules/metro/.*
 
+; Ignore templates for 'react-native init'
+<PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
+
+; Ignore RN jest
+<PROJECT_ROOT>/node_modules/react-native/jest/.*
+
+; Ignore RNTester
+<PROJECT_ROOT>/node_modules/react-native/RNTester/.*
+
+; Ignore the website subdir
+<PROJECT_ROOT>/node_modules/react-native/website/.*
+
+; Ignore the Dangerfile
+<PROJECT_ROOT>/node_modules/react-native/danger/dangerfile.js
+
+; Ignore Fbemitter
+<PROJECT_ROOT>/node_modules/fbemitter/.*
+
+; Ignore various node_modules
+<PROJECT_ROOT>/node_modules/react-native-gesture-handler/.*
+<PROJECT_ROOT>/node_modules/react-navigation/.*
+<PROJECT_ROOT>/node_modules/xdl/.*
+<PROJECT_ROOT>/node_modules/reqwest/.*
+<PROJECT_ROOT>/node_modules/metro-bundler/.*
+
 [include]
 
 [libs]
@@ -50,5 +75,6 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
 
-[version]
-^0.67.0
+[untyped]
+.*/node_modules/react-native
+.*/node_modules/expo
