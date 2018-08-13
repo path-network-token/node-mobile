@@ -16,8 +16,4 @@ export default class Device {
     }, 30000);
     this.intervalId = intervalId;
   }
-
-  componentWillUnmount() {
-    clearInterval(this.intervalId);
-  }
 }

@@ -14,7 +14,9 @@ describe('job reducer', () => {
 
   it('should handle JOB_PENDING', () => {
     const jobData = {
-      errorMessage: '',
+      jobFailure: {
+        message: ''
+      },
       jobPending: true,
       jobSuccess: {
         job_uuid: '',
@@ -36,7 +38,9 @@ describe('job reducer', () => {
 
   it('should handle JOB_SUCCESS', () => {
     const jobData = {
-      errorMessage: '',
+      jobFailure: {
+        message: ''
+      },
       jobPending: false,
       jobSuccess: {
         job_uuid: '123234234235235',
@@ -64,7 +68,10 @@ describe('job reducer', () => {
 
   it('should handle JOB_FAILURE', () => {
     const jobData = {
-      errorMessage: 'job test fail message',
+      jobFailure: {
+        job_uuid: '1234567890',
+        message: 'job test fail message'
+      },
       jobPending: false,
       jobSuccess: {
         job_uuid: '',
@@ -80,6 +87,7 @@ describe('job reducer', () => {
 
     const failAction = {
       type: actions.JOB_FAILURE,
+      job_uuid: '1234567890',
       message: 'job test fail message'
     };
     expect(reducers({}, failAction)).toEqual(expectedState);

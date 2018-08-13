@@ -206,8 +206,4 @@ export default class SocketClient {
     const ackMsg = createAckMsg(msg_id);
     this.socket.send(JSON.stringify(ackMsg));
   };
-
-  render() {
-    return null;
-  }
 }

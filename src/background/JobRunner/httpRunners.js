@@ -43,20 +43,21 @@ const handleRequest: (
 
       const result = {
         job_uuid: jobData.job_uuid,
+        response_body: data.data,
         status,
         response_time
       };
 
       console.log(result);
-      // critical_responses ?
       dispatch(jobResultSuccess(result));
     })
     .catch(error => {
       console.log(error);
       const result = {
-        job_uuid: jobData.job_uuid
+        job_uuid: jobData.job_uuid,
+        response_body: error
       };
-      // critical_responses ?
+
       dispatch(jobResultFailure(result));
     });
 };
@@ -71,7 +72,6 @@ export const httpGet: (data: MinerJobRequest) => any = data => {
 
 export const httpPost: (data: MinerJobRequest) => Thunk = data => {
   const uri = generateEndpoint(data);
-  console.log('here POST');
   return dispatch => {
     handleRequest(axios.post(uri), data, Date.now(), dispatch);
   };
