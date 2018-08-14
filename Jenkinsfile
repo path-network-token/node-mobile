@@ -72,7 +72,7 @@ node() {
        stage('Build') {
          try {
            sh "cd android;ENVFILE=.env.production ./gradlew assembleRelease"
-           archiveArtifacts './android/app/outputs/*.apk'
+           archiveArtifacts './android/app/outputs/apk/*.apk'
            } catch (exc) {
               slackSend channel: "${slackChannel}", color: '#FF0000', message: "${env.STAGE_NAME} failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitBranch} (<${env.JOB_URL}|Open>)"
               currentBuild.result = 'FAILURE'
@@ -99,7 +99,7 @@ node() {
          export AWS_SECRET_ACCESS_KEY=\$(echo \$temp_role | jq .Credentials.SecretAccessKey | xargs)
          export AWS_SESSION_TOKEN=\$(echo \$temp_role | jq .Credentials.SessionToken | xargs)
          set -x
-         aws s3 cp ./android/app/outputs/*.apk s3://${s3BucketName}/${appName}/${appName}-${packageVersion}.apk
+         aws s3 cp ./android/app/outputs/apk/*.apk s3://${s3BucketName}/${appName}/${appName}-${packageVersion}.apk
        """            
        //archiveArtifacts './android/app/outputs/*.apk'
        //androidApkUpload googleCredentialsId: 'google-play', apkFilesPattern: '**/*-release.apk', trackName: 'beta'
