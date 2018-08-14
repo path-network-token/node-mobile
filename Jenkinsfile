@@ -84,7 +84,7 @@ node() {
    stage('Publish') {
      try {
        if (gitBranch == "develop") {
-         s3BucketName = "s3://path-apk-releases"
+         s3BucketName = "path-apk-releases"
          assumeRole = "arn:aws:iam::217940666184:role/jenkins-assume-role"
        }
        // Configured as a Jenkins file credential and secret value
