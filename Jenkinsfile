@@ -100,7 +100,9 @@ node() {
          export AWS_SESSION_TOKEN=\$(echo \$temp_role | jq .Credentials.SessionToken | xargs)
          set -x
          aws s3 cp ./android/app/build/outputs/apk/*.apk s3://${s3BucketName}/${appName}/${appName}-${packageVersion}.apk
-       """            
+       """
+       currentBuild.RESULT = 'SUCCESS'
+       slackSend channel: "${slackChannel}", color: '#439FE0', message: "Finished ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitBranch} (<${env.JOB_URL}|Open>)"
        //archiveArtifacts './android/app/outputs/*.apk'
        //androidApkUpload googleCredentialsId: 'google-play', apkFilesPattern: '**/*-release.apk', trackName: 'beta'
        } catch (exc) {
