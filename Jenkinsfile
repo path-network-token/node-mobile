@@ -56,9 +56,9 @@ node() {
        stage('Static Analysis') {
          try {
            sh "cd android;./gradlew lintDebug"
-           androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
+           //androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
          } catch (exc) {
-           androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
+           //androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
            currentBuild.result = 'FAILURE'
            throw exc   
          }
