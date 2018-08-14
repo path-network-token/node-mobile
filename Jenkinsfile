@@ -3,8 +3,13 @@ node() {
  def appName = "mobile-miner"
  def packageVersion = "1.0.${BUILD_NUMBER}"
  def slackChannel = "#core-dev"
+ def gitCommitMsg = sh(script: 'git show -s --format=%B --oneline HEAD', returnStdout: true).trim()
+
  gitBranch = scmVars.GIT_BRANCH.replace('origin/', '')
- 
+
+ slackSend channel: "${slackChannel}", color: '#439FE0', message: "Starting ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitCommitMsg} (<${env.JOB_URL}|Open>)"
+ currentBuild.displayName = "#${BUILD_NUMBER} - ${gitBranch}"
+
  /*
   @TODO Test stage: Need if/else logic based on debug/release
   ./gradlew testDebugUnitTest testDebugUnitTest"
@@ -24,10 +29,7 @@ node() {
   Info: https://wiki.jenkins.io/display/JENKINS/Android+Lint+Plugin
  */ 
 
-  slackSend channel: "${slackChannel}", color: '#439FE0', message: "Starting ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitCommitMsg} (<${env.JOB_URL}|Open>)"
-  currentBuild.displayName = "#${BUILD_NUMBER} - ${gitBranch}"
-
-     stage('Checkout') {
+      stage('Checkout') {
          checkout scm
          sh 'npm install'
      }
