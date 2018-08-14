@@ -14,7 +14,7 @@ node() {
 
       stage('Compile') {
         try {
-          sh "./gradlew compileDebugSources"
+          sh "./android/gradlew compileDebugSources"
         }
         catch (exc) {
           slackSend channel: "${slackChannel}", color: '#FF0000', message: "${env.STAGE_NAME} failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitBranch} (<${env.JOB_URL}|Open>)"
@@ -25,7 +25,7 @@ node() {
 
       stage('Test') {
         try {
-            sh "./gradlew testDebugUnitTest testDebugUnitTest"
+            sh "./android/gradlew testDebugUnitTest testDebugUnitTest"
             junit '**/TEST-*.xml'
           }
           catch (exc) {
@@ -35,15 +35,22 @@ node() {
           }
       }
 
-      stage('SAST') {
-          sh "./gradlew lintDebug"
-          androidLint pattern: '**/lint-results-*.xml'
+      stage('Static Analysis') {
+        try {
+            sh "./android/gradlew lintDebug"
+            androidLint pattern: '**/lint-results-*.xml'
+            }
+            catch (exc) {
+                slackSend channel: "${slackChannel}", color: '#FF0000', message: "${env.STAGE_NAME} failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitBranch} (<${env.JOB_URL}|Open>)"
+                currentBuild.result = 'FAILURE'
+                throw exc
+            }
       }
 
       stage('Build') {
         try {
-            sh "ENVFILE=.env.production ./gradlew assembleRelease"
-            archiveArtifacts '**/*.apk'
+            sh "ENVFILE=.env.production ./android/gradlew assembleRelease"
+            archiveArtifacts 'android/app/outputs/*.apk'
           }
           catch (exc) {
             slackSend channel: "${slackChannel}", color: '#FF0000', message: "${env.STAGE_NAME} failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} - ${gitBranch} (<${env.JOB_URL}|Open>)"
@@ -58,11 +65,10 @@ node() {
             s3BucketName = "s3://path-apk-releases"
             assumeRole = "arn:aws:iam::217940666184:role/jenkins-assume-role"
           }
-          // Configured as a Jenkins file credential 
+          // Configured as a Jenkins file credential and secret value
           SIGNING_KEYSTORE = credentials('path-android-signing-keystore')
           SIGNING_KEY_PASSWORD = credentials('path-android-signing-password')
           sh """
-            sh "ENVFILE=.env.production ./gradlew assembleRelease"
             set +x
             temp_role=\$(/usr/bin/aws sts assume-role \
               --role-arn "${assumeRole}" \
@@ -71,9 +77,9 @@ node() {
             export AWS_SECRET_ACCESS_KEY=\$(echo \$temp_role | jq .Credentials.SecretAccessKey | xargs)
             export AWS_SESSION_TOKEN=\$(echo \$temp_role | jq .Credentials.SessionToken | xargs)
             set -x
-            aws s3 cp ./**/*.apk s3://${s3BucketName}/${appName}/deployment/${appName}-${packageVersion}.zip
+            aws s3 cp ./android/app/outputs/*.apk s3://${s3BucketName}/${appName}/${appName}-${packageVersion}.apk
           """            
-          archiveArtifacts '**/*.apk'
+          archiveArtifacts 'android/app/outputs/*.apk'
           //androidApkUpload googleCredentialsId: 'google-play', apkFilesPattern: '**/*-release.apk', trackName: 'beta'
          }
          catch (exc) {
