@@ -35,7 +35,7 @@ node() {
      }
 
      stage('Environment Preparation') {
-       docker.image('thedrhax/android-sdk').inside("-e HOME=/tmp") {
+       docker.image('153323634045.dkr.ecr.us-west-2.amazonaws.com/android-sdk-node:latest').inside("-e HOME=/tmp") {
          stage('Prepare environment') {
            try {
              println 'Preparing environment...'
