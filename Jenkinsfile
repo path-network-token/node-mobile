@@ -53,16 +53,16 @@ node() {
               throw exc
           }
        }
-       stage('Static Analysis') {
+       /*stage('Static Analysis') {
          try {
            sh "cd android;./gradlew lintDebug"
-           //androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
+           androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
          } catch (exc) {
            //androidLint pattern: 'android/app/build/reports/lint-results-debug.xml' 
            currentBuild.result = 'FAILURE'
            throw exc   
          }
-       }
+       }*/
        stage('Build') {
          try {
            sh "cd android;ENVFILE=.env.production ./gradlew assembleRelease"
@@ -77,7 +77,7 @@ node() {
    }
    stage('Publish') {
      try {
-       if (gitBranch == "master") {
+       if (gitBranch == "develop") {
          s3BucketName = "s3://path-apk-releases"
          assumeRole = "arn:aws:iam::217940666184:role/jenkins-assume-role"
        }
