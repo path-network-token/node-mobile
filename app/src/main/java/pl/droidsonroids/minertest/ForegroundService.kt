@@ -17,7 +17,7 @@ import android.widget.Toast
 private const val WAKE_LOCK_TAG = "MinerTest::Tag"
 
 private const val RECONNECT_DELAY_MILLIS = 10_000L
-private const val REQUEST_INTERVAL_MILLIS = 3_000L
+private const val REQUEST_INTERVAL_MILLIS = 30_000L
 
 private const val NOTIFICATION_ID = 3127
 private const val NOTIFICATION_NAME = "MinerTest"
