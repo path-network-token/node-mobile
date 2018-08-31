@@ -8,16 +8,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import android.widget.Toast
+
+private const val WAKE_LOCK_TAG = "MinerTest::Tag"
 
 private const val RECONNECT_DELAY_MILLIS = 10_000L
 private const val REQUEST_INTERVAL_MILLIS = 3_000L
-private const val MINER_NOTIFICATION_ID = "MinerNotificationId"
-private const val WAKE_LOCK_TAG = "MinerTest::Tag"
-private const val NOTIFICATION_NAME = "MinerTest"
+
 private const val NOTIFICATION_ID = 3127
+private const val NOTIFICATION_NAME = "MinerTest"
+private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
 
 class ForegroundService : Service() {
 
@@ -28,6 +32,7 @@ class ForegroundService : Service() {
     private val webSocketClient = WebSocketClient()
     private val repeatedTask = RepeatedTask(REQUEST_INTERVAL_MILLIS) { webSocketClient.send() }
     private val handler = Handler()
+    private val mainLooperHandler = Handler(Looper.getMainLooper())
 
     override fun onBind(intent: Intent) = null
 
@@ -43,7 +48,11 @@ class ForegroundService : Service() {
     }
 
     private fun setUpWebSocketClient() {
+        webSocketClient.onMessageReceived = {
+            showToast("WebSocket message: $it")
+        }
         webSocketClient.onFailure = {
+            showToast("WebSocket interruption")
             handler.postDelayed({
                 webSocketClient.connect()
             }, RECONNECT_DELAY_MILLIS)
@@ -62,7 +71,7 @@ class ForegroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
-                MINER_NOTIFICATION_ID,
+                CHANNEL_NOTIFICATION_ID,
                 NOTIFICATION_NAME,
                 NotificationManager.IMPORTANCE_HIGH
             )
@@ -72,7 +81,7 @@ class ForegroundService : Service() {
 
     private fun startForegroundNotification() {
         startForeground(
-            NOTIFICATION_ID, NotificationCompat.Builder(this, MINER_NOTIFICATION_ID)
+            NOTIFICATION_ID, NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(NOTIFICATION_NAME)
                 .setContentIntent(createPendingIntent())
@@ -83,5 +92,13 @@ class ForegroundService : Service() {
     private fun createPendingIntent(): PendingIntent {
         val intent = Intent(this, MainActivity::class.java)
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+    }
+
+    private fun showToast(message: String) {
+        postInMainLooper { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun postInMainLooper(action: () -> Unit) {
+       mainLooperHandler.post { action() }
     }
 }
