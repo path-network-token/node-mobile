@@ -1,6 +1,7 @@
 package pl.droidsonroids.minertest
 
 import android.util.Log
+import kotlinx.coroutines.experimental.delay
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 
@@ -18,27 +19,36 @@ class WebSocketClient {
 
     private lateinit var webSocket: WebSocket
 
-    fun connect() {
-        webSocket = client.newWebSocket(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.d(LOG_TAG, "WebSocket connection opened")
-            }
+    private val webSocketClient = object : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            Log.d(LOG_TAG, "WebSocket connection opened")
+        }
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.d(LOG_TAG, "WebSocket message: $text")
-                onMessageReceived?.invoke(text)
-            }
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            Log.d(LOG_TAG, "WebSocket message: $text")
+            onMessageReceived?.invoke(text)
+        }
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                Log.d(LOG_TAG, "WebSocket connection interrupted")
-                t.printStackTrace()
-                onFailure?.invoke()
-            }
-        })
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            Log.d(LOG_TAG, "WebSocket connection interrupted")
+            t.printStackTrace()
+            onFailure?.invoke()
+        }
     }
 
-    fun send() {
+    fun connect() {
+        webSocket = client.newWebSocket(request, webSocketClient)
+    }
+
+    suspend fun connectWithDelay(delayMillis: Long) {
+        delay(delayMillis)
+        connect()
+    }
+
+    tailrec suspend fun requestLoop(intervalMillis: Long) {
         webSocket.send(testCheckInMessage)
+        delay(intervalMillis)
+        requestLoop(intervalMillis)
     }
 
     fun disconnect() {

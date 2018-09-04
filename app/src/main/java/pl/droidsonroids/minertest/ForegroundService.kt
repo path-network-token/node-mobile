@@ -7,12 +7,13 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.Toast
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 private const val WAKE_LOCK_TAG = "MinerTest::Tag"
 
@@ -29,12 +30,8 @@ class ForegroundService : Service() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
-    private val handler = Handler()
-    private val mainLooperHandler = Handler(Looper.getMainLooper())
     private val webSocketClient = WebSocketClient()
-
-    private val repeatedTask = RepeatedTask(REQUEST_INTERVAL_MILLIS) { webSocketClient.send() }
-    private val connectRunnable = Runnable { webSocketClient.connect() }
+    private val compositeJob = Job()
 
     override fun onBind(intent: Intent) = null
 
@@ -43,10 +40,17 @@ class ForegroundService : Service() {
         Log.d(LOG_TAG, "Foreground service onCreate")
         wakeLock.acquire()
         setUpWebSocketClient()
-        webSocketClient.connect()
-        repeatedTask.run()
+        startRequests()
         setUpNotificationChannelId()
         startForegroundNotification()
+    }
+
+    override fun onDestroy() {
+        Log.d(LOG_TAG, "Foreground service onDestroy")
+        compositeJob.cancel()
+        wakeLock.release()
+        webSocketClient.disconnect()
+        super.onDestroy()
     }
 
     private fun setUpWebSocketClient() {
@@ -55,19 +59,17 @@ class ForegroundService : Service() {
         }
         webSocketClient.onFailure = {
             showToast("WebSocket interruption")
-            handler.postDelayed({
-                webSocketClient.connect()
-            }, RECONNECT_DELAY_MILLIS)
+            launch(parent = compositeJob) {
+                webSocketClient.connectWithDelay(RECONNECT_DELAY_MILLIS)
+            }
         }
+        webSocketClient.connect()
     }
 
-    override fun onDestroy() {
-        Log.d(LOG_TAG, "Foreground service onDestroy")
-        wakeLock.release()
-        repeatedTask.stop()
-        webSocketClient.disconnect()
-        handler.removeCallbacks(connectRunnable)
-        super.onDestroy()
+    private fun startRequests() {
+        launch(parent = compositeJob) {
+            webSocketClient.requestLoop(REQUEST_INTERVAL_MILLIS)
+        }
     }
 
     private fun setUpNotificationChannelId() {
@@ -98,10 +100,8 @@ class ForegroundService : Service() {
     }
 
     private fun showToast(message: String) {
-        postInMainLooper { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
-    }
-
-    private fun postInMainLooper(action: () -> Unit) {
-        mainLooperHandler.post { action() }
+        launch(UI, parent = compositeJob) {
+            Toast.makeText(this@ForegroundService, message, Toast.LENGTH_SHORT).show()
+        }
     }
 }
