@@ -99,6 +99,6 @@ class ForegroundService : Service() {
     }
 
     private fun postInMainLooper(action: () -> Unit) {
-       mainLooperHandler.post { action() }
+        mainLooperHandler.post { action() }
     }
 }

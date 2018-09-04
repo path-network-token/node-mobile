@@ -2,7 +2,7 @@ package pl.droidsonroids.minertest
 
 import android.os.Handler
 
-class RepeatedTask(val intervalMillis: Long, val action : () -> Unit) {
+class RepeatedTask(val intervalMillis: Long, val action: () -> Unit) {
     private val handler = Handler()
 
     private val runnable = object : Runnable {

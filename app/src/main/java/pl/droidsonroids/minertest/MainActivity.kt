@@ -1,9 +1,9 @@
 package pl.droidsonroids.minertest
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 const val LOG_TAG = "MinerTag"
