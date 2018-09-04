@@ -29,10 +29,12 @@ class ForegroundService : Service() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
-    private val webSocketClient = WebSocketClient()
-    private val repeatedTask = RepeatedTask(REQUEST_INTERVAL_MILLIS) { webSocketClient.send() }
     private val handler = Handler()
     private val mainLooperHandler = Handler(Looper.getMainLooper())
+    private val webSocketClient = WebSocketClient()
+
+    private val repeatedTask = RepeatedTask(REQUEST_INTERVAL_MILLIS) { webSocketClient.send() }
+    private val connectRunnable = Runnable { webSocketClient.connect() }
 
     override fun onBind(intent: Intent) = null
 
@@ -64,6 +66,7 @@ class ForegroundService : Service() {
         wakeLock.release()
         repeatedTask.stop()
         webSocketClient.disconnect()
+        handler.removeCallbacks(connectRunnable)
         super.onDestroy()
     }
 
