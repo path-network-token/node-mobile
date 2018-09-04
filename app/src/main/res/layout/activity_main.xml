@@ -15,6 +15,8 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="30dp"
         android:adjustViewBounds="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:scaleType="centerInside"
         android:src="@drawable/path_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/addressEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -41,10 +43,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/save_button_label"
-        app:layout_constraintBottom_toBottomOf="@+id/editText"
+        app:layout_constraintBottom_toBottomOf="@+id/addressEditText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText"
-        app:layout_constraintTop_toTopOf="@+id/editText" />
+        app:layout_constraintStart_toEndOf="@+id/addressEditText"
+        app:layout_constraintTop_toTopOf="@+id/addressEditText" />
 
     <Button
         android:id="@+id/startServiceButton"

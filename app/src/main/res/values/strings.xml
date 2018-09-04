@@ -5,4 +5,5 @@
     <string name="stop_service_button_text">Stop Service</string>
     <string name="wallet_hint">Path Wallet Address</string>
     <string name="save_button_label">Save</string>
+    <string name="saved_toast">Path Wallet Address was saved</string>
 </resources>
