@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             storage.pathWalletAddress = addressEditText.text.toString()
             hideKeyboard()
-            Toast.makeText(this, getString(R.string.saved_toast), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.saved_toast, Toast.LENGTH_SHORT).show()
         }
         addressEditText.setText(storage.pathWalletAddress)
     }

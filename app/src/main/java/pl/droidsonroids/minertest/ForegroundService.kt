@@ -1,5 +1,6 @@
 package pl.droidsonroids.minertest
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -14,11 +15,9 @@ import android.widget.Toast
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import pl.droidsonroids.minertest.websocket.WebSocketClient
 
 private const val WAKE_LOCK_TAG = "MinerTest::Tag"
-
-private const val RECONNECT_DELAY_MILLIS = 10_000L
-private const val REQUEST_INTERVAL_MILLIS = 30_000L
 
 private const val NOTIFICATION_ID = 3127
 private const val NOTIFICATION_NAME = "MinerTest"
@@ -30,46 +29,34 @@ class ForegroundService : Service() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
-    private val webSocketClient = WebSocketClient()
-    private val compositeJob = Job()
 
-    override fun onBind(intent: Intent) = null
+    private val compositeJob = Job()
+    private val webSocketClient = WebSocketClient(compositeJob)
+    private val miner by lazy { Miner(compositeJob, Storage(this), webSocketClient.minerService) }
+
+    override fun onBind(intent: Intent?) = null
 
     override fun onCreate() {
         super.onCreate()
         Log.d(LOG_TAG, "Foreground service onCreate")
-        wakeLock.acquire()
-        setUpWebSocketClient()
-        startRequests()
+        setUpWakeLock()
+        setUpConnection()
+        setupHeartbeat()
         setUpNotificationChannelId()
         startForegroundNotification()
     }
 
-    override fun onDestroy() {
-        Log.d(LOG_TAG, "Foreground service onDestroy")
-        compositeJob.cancel()
-        wakeLock.release()
-        webSocketClient.disconnect()
-        super.onDestroy()
+    @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
+    private fun setUpWakeLock() {
+        wakeLock.acquire()
     }
 
-    private fun setUpWebSocketClient() {
-        webSocketClient.onMessageReceived = {
-            showToast("WebSocket message: $it")
-        }
-        webSocketClient.onFailure = {
-            showToast("WebSocket interruption")
-            launch(parent = compositeJob) {
-                webSocketClient.connectWithDelay(RECONNECT_DELAY_MILLIS)
-            }
-        }
+    private fun setUpConnection() {
         webSocketClient.connect()
     }
 
-    private fun startRequests() {
-        launch(parent = compositeJob) {
-            webSocketClient.requestLoop(REQUEST_INTERVAL_MILLIS)
-        }
+    private fun setupHeartbeat() {
+        miner.startHeartbeat()
     }
 
     private fun setUpNotificationChannelId() {
@@ -97,6 +84,13 @@ class ForegroundService : Service() {
     private fun createPendingIntent(): PendingIntent {
         val intent = Intent(this, MainActivity::class.java)
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+    }
+
+    override fun onDestroy() {
+        Log.d(LOG_TAG, "Foreground service onDestroy")
+        compositeJob.cancel()
+        wakeLock.release()
+        super.onDestroy()
     }
 
     private fun showToast(message: String) {
