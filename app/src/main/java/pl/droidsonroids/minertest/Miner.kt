@@ -7,9 +7,8 @@ import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.message.Ack
 import pl.droidsonroids.minertest.message.CheckIn
 import pl.droidsonroids.minertest.message.JobRequest
-import pl.droidsonroids.minertest.runner.HttpRunner
+import pl.droidsonroids.minertest.runner.getRunner
 import pl.droidsonroids.minertest.websocket.MinerService
-import java.io.IOException
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 
@@ -42,11 +41,6 @@ class Miner(
         val ack = Ack(id = jobRequest.id, minerId = null)
         minerService.sendAck(ack)
         println("ack sent: $ack")
-    }
-
-    private fun getRunner(jobRequest: JobRequest) = when {
-        jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
-        else -> throw IOException("No runner found for: $this")
     }
 
     private fun registerErrorHandler() = launchInBackground {
