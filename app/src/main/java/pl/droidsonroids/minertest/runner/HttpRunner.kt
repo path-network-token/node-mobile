@@ -1,47 +1,20 @@
 package pl.droidsonroids.minertest.runner
 
-import android.os.SystemClock
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import pl.droidsonroids.minertest.message.JobRequest
-import pl.droidsonroids.minertest.message.JobResult
-import pl.droidsonroids.minertest.message.Status
 import java.io.IOException
 
 class HttpRunner : JobRunner {
     private val client = OkHttpClient()
 
-    override fun runJob(jobRequest: JobRequest): JobResult {
+    override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runHttpJob)
 
-        try {
-            val request = buildRequest(jobRequest)
-            val startTimeMillis = SystemClock.elapsedRealtime()
-
-            client.newCall(request).execute().use {
-                val endTimeMillis = SystemClock.elapsedRealtime()
-                val requestDurationMillis = endTimeMillis - startTimeMillis
-
-                val status = when {
-                    requestDurationMillis > jobRequest.degradedAfter -> Status.degraded
-                    requestDurationMillis > jobRequest.criticalAfter -> Status.critical
-                    else -> Status.ok
-                }
-
-                return JobResult(
-                    jobUuid = jobRequest.jobUuid,
-                    responseTime = requestDurationMillis,
-                    responseBody = it.body()?.string() ?: "",
-                    status = status
-                )
-            }
-        } catch (e: IOException) {
-            return JobResult(
-                jobUuid = jobRequest.jobUuid,
-                responseTime = 0,
-                responseBody = "",
-                status = Status.unknown
-            )
+    private fun runHttpJob(jobRequest: JobRequest): String {
+        val request = buildRequest(jobRequest)
+        client.newCall(request).execute().use {
+            return it.body()?.string() ?: ""
         }
     }
 
