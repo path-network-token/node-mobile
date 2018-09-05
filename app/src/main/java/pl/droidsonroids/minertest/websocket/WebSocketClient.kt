@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 private const val HTTP_TIMEOUT_MILLIS: Long = 3_000
 private const val WEBSOCKET_TIMEOUT_MILLIS: Long = 10_000
-private const val WEBSOCKET_URL = "ws://jobs-api.path.network/ws" //TODO use staging server
+private const val WEBSOCKET_URL = "ws://jobs-api.dev.udpflood.net/ws"
 
 class WebSocketClient(job: Job) {
     private val lifecycleRegistry = LifecycleRegistry()

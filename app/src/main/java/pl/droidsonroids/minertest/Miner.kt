@@ -4,16 +4,12 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import pl.droidsonroids.minertest.message.Ack
 import pl.droidsonroids.minertest.message.CheckIn
 import pl.droidsonroids.minertest.message.JobRequest
-import pl.droidsonroids.minertest.message.JobResult
+import pl.droidsonroids.minertest.runner.HttpRunner
 import pl.droidsonroids.minertest.websocket.MinerService
 import java.io.IOException
-import java.util.*
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 
@@ -22,9 +18,6 @@ class Miner(
     private val storage: Storage,
     private val minerService: MinerService
 ) {
-    private val jobRunners = mapOf(
-        "http" to HttpRunner()
-    )
 
     init {
         registerJobRequestHandler()
@@ -35,16 +28,25 @@ class Miner(
     private fun registerJobRequestHandler() = launchInBackground {
         minerService.receiveJobRequest().consumeEach { jobRequest ->
             println("job request from server: $jobRequest")
-            val ack = Ack(id = jobRequest.id, minerId = null)
 
-            minerService.sendAck(ack)
-            println("job request ack sent: $ack")
+            sendAck(jobRequest)
 
-            val runner = jobRunners.getOrElse(jobRequest.protocol) { TODO() }
+            val runner = getRunner(jobRequest)
             val jobResult = runner.runJob(jobRequest)
             minerService.sendJobResult(jobResult)
             println("job result sent: $jobResult")
         }
+    }
+
+    private fun sendAck(jobRequest: JobRequest) {
+        val ack = Ack(id = jobRequest.id, minerId = null)
+        minerService.sendAck(ack)
+        println("ack sent: $ack")
+    }
+
+    private fun getRunner(jobRequest: JobRequest) = when {
+        jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
+        else -> throw IOException("No runner found for: $this")
     }
 
     private fun registerErrorHandler() = launchInBackground {
@@ -55,6 +57,7 @@ class Miner(
 
     private fun registerAckHandler() = launchInBackground {
         minerService.receiveAck().consumeEach {
+            //TODO reconnect if there is no ack nor error received for 30s
             println("ack from server: $it")
         }
     }
@@ -76,35 +79,5 @@ class Miner(
 
     private fun launchInBackground(block: suspend () -> Unit) {
         launch(parent = job) { block() }
-    }
-}
-
-interface JobRunner {
-    fun runJob(jobRequest: JobRequest): JobResult
-}
-
-class HttpRunner : JobRunner {
-    private val client = OkHttpClient()
-
-    override fun runJob(jobRequest: JobRequest): JobResult {
-        val url = HttpUrl.Builder()
-            .host(jobRequest.endpointAddress)
-            .port(jobRequest.endpointPort)
-            .scheme("http")
-            .build()
-
-        val request = Request.Builder()
-            .method(jobRequest.method.name, null)
-            .url("$url/${jobRequest.endpointAdditionalParams}")
-            .build()
-
-        try {
-            val response = client.newCall(request)
-                .execute()
-            TODO()
-        } catch (e:IOException){
-            TODO()
-        }
-        return JobResult(jobUuid = jobRequest.jobUuid, responseTime = TODO(), responseBody = TODO(), status = TODO())
     }
 }
