@@ -8,6 +8,9 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import pl.droidsonroids.minertest.info.ConnectionStatus
+import pl.droidsonroids.minertest.info.ConnectionStatus.CONNECTED
+import pl.droidsonroids.minertest.info.ConnectionStatus.DISCONNECTED
 import pl.droidsonroids.minertest.message.Ack
 import pl.droidsonroids.minertest.message.CheckIn
 import pl.droidsonroids.minertest.message.JobRequest
@@ -27,26 +30,36 @@ class Miner(
     private val minerService = webSocketClient.minerService
     private var timeoutJob = Job()
 
-    private val _jobCompleteReceiveChannel = ConflatedChannel<Long>()
-    val jobCompleteReceiveChannel: ReceiveChannel<Long> = _jobCompleteReceiveChannel
+    private val jobCompletedChannel = ConflatedChannel<Long>()
+    private val connectionStatusChannel = ConflatedChannel<ConnectionStatus>()
 
     init {
         resetWatchdog()
         registerJobRequestHandler()
         registerErrorHandler()
         registerAckHandler()
-        registerStartHandler()
+        registerConnectionOpenedHandler()
         registerWatchdogResetHandler()
+        launchInBackground {
+            minerService.receiveWebSocketEvent()
+                .filter { it is WebSocket.Event.OnConnectionClosed }
+                .consumeEach {
+                    connectionStatusChannel.offer(DISCONNECTED)
+                }
+        }
     }
 
-    fun start() {
-        webSocketClient.connect()
-    }
+    fun start() = webSocketClient.connect()
 
-    private fun registerStartHandler() = launchInBackground {
+    fun receiveJobCompletion(): ReceiveChannel<Long> = jobCompletedChannel
+
+    fun receiveConnectionStatus(): ReceiveChannel<ConnectionStatus> = connectionStatusChannel
+
+    private fun registerConnectionOpenedHandler() = launchInBackground {
         minerService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
             .consumeEach {
+                connectionStatusChannel.offer(CONNECTED)
                 sendHeartbeat(HEARTBEAT_INTERVAL_MILLIS)
             }
     }
@@ -73,7 +86,7 @@ class Miner(
 
     private fun dispatchCompletedJobCount() {
         storage.completedJobsCount++
-        _jobCompleteReceiveChannel.offer(storage.completedJobsCount)
+        jobCompletedChannel.offer(storage.completedJobsCount)
     }
 
     private fun sendAck(jobRequest: JobRequest) {

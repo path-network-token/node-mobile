@@ -15,7 +15,6 @@ import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.Miner
 import pl.droidsonroids.minertest.R
 import pl.droidsonroids.minertest.Storage
-import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.sendCompletedJobsCountBroadcast
 import pl.droidsonroids.minertest.info.sendStatusBroadcast
 import timber.log.Timber
@@ -35,12 +34,6 @@ class ForegroundService : Service() {
 
     private val miner by lazy { Miner(compositeJob, Storage(this)) }
 
-    private var connectionStatus = ConnectionStatus.DISCONNECTED
-        set(value) {
-            field = value
-            sendStatusBroadcast(value)
-        }
-
     override fun onBind(intent: Intent?) = null
 
     override fun onCreate() {
@@ -50,7 +43,8 @@ class ForegroundService : Service() {
         setUpNotificationChannelId()
         startForegroundNotification()
         miner.start()
-        subscribeToCompleteJobCounterChange()
+        subscribeToCompletedJobCounterChange()
+        subscribeToConnectionStatusChange()
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -79,10 +73,18 @@ class ForegroundService : Service() {
         )
     }
 
-    private fun subscribeToCompleteJobCounterChange() {
+    private fun subscribeToCompletedJobCounterChange() {
         launch(parent = compositeJob) {
-            miner.jobCompleteReceiveChannel.consumeEach {
+            miner.receiveJobCompletion().consumeEach {
                 sendCompletedJobsCountBroadcast(it)
+            }
+        }
+    }
+
+    private fun subscribeToConnectionStatusChange() {
+        launch(parent = compositeJob) {
+            miner.receiveConnectionStatus().consumeEach {
+                sendStatusBroadcast(it)
             }
         }
     }
