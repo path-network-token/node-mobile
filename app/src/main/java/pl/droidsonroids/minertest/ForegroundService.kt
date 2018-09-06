@@ -15,6 +15,9 @@ import android.widget.Toast
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import pl.droidsonroids.minertest.info.ConnectionStatus
+import pl.droidsonroids.minertest.info.sendCompletedJobsCountBroadcast
+import pl.droidsonroids.minertest.info.sendStatusBroadcast
 import pl.droidsonroids.minertest.websocket.WebSocketClient
 
 private const val WAKE_LOCK_TAG = "MinerTest::Tag"
@@ -33,6 +36,18 @@ class ForegroundService : Service() {
     private val compositeJob = Job()
     private val webSocketClient = WebSocketClient(compositeJob)
     private val miner by lazy { Miner(compositeJob, Storage(this), webSocketClient.minerService) }
+
+    // TODO : change values
+    private var completedJobsCounter: Long = 0
+        set(value) {
+            field = value
+            sendCompletedJobsCountBroadcast(value)
+        }
+    private var connectionStatus = ConnectionStatus.DISCONNECTED
+        set(value) {
+            field = value
+            sendStatusBroadcast(value)
+        }
 
     override fun onBind(intent: Intent?) = null
 
@@ -99,3 +114,4 @@ class ForegroundService : Service() {
         }
     }
 }
+

@@ -56,7 +56,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/start_service_button_text"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/jobsCounterTextView"
+        app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
         app:layout_constraintEnd_toStartOf="@+id/stopServiceButton"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
@@ -68,24 +68,36 @@
         android:layout_height="wrap_content"
         android:text="@string/stop_service_button_text"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/jobsCounterTextView"
+        app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/startServiceButton" />
 
     <!-- TODO remove hardcoded value -->
-    <TextView
-        android:id="@+id/jobsCounterTextView"
+
+    <LinearLayout
+        android:id="@+id/infoLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:background="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:padding="8dp"
-        android:text="Jobs completed: 0\nStatus: connected"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/jobsCounterTextView"
+            style="@style/AppTheme.InfoTextView"
+            tools:text="Jobs completed: 0" />
+
+        <TextView
+            android:id="@+id/statusTextView"
+            style="@style/AppTheme.InfoTextView"
+            tools:text="Status: connected" />
+
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

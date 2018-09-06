@@ -6,4 +6,9 @@
     <string name="wallet_hint">Path Wallet Address</string>
     <string name="save_button_label">Save</string>
     <string name="saved_toast">Path Wallet Address was saved</string>
+
+    <string name="completed_jobs_label">Completed jobs: %d</string>
+    <string name="status_label">Status: %s</string>
+    <string name="state_connected">connected</string>
+    <string name="state_disconnected">disconnected</string>
 </resources>
