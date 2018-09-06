@@ -27,14 +27,13 @@ private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
 
 class ForegroundService : Service() {
 
-    private val storage by lazy { Storage(this) }
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
     private val compositeJob = Job()
 
-    private val miner by lazy { Miner(compositeJob, storage) }
+    private val miner by lazy { Miner(compositeJob, Storage(this)) }
 
     private var connectionStatus = ConnectionStatus.DISCONNECTED
         set(value) {
