@@ -1,9 +1,7 @@
 package pl.droidsonroids.minertest
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -12,15 +10,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.InfoBroadcastReceiver
 import pl.droidsonroids.minertest.info.registerInfoReceiver
-
-const val LOG_TAG = "MinerTag"
+import pl.droidsonroids.minertest.service.startForegroundMinerService
 
 class MainActivity : AppCompatActivity() {
 
     private val storage by lazy { Storage(this) }
-    private val serviceIntent by lazy {
-        Intent(this, ForegroundService::class.java)
-    }
+
     private val infoBroadcastReceiver = InfoBroadcastReceiver(
         onCompletedJobsChanged = ::setCompletedJobsCounterText,
         onStatusChanged = ::setStatusText
@@ -28,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startForegroundMinerService()
         setContentView(R.layout.activity_main)
         setUpView()
     }
@@ -44,12 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpView() {
-        startServiceButton.setOnClickListener {
-            ContextCompat.startForegroundService(this, serviceIntent)
-        }
-        stopServiceButton.setOnClickListener {
-            stopService(serviceIntent)
-        }
         saveButton.setOnClickListener {
             storage.pathWalletAddress = addressEditText.text.toString()
             hideKeyboard()

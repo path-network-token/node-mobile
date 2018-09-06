@@ -14,6 +14,7 @@ import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.runner.Runner
 import pl.droidsonroids.minertest.runner.getRunner
 import pl.droidsonroids.minertest.websocket.WebSocketClient
+import timber.log.Timber
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 private const val RECONNECT_DELAY = 37_000L
@@ -52,14 +53,14 @@ class Miner(
 
     private fun registerJobRequestHandler() = launchInBackground {
         minerService.receiveJobRequest().consumeEach { jobRequest ->
-            println("job request from server: $jobRequest")
+            Timber.d("job request from server: $jobRequest")
             sendAck(jobRequest)
             val runner = getRunner(jobRequest)
             if (runner != null) {
                 runJob(runner, jobRequest)
                 dispatchCompletedJobCount()
             } else {
-                println("no runner found for $jobRequest")
+                Timber.d("no runner found for $jobRequest")
             }
         }
     }
@@ -67,7 +68,7 @@ class Miner(
     private fun runJob(runner: Runner, jobRequest: JobRequest) {
         val jobResult = runner.runJob(jobRequest)
         minerService.sendJobResult(jobResult)
-        println("job result sent: $jobResult")
+        Timber.v("job result sent: $jobResult")
     }
 
     private fun dispatchCompletedJobCount() {
@@ -78,18 +79,18 @@ class Miner(
     private fun sendAck(jobRequest: JobRequest) {
         val ack = Ack(id = jobRequest.id, minerId = storage.minerId)
         minerService.sendAck(ack)
-        println("ack sent: $ack")
+        Timber.d("ack sent: $ack")
     }
 
     private fun registerErrorHandler() = launchInBackground {
         minerService.receiveError().consumeEach {
-            println("error from server: $it")
+            Timber.w("error from server: $it")
         }
     }
 
     private fun registerAckHandler() = launchInBackground {
         minerService.receiveAck().consumeEach {
-            println("ack from server: $it")
+            Timber.d("ack from server: $it")
             storage.minerId = it.minerId
         }
     }
@@ -106,7 +107,7 @@ class Miner(
         timeoutJob.cancel()
         timeoutJob = launchInBackground {
             delay(RECONNECT_DELAY)
-            println("timeout")
+            Timber.w("watchdog detected timeout")
             webSocketClient.reconnect()
         }
     }
@@ -115,7 +116,7 @@ class Miner(
         val wallet = storage.pathWalletAddress ?: throw IllegalStateException("Missing wallet address")
         val checkIn = CheckIn(minerId = null, wallet = wallet)
 
-        println("client check in: $checkIn")
+        Timber.d("client check in: $checkIn")
 
         minerService.sendCheckIn(checkIn)
         delay(intervalMillis)
