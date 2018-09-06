@@ -4,7 +4,7 @@ import pl.droidsonroids.minertest.message.JobRequest
 import java.io.IOException
 import javax.net.SocketFactory
 
-class TcpRunner : JobRunner {
+class TcpRunner : Runner {
 
     override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runTcpJob)
 

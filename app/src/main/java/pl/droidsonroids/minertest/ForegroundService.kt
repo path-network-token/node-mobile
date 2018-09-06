@@ -11,14 +11,12 @@ import android.os.Build
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import android.widget.Toast
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.sendCompletedJobsCountBroadcast
 import pl.droidsonroids.minertest.info.sendStatusBroadcast
-import pl.droidsonroids.minertest.websocket.WebSocketClient
 
 private const val WAKE_LOCK_TAG = "MinerTest::Tag"
 
@@ -34,16 +32,8 @@ class ForegroundService : Service() {
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
     private val compositeJob = Job()
-    private val webSocketClient = WebSocketClient(compositeJob)
-    private val miner by lazy {
-        Miner(
-            compositeJob,
-            storage,
-            webSocketClient.minerService,
-            onJobCompleted = ::updateCompletedJobsCount,
-            onTimeout = webSocketClient::reconnect
-        )
-    }
+
+    private val miner by lazy { Miner(compositeJob, storage) }
 
     private var connectionStatus = ConnectionStatus.DISCONNECTED
         set(value) {
@@ -57,19 +47,15 @@ class ForegroundService : Service() {
         super.onCreate()
         Log.d(LOG_TAG, "Foreground service onCreate")
         setUpWakeLock()
-        setUpConnection()
         setUpNotificationChannelId()
         startForegroundNotification()
         miner.start()
+        subscribeToCompleteJobCounterChange()
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
     private fun setUpWakeLock() {
         wakeLock.acquire()
-    }
-
-    private fun setUpConnection() {
-        webSocketClient.connect()
     }
 
     private fun setUpNotificationChannelId() {
@@ -99,10 +85,12 @@ class ForegroundService : Service() {
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
-    private fun updateCompletedJobsCount() {
-        val newCount = storage.completedJobsCount + 1
-        storage.completedJobsCount = newCount
-        sendCompletedJobsCountBroadcast(newCount)
+    private fun subscribeToCompleteJobCounterChange() {
+        launch(parent = compositeJob) {
+            miner.jobCompleteReceiveChannel.consumeEach {
+                sendCompletedJobsCountBroadcast(it)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -111,11 +99,4 @@ class ForegroundService : Service() {
         wakeLock.release()
         super.onDestroy()
     }
-
-    private fun showToast(message: String) {
-        launch(UI, parent = compositeJob) {
-            Toast.makeText(this@ForegroundService, message, Toast.LENGTH_SHORT).show()
-        }
-    }
 }
-

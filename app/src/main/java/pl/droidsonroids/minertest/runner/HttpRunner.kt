@@ -7,7 +7,7 @@ import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.message.Method
 import java.io.IOException
 
-class HttpRunner : JobRunner {
+class HttpRunner : Runner {
     private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
     private val client = OkHttpClient()
 

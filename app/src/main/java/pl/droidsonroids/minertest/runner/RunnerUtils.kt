@@ -12,7 +12,7 @@ private const val CRITICAL_TIMEOUT_MILLIS = 1000L
 fun getRunner(jobRequest: JobRequest) = when {
     jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
     jobRequest.protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
-    else -> throw IOException("No runner found for: $jobRequest")
+    else -> null
 }
 
 fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): JobResult {
