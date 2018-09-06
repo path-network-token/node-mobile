@@ -4,9 +4,11 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import pl.droidsonroids.minertest.message.JobRequest
+import pl.droidsonroids.minertest.message.Method
 import java.io.IOException
 
 class HttpRunner : JobRunner {
+    private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
     private val client = OkHttpClient()
 
     override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runHttpJob)
@@ -21,22 +23,25 @@ class HttpRunner : JobRunner {
     private fun buildRequest(jobRequest: JobRequest): Request {
         val completeUrl = with(jobRequest) {
             val prependedProtocol = when {
-                endpointAddress.startsWith("http://", true) || endpointAddress.startsWith("https://", true) -> ""
+                endpointAddress.matches(httpProtocolRegex) -> ""
                 else -> "http://"
             }
-            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
-            val urlPrefixWithPort = urlPrefix.newBuilder()
-                .port(endpointPort)
-                .build()
 
-            "$urlPrefixWithPort$endpointAdditionalParams"
+            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
+            val urlPrefixWithPortBuilder = urlPrefix.newBuilder()
+            if (endpointPort != null) {
+                urlPrefixWithPortBuilder.port(endpointPort)
+            }
+
+            "${urlPrefixWithPortBuilder.build()}${endpointAdditionalParams.orEmpty()}"
         }
 
+        val method = jobRequest.method ?: Method.GET
         val requestBuilder = Request.Builder()
-            .method(jobRequest.method.name, null)
+            .method(method.name, null)
             .url(completeUrl)
 
-        jobRequest.headers.flatMap { it.entries }.forEach { entry ->
+        jobRequest.headers?.flatMap { it.entries }?.forEach { entry ->
             requestBuilder.addHeader(entry.key, entry.value)
         }
 

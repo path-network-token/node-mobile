@@ -1,7 +1,9 @@
 package pl.droidsonroids.minertest
 
+import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.message.Ack
@@ -21,18 +23,25 @@ class Miner(
     private val onJobCompleted: () -> Unit,
     private val onTimeout: () -> Unit
 ) {
-    private var timeoutJob: Job? = null
+    private var timeoutJob = Job()
 
     init {
+        resetWatchdog()
         registerJobRequestHandler()
         registerErrorHandler()
         registerAckHandler()
+
+        launchInBackground {
+            minerService.receiveWebSocketEvent().filter { it is WebSocket.Event.OnConnectionOpened<*> }.consumeEach {
+                sendHeartbeat(HEARTBEAT_INTERVAL_MILLIS)
+            }
+        }
     }
 
     private fun registerJobRequestHandler() = launchInBackground {
         minerService.receiveJobRequest().consumeEach { jobRequest ->
             println("job request from server: $jobRequest")
-
+            resetWatchdog()
             sendAck(jobRequest)
 
             val runner = getRunner(jobRequest)
@@ -52,22 +61,24 @@ class Miner(
     private fun registerErrorHandler() = launchInBackground {
         minerService.receiveError().consumeEach {
             println("error from server: $it")
+
         }
     }
 
     private fun registerAckHandler() = launchInBackground {
         minerService.receiveAck().consumeEach {
-            timeoutJob?.cancel()
             println("ack from server: $it")
-            timeoutJob = launchInBackground {
-                delay(RECONNECT_DELAY)
-                onTimeout()
-            }
+            resetWatchdog()
         }
     }
 
-    fun startHeartbeat() = launchInBackground {
-        sendHeartbeat(HEARTBEAT_INTERVAL_MILLIS)
+    private fun resetWatchdog() {
+        timeoutJob.cancel()
+        timeoutJob = launchInBackground {
+            delay(RECONNECT_DELAY)
+            println("Timeout")
+            onTimeout()
+        }
     }
 
     private tailrec suspend fun sendHeartbeat(intervalMillis: Long) {
@@ -83,5 +94,9 @@ class Miner(
 
     private fun launchInBackground(block: suspend () -> Unit): Job {
         return launch(parent = job) { block() }
+    }
+
+    fun start() {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

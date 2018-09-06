@@ -58,9 +58,9 @@ class ForegroundService : Service() {
         Log.d(LOG_TAG, "Foreground service onCreate")
         setUpWakeLock()
         setUpConnection()
-        setupHeartbeat()
         setUpNotificationChannelId()
         startForegroundNotification()
+        miner.start()
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -70,10 +70,6 @@ class ForegroundService : Service() {
 
     private fun setUpConnection() {
         webSocketClient.connect()
-    }
-
-    private fun setupHeartbeat() {
-        miner.startHeartbeat()
     }
 
     private fun setUpNotificationChannelId() {

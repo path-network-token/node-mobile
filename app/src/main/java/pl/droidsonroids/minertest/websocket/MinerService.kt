@@ -1,11 +1,15 @@
 package pl.droidsonroids.minertest.websocket
 
+import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import pl.droidsonroids.minertest.message.*
 
 interface MinerService {
+    @Receive
+    fun receiveWebSocketEvent(): ReceiveChannel<WebSocket.Event>
+
     @Send
     fun sendCheckIn(checkIn: CheckIn)
 

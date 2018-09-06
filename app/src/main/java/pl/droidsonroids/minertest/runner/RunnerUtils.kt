@@ -43,9 +43,12 @@ inline fun measureRealtimeMillis(block: () -> Unit): Long {
 }
 
 fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Status {
+    val degradedAfterMillis = jobRequest.degradedAfter ?: 1000L
+    val criticalAfterMillis = jobRequest.criticalAfter ?: 2000L
+
     return when {
-        requestDurationMillis > jobRequest.degradedAfter -> Status.degraded
-        requestDurationMillis > jobRequest.criticalAfter -> Status.critical
+        requestDurationMillis > degradedAfterMillis -> Status.degraded
+        requestDurationMillis > criticalAfterMillis -> Status.critical
         else -> Status.ok
     }
 }
