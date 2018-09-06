@@ -1,0 +1,17 @@
+package pl.droidsonroids.minertest.runner
+
+import pl.droidsonroids.minertest.message.JobRequest
+import javax.net.SocketFactory
+
+class TcpRunner : JobRunner {
+
+    override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runTcpJob)
+
+    private fun runTcpJob(jobRequest: JobRequest): String {
+        //TODO check if SSLSocket is supported by RN app
+        return SocketFactory.getDefault().createSocket(jobRequest.endpointAddress, jobRequest.endpointPort).use {
+            it.getOutputStream().bufferedWriter().write(jobRequest.payload)
+            it.getInputStream().bufferedReader().readText()
+        }
+    }
+}
