@@ -28,21 +28,22 @@ private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
 
 class ForegroundService : Service() {
 
+    private val storage by lazy { Storage(this) }
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
-
     private val compositeJob = Job()
     private val webSocketClient = WebSocketClient(compositeJob)
-    private val miner by lazy { Miner(compositeJob, Storage(this), webSocketClient.minerService) }
+    private val miner by lazy {
+        Miner(
+            compositeJob,
+            storage,
+            webSocketClient.minerService,
+            onJobCompleted = ::updateCompletedJobsCount
+        )
+    }
 
-    // TODO : change values
-    private var completedJobsCounter: Long = 0
-        set(value) {
-            field = value
-            sendCompletedJobsCountBroadcast(value)
-        }
     private var connectionStatus = ConnectionStatus.DISCONNECTED
         set(value) {
             field = value
@@ -99,6 +100,12 @@ class ForegroundService : Service() {
     private fun createPendingIntent(): PendingIntent {
         val intent = Intent(this, MainActivity::class.java)
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+    }
+
+    private fun updateCompletedJobsCount() {
+        val newCount = storage.completedJobsCount + 1
+        storage.completedJobsCount = newCount
+        sendCompletedJobsCountBroadcast(newCount)
     }
 
     override fun onDestroy() {

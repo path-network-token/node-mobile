@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // TODO: get current value - maybe shared preferences will be better?
+        setCompletedJobsCounterText(storage.completedJobsCount)
         registerInfoReceiver(infoBroadcastReceiver)
     }
 
@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.saved_toast, Toast.LENGTH_SHORT).show()
         }
         addressEditText.setText(storage.pathWalletAddress)
-        setCompletedJobsCounterText(0)
         setStatusText(ConnectionStatus.DISCONNECTED)
     }
 

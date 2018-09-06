@@ -2,11 +2,13 @@ package pl.droidsonroids.minertest
 
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.single
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.message.Ack
 import pl.droidsonroids.minertest.message.CheckIn
 import pl.droidsonroids.minertest.message.JobRequest
+import pl.droidsonroids.minertest.message.Status
 import pl.droidsonroids.minertest.runner.getRunner
 import pl.droidsonroids.minertest.websocket.MinerService
 
@@ -15,7 +17,8 @@ private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 class Miner(
     private val job: Job,
     private val storage: Storage,
-    private val minerService: MinerService
+    private val minerService: MinerService,
+    private val onJobCompleted: () -> Unit
 ) {
 
     init {
@@ -33,6 +36,7 @@ class Miner(
             val runner = getRunner(jobRequest)
             val jobResult = runner.runJob(jobRequest)
             minerService.sendJobResult(jobResult)
+            if (jobResult.status == Status.ok) onJobCompleted()
             println("job result sent: $jobResult")
         }
     }
