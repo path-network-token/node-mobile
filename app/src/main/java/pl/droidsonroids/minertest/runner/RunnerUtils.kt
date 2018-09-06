@@ -6,6 +6,9 @@ import pl.droidsonroids.minertest.message.JobResult
 import pl.droidsonroids.minertest.message.Status
 import java.io.IOException
 
+private const val DEGRADED_TIMEOUT_MILLIS = 1000L
+private const val CRITICAL_TIMEOUT_MILLIS = 1000L
+
 fun getRunner(jobRequest: JobRequest) = when {
     jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
     jobRequest.protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
@@ -24,8 +27,9 @@ fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): Job
 
         status = calculateJobStatus(requestDurationMillis, jobRequest)
     } catch (e: IOException) {
-        status = Status.unknown
         requestDurationMillis = 0L
+        responseBody = e.message ?: ""
+        status = Status.unknown
     }
 
     return JobResult(
@@ -43,8 +47,8 @@ inline fun measureRealtimeMillis(block: () -> Unit): Long {
 }
 
 fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Status {
-    val degradedAfterMillis = jobRequest.degradedAfter ?: 1000L
-    val criticalAfterMillis = jobRequest.criticalAfter ?: 2000L
+    val degradedAfterMillis = jobRequest.degradedAfter ?: DEGRADED_TIMEOUT_MILLIS
+    val criticalAfterMillis = jobRequest.criticalAfter ?: CRITICAL_TIMEOUT_MILLIS
 
     return when {
         requestDurationMillis > degradedAfterMillis -> Status.degraded

@@ -30,18 +30,21 @@ class Miner(
         registerJobRequestHandler()
         registerErrorHandler()
         registerAckHandler()
+        registerStartHandler()
+        registerMessageReceiveHandler()
+    }
 
-        launchInBackground {
-            minerService.receiveWebSocketEvent().filter { it is WebSocket.Event.OnConnectionOpened<*> }.consumeEach {
+    private fun registerStartHandler() = launchInBackground {
+        minerService.receiveWebSocketEvent()
+            .filter { it is WebSocket.Event.OnConnectionOpened<*> }
+            .consumeEach {
                 sendHeartbeat(HEARTBEAT_INTERVAL_MILLIS)
             }
-        }
     }
 
     private fun registerJobRequestHandler() = launchInBackground {
         minerService.receiveJobRequest().consumeEach { jobRequest ->
             println("job request from server: $jobRequest")
-            resetWatchdog()
             sendAck(jobRequest)
 
             val runner = getRunner(jobRequest)
@@ -53,7 +56,7 @@ class Miner(
     }
 
     private fun sendAck(jobRequest: JobRequest) {
-        val ack = Ack(id = jobRequest.id, minerId = null)
+        val ack = Ack(id = jobRequest.id, minerId = storage.minerId)
         minerService.sendAck(ack)
         println("ack sent: $ack")
     }
@@ -61,15 +64,22 @@ class Miner(
     private fun registerErrorHandler() = launchInBackground {
         minerService.receiveError().consumeEach {
             println("error from server: $it")
-
         }
     }
 
     private fun registerAckHandler() = launchInBackground {
         minerService.receiveAck().consumeEach {
             println("ack from server: $it")
-            resetWatchdog()
+            storage.minerId = it.minerId
         }
+    }
+
+    private fun registerMessageReceiveHandler() = launchInBackground {
+        minerService.receiveWebSocketEvent()
+            .filter { it is WebSocket.Event.OnMessageReceived }
+            .consumeEach {
+                resetWatchdog()
+            }
     }
 
     private fun resetWatchdog() {
