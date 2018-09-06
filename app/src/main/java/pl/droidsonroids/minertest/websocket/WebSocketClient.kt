@@ -50,4 +50,9 @@ class WebSocketClient(job: Job) {
     fun connect() {
         lifecycleRegistry.onNext(Lifecycle.State.Started)
     }
+
+    fun reconnect() {
+        lifecycleRegistry.onNext(Lifecycle.State.Stopped.AndAborted)
+        lifecycleRegistry.onNext(Lifecycle.State.Started)
+    }
 }

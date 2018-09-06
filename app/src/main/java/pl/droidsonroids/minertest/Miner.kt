@@ -2,7 +2,6 @@ package pl.droidsonroids.minertest
 
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.channels.single
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.message.Ack
@@ -13,13 +12,16 @@ import pl.droidsonroids.minertest.runner.getRunner
 import pl.droidsonroids.minertest.websocket.MinerService
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
+private const val RECONNECT_DELAY = 37_000L
 
 class Miner(
     private val job: Job,
     private val storage: Storage,
     private val minerService: MinerService,
-    private val onJobCompleted: () -> Unit
+    private val onJobCompleted: () -> Unit,
+    private val onTimeout: () -> Unit
 ) {
+    private var timeoutJob: Job? = null
 
     init {
         registerJobRequestHandler()
@@ -55,8 +57,12 @@ class Miner(
 
     private fun registerAckHandler() = launchInBackground {
         minerService.receiveAck().consumeEach {
-            //TODO reconnect if there is no ack nor error received for 30s
+            timeoutJob?.cancel()
             println("ack from server: $it")
+            timeoutJob = launchInBackground {
+                delay(RECONNECT_DELAY)
+                onTimeout()
+            }
         }
     }
 
@@ -75,7 +81,7 @@ class Miner(
         sendHeartbeat(intervalMillis)
     }
 
-    private fun launchInBackground(block: suspend () -> Unit) {
-        launch(parent = job) { block() }
+    private fun launchInBackground(block: suspend () -> Unit): Job {
+        return launch(parent = job) { block() }
     }
 }

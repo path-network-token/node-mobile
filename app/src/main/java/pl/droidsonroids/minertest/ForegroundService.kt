@@ -40,7 +40,8 @@ class ForegroundService : Service() {
             compositeJob,
             storage,
             webSocketClient.minerService,
-            onJobCompleted = ::updateCompletedJobsCount
+            onJobCompleted = ::updateCompletedJobsCount,
+            onTimeout = webSocketClient::reconnect
         )
     }
 
