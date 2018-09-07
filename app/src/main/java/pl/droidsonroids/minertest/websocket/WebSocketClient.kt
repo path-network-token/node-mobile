@@ -9,11 +9,9 @@ import com.tinder.scarlet.retry.LinearBackoffStrategy
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import kotlinx.coroutines.experimental.Job
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
+import pl.droidsonroids.minertest.Constants
+import pl.droidsonroids.minertest.service.OkHttpClientFactory
 
-private const val HTTP_TIMEOUT_MILLIS: Long = 3_000
-private const val WEBSOCKET_TIMEOUT_MILLIS: Long = 10_000
 private const val WEBSOCKET_URL = "ws://jobs-api.dev.udpflood.net/ws"
 
 class WebSocketClient(job: Job) {
@@ -25,12 +23,7 @@ class WebSocketClient(job: Job) {
             lifecycleRegistry.onNext(Lifecycle.State.Destroyed)
         }
 
-        val okHttpClient = OkHttpClient.Builder()
-            .readTimeout(HTTP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .writeTimeout(HTTP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .connectTimeout(HTTP_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .build()
-
+        val okHttpClient = OkHttpClientFactory.create()
         val webSocketFactory = okHttpClient.newWebSocketFactory(WEBSOCKET_URL)
 
         val gson = GsonBuilder()
@@ -41,7 +34,7 @@ class WebSocketClient(job: Job) {
             .webSocketFactory(webSocketFactory)
             .addMessageAdapterFactory(MinerGsonMessageAdapter.Factory(gson))
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
-            .backoffStrategy(LinearBackoffStrategy(WEBSOCKET_TIMEOUT_MILLIS))
+            .backoffStrategy(LinearBackoffStrategy(Constants.TIMEOUT_MILLIS))
             .lifecycle(lifecycleRegistry)
             .build()
             .create()

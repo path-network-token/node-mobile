@@ -40,6 +40,10 @@ class Miner(
         registerAckHandler()
         registerConnectionOpenedHandler()
         registerWatchdogResetHandler()
+        registerConnectionCloseHandler()
+    }
+
+    private fun registerConnectionCloseHandler() {
         launchInBackground {
             minerService.receiveWebSocketEvent()
                 .filter { it is WebSocket.Event.OnConnectionClosed }
@@ -68,17 +72,13 @@ class Miner(
         minerService.receiveJobRequest().consumeEach { jobRequest ->
             Timber.d("job request from server: $jobRequest")
             sendAck(jobRequest)
-            val runner = getRunner(jobRequest)
-            if (runner != null) {
-                runJob(runner, jobRequest)
-                dispatchCompletedJobCount()
-            } else {
-                Timber.d("no runner found for $jobRequest")
-            }
+            val runner = jobRequest.getRunner()
+            runJob(runner, jobRequest)
+            dispatchCompletedJobCount()
         }
     }
 
-    private fun runJob(runner: Runner, jobRequest: JobRequest) {
+    private suspend fun runJob(runner: Runner, jobRequest: JobRequest) {
         val jobResult = runner.runJob(jobRequest)
         minerService.sendJobResult(jobResult)
         Timber.v("job result sent: $jobResult")
@@ -117,6 +117,7 @@ class Miner(
     }
 
     private fun resetWatchdog() {
+        Timber.w("watchdog reset")
         timeoutJob.cancel()
         timeoutJob = launchInBackground {
             delay(RECONNECT_DELAY)

@@ -7,15 +7,18 @@ import pl.droidsonroids.minertest.message.Status
 import java.io.IOException
 
 private const val DEGRADED_TIMEOUT_MILLIS = 1000L
-private const val CRITICAL_TIMEOUT_MILLIS = 1000L
+private const val CRITICAL_TIMEOUT_MILLIS = 2000L
+private const val BODY_LENGTH_BYTES_MAX = 1 shl 15
 
-fun getRunner(jobRequest: JobRequest) = when {
-    jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
-    jobRequest.protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
-    else -> null
+fun JobRequest.getRunner() = when {
+    protocol == null -> FallbackRunner
+    protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
+    protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
+    protocol.startsWith(prefix = "udp", ignoreCase = true) -> UdpRunner()
+    else -> FallbackRunner
 }
 
-fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): JobResult {
+suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
     var status: Status
     var requestDurationMillis: Long
@@ -35,7 +38,7 @@ fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): Job
     return JobResult(
         jobUuid = jobRequest.jobUuid,
         responseTime = requestDurationMillis,
-        responseBody = responseBody,
+        responseBody = responseBody.take(BODY_LENGTH_BYTES_MAX),
         status = status
     )
 }
@@ -56,3 +59,10 @@ fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Sta
         else -> Status.ok
     }
 }
+
+val JobRequest.endpointHost: String
+    get() {
+        endpointAddress ?: throw IOException("Missing endpoint address in $this")
+        val regex = "^\\w+://".toRegex(RegexOption.IGNORE_CASE)
+        return endpointAddress.replaceFirst(regex, "")
+    }

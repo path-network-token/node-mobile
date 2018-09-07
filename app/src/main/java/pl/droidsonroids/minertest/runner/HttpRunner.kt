@@ -1,28 +1,29 @@
 package pl.droidsonroids.minertest.runner
 
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import pl.droidsonroids.minertest.message.JobRequest
-import pl.droidsonroids.minertest.message.Method
+import pl.droidsonroids.minertest.service.OkHttpClientFactory
 import java.io.IOException
 
-class HttpRunner : Runner {
-    private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
-    private val client = OkHttpClient()
+private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
 
-    override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runHttpJob)
+class HttpRunner : Runner {
+
+    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runHttpJob(it) }
 
     private fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)
+        val client = OkHttpClientFactory.create()
         client.newCall(request).execute().use {
-            return it.body()?.string() ?: ""
+            return it.body()?.string().orEmpty()
         }
     }
 
     private fun buildRequest(jobRequest: JobRequest): Request {
         val completeUrl = with(jobRequest) {
             val prependedProtocol = when {
+                endpointAddress == null -> throw IOException("Missing endpint address in $jobRequest")
                 endpointAddress.matches(httpProtocolRegex) -> ""
                 else -> "http://"
             }
@@ -36,9 +37,9 @@ class HttpRunner : Runner {
             "${urlPrefixWithPortBuilder.build()}${endpointAdditionalParams.orEmpty()}"
         }
 
-        val method = jobRequest.method ?: Method.GET
+        val method = jobRequest.method ?: "GET"
         val requestBuilder = Request.Builder()
-            .method(method.name, null)
+            .method(method, null)
             .url(completeUrl)
 
         jobRequest.headers?.flatMap { it.entries }?.forEach { entry ->

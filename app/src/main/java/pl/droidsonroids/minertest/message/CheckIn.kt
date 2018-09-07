@@ -7,5 +7,5 @@ data class CheckIn(
     val lon: String? = null,
     val minerId: String?,
     val wallet: String,
-    val deviceType: Device = Device.android
+    val deviceType: String? = "android"
 ) : MinerMessage
