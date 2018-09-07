@@ -2,10 +2,10 @@ package pl.droidsonroids.minertest
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.InfoBroadcastReceiver
