@@ -11,7 +11,7 @@ class UdpRunner : Runner {
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runUdpJob(it) }
 
     private fun runUdpJob(jobRequest: JobRequest): String {
-        val port = jobRequest.endpointPort ?: DEFAULT_UDP_PORT
+        val port = jobRequest.endpointPortOrDefault(DEFAULT_UDP_PORT)
 
         DatagramSocket().use {
             val endpointInetAddress = InetAddress.getByName(jobRequest.endpointHost)

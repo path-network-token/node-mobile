@@ -2,6 +2,7 @@ package pl.droidsonroids.minertest.runner
 
 import okhttp3.HttpUrl
 import okhttp3.Request
+import pl.droidsonroids.minertest.Constants.TCP_UDP_PORT_RANGE
 import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.service.OkHttpClientFactory
 import java.io.IOException
@@ -30,7 +31,7 @@ class HttpRunner : Runner {
 
             val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
             val urlPrefixWithPortBuilder = urlPrefix.newBuilder()
-            if (endpointPort != null) {
+            if (endpointPort != null && TCP_UDP_PORT_RANGE.contains(endpointPort)) {
                 urlPrefixWithPortBuilder.port(endpointPort)
             }
 

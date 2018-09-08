@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
 
+val Context.foregroundServiceIntent
+    get() = Intent(this, ForegroundService::class.java)
+
 fun Context.startForegroundMinerService() {
-    val intent = Intent(this, ForegroundService::class.java)
-    ContextCompat.startForegroundService(this, intent)
+    ContextCompat.startForegroundService(this, foregroundServiceIntent)
 }

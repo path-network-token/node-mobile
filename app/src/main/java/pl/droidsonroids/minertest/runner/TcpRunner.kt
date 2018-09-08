@@ -16,7 +16,7 @@ class TcpRunner : Runner {
 
     private suspend fun runTcpJob(jobRequest: JobRequest): String {
         SocketFactory.getDefault().createSocket().use {
-            val port = jobRequest.endpointPort ?: DEFAULT_TCP_PORT
+            val port = jobRequest.endpointPortOrDefault(DEFAULT_TCP_PORT)
             it.connect(InetSocketAddress(jobRequest.endpointHost, port), Constants.TIMEOUT_MILLIS.toInt())
             it.soTimeout = Constants.TIMEOUT_MILLIS.toInt()
 

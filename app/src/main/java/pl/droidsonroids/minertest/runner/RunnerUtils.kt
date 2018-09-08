@@ -1,6 +1,7 @@
 package pl.droidsonroids.minertest.runner
 
 import android.os.SystemClock
+import pl.droidsonroids.minertest.Constants.TCP_UDP_PORT_RANGE
 import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.message.JobResult
 import pl.droidsonroids.minertest.message.Status
@@ -64,5 +65,9 @@ val JobRequest.endpointHost: String
     get() {
         endpointAddress ?: throw IOException("Missing endpoint address in $this")
         val regex = "^\\w+://".toRegex(RegexOption.IGNORE_CASE)
-        return endpointAddress.replaceFirst(regex, "")
+        return endpointAddress.replaceFirst(regex, "").replaceAfter('/', "")
     }
+
+fun JobRequest.endpointPortOrDefault(default: Int): Int {
+    return (endpointPort ?: default).coerceIn(TCP_UDP_PORT_RANGE)
+}

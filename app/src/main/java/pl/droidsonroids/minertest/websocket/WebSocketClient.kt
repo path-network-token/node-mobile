@@ -27,6 +27,7 @@ class WebSocketClient(job: Job) {
         val webSocketFactory = okHttpClient.newWebSocketFactory(WEBSOCKET_URL)
 
         val gson = GsonBuilder()
+            .setLenient()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
 

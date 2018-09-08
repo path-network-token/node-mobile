@@ -2,13 +2,11 @@ package pl.droidsonroids.minertest
 
 import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.ConnectionStatus.CONNECTED
 import pl.droidsonroids.minertest.info.ConnectionStatus.DISCONNECTED
 import pl.droidsonroids.minertest.message.Ack
@@ -30,8 +28,11 @@ class Miner(
     private val minerService = webSocketClient.minerService
     private var timeoutJob = Job()
 
-    private val jobCompletedChannel = ConflatedChannel<Long>()
-    private val connectionStatusChannel = ConflatedChannel<ConnectionStatus>()
+    private val jobCompletedChannel = ConflatedBroadcastChannel(storage.completedJobsCount)
+    private val connectionStatusChannel = ConflatedBroadcastChannel(DISCONNECTED)
+
+    fun receiveJobCompleted() = jobCompletedChannel.openSubscription()
+    fun receiveConnectionStatus() = connectionStatusChannel.openSubscription()
 
     init {
         resetWatchdog()
@@ -40,24 +41,9 @@ class Miner(
         registerAckHandler()
         registerConnectionOpenedHandler()
         registerWatchdogResetHandler()
-        registerConnectionCloseHandler()
-    }
-
-    private fun registerConnectionCloseHandler() {
-        launchInBackground {
-            minerService.receiveWebSocketEvent()
-                .filter { it is WebSocket.Event.OnConnectionClosed }
-                .consumeEach {
-                    connectionStatusChannel.offer(DISCONNECTED)
-                }
-        }
     }
 
     fun start() = webSocketClient.connect()
-
-    fun receiveJobCompletion(): ReceiveChannel<Long> = jobCompletedChannel
-
-    fun receiveConnectionStatus(): ReceiveChannel<ConnectionStatus> = connectionStatusChannel
 
     private fun registerConnectionOpenedHandler() = launchInBackground {
         minerService.receiveWebSocketEvent()
@@ -121,6 +107,7 @@ class Miner(
         timeoutJob.cancel()
         timeoutJob = launchInBackground {
             delay(RECONNECT_DELAY)
+            connectionStatusChannel.offer(DISCONNECTED)
             Timber.w("watchdog detected timeout")
             webSocketClient.reconnect()
         }

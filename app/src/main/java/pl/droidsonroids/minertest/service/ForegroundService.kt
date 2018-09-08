@@ -6,17 +6,14 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
 import pl.droidsonroids.minertest.Miner
 import pl.droidsonroids.minertest.R
 import pl.droidsonroids.minertest.Storage
-import pl.droidsonroids.minertest.info.sendCompletedJobsCountBroadcast
-import pl.droidsonroids.minertest.info.sendStatusBroadcast
 import timber.log.Timber
 
 private const val WAKE_LOCK_TAG = "MinerWakeLock"
@@ -26,6 +23,11 @@ private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
 
 class ForegroundService : Service() {
 
+    class MinerBinder(private val miner: Miner) : Binder() {
+        fun receiveJobCompleted() = miner.receiveJobCompleted()
+        fun receiveConnectionStatus() = miner.receiveConnectionStatus()
+    }
+
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
@@ -34,7 +36,7 @@ class ForegroundService : Service() {
 
     private val miner by lazy { Miner(compositeJob, Storage(this)) }
 
-    override fun onBind(intent: Intent?) = null
+    override fun onBind(intent: Intent?) = MinerBinder(miner)
 
     override fun onCreate() {
         super.onCreate()
@@ -43,8 +45,6 @@ class ForegroundService : Service() {
         setUpNotificationChannelId()
         startForegroundNotification()
         miner.start()
-        subscribeToCompletedJobCounterChange()
-        subscribeToConnectionStatusChange()
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -71,22 +71,6 @@ class ForegroundService : Service() {
                 .setContentTitle(getString(R.string.app_name))
                 .build()
         )
-    }
-
-    private fun subscribeToCompletedJobCounterChange() {
-        launch(parent = compositeJob) {
-            miner.receiveJobCompletion().consumeEach {
-                sendCompletedJobsCountBroadcast(it)
-            }
-        }
-    }
-
-    private fun subscribeToConnectionStatusChange() {
-        launch(parent = compositeJob) {
-            miner.receiveConnectionStatus().consumeEach {
-                sendStatusBroadcast(it)
-            }
-        }
     }
 
     override fun onDestroy() {
