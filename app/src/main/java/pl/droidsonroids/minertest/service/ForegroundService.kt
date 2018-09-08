@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Binder
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
@@ -22,11 +21,6 @@ private const val NOTIFICATION_ID = 3127
 private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
 
 class ForegroundService : Service() {
-
-    class MinerBinder(private val miner: Miner) : Binder() {
-        fun receiveJobCompleted() = miner.receiveJobCompleted()
-        fun receiveConnectionStatus() = miner.receiveConnectionStatus()
-    }
 
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager

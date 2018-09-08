@@ -16,7 +16,7 @@ class MinerServiceConnection(
     private val job = Job()
 
     override fun onServiceConnected(name: ComponentName, service: IBinder) {
-        val minerBinder = service as ForegroundService.MinerBinder
+        val minerBinder = service as MinerBinder
         launch(context = UI, parent = job) {
             minerBinder.receiveJobCompleted().consumeEach(onCompletedJobsCountChange)
         }
