@@ -19,7 +19,7 @@ import pl.droidsonroids.minertest.websocket.WebSocketClient
 import timber.log.Timber
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
-private const val RECONNECT_DELAY = 37_000L
+private const val RECONNECT_DELAY_MILLIS = 37_000L
 
 class Miner(
     private val job: Job,
@@ -108,7 +108,7 @@ class Miner(
         Timber.w("watchdog reset")
         timeoutJob.cancel()
         timeoutJob = launchInBackground {
-            delay(RECONNECT_DELAY)
+            delay(RECONNECT_DELAY_MILLIS)
             connectionStatusChannel.offer(DISCONNECTED)
             Timber.w("watchdog detected timeout")
             webSocketClient.reconnect()

@@ -1,12 +1,16 @@
 package pl.droidsonroids.minertest
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+import android.view.inputmethod.EditorInfo.IME_NULL
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import pl.droidsonroids.minertest.info.ConnectionStatus
 import pl.droidsonroids.minertest.info.ConnectionStatus.CONNECTED
@@ -25,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setUpView()
         handleServiceState()
+        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), 1)
     }
 
     override fun onDestroy() {
@@ -36,9 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpView() {
         saveButton.setOnClickListener {
-            storage.pathWalletAddress = addressEditText.text.toString()
-            hideKeyboard()
-            showToast(R.string.address_saved_toast)
+            onWalletAddressConfirmed()
         }
         startButton.setOnClickListener {
             startAndBindMinerService(serviceConnection)
@@ -51,6 +54,30 @@ class MainActivity : AppCompatActivity() {
             showToast(R.string.service_stopped_toast)
         }
         addressEditText.setText(storage.pathWalletAddress)
+        addressEditText.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                IME_NULL, IME_ACTION_DONE -> {
+                    onWalletAddressConfirmed()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun onWalletAddressConfirmed() {
+        if (addressEditText.text.isBlank()) {
+            addressEditText.error = getString(R.string.blank_path_wallet_address_error)
+        } else {
+            updatePathWalletAddress()
+            addressEditText.error = null
+        }
+    }
+
+    private fun updatePathWalletAddress() {
+        storage.pathWalletAddress = addressEditText.text.toString()
+        hideKeyboard()
+        showToast(R.string.address_saved_toast)
     }
 
     private fun setCompletedJobsCounterText(count: Long) {

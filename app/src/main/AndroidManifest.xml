@@ -21,6 +21,7 @@
         tools:ignore="UnusedAttribute">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

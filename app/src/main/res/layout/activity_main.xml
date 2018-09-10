@@ -31,6 +31,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
         android:hint="@string/wallet_hint"
+        android:imeOptions="actionDone"
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@id/saveButton"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
