@@ -2,9 +2,9 @@ package pl.droidsonroids.minertest.runner
 
 import android.os.SystemClock
 import pl.droidsonroids.minertest.Constants.TCP_UDP_PORT_RANGE
+import pl.droidsonroids.minertest.json.Status
 import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.message.JobResult
-import pl.droidsonroids.minertest.message.Status
 import java.io.IOException
 
 private const val DEGRADED_TIMEOUT_MILLIS = 1000L
@@ -21,7 +21,7 @@ fun JobRequest.getRunner() = when {
 
 suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
-    var status: Status
+    var status: String
     var requestDurationMillis: Long
 
     try {
@@ -33,7 +33,7 @@ suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest)
     } catch (e: IOException) {
         requestDurationMillis = 0L
         responseBody = e.message ?: ""
-        status = Status.unknown
+        status = Status.UNKNOWN
     }
 
     return JobResult(
@@ -50,14 +50,14 @@ inline fun measureRealtimeMillis(block: () -> Unit): Long {
     return SystemClock.elapsedRealtime() - start
 }
 
-fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Status {
+fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): String {
     val degradedAfterMillis = jobRequest.degradedAfter ?: DEGRADED_TIMEOUT_MILLIS
     val criticalAfterMillis = jobRequest.criticalAfter ?: CRITICAL_TIMEOUT_MILLIS
 
     return when {
-        requestDurationMillis > degradedAfterMillis -> Status.degraded
-        requestDurationMillis > criticalAfterMillis -> Status.critical
-        else -> Status.ok
+        requestDurationMillis > degradedAfterMillis -> Status.DEGRADED
+        requestDurationMillis > criticalAfterMillis -> Status.CRITICAL
+        else -> Status.OK
     }
 }
 

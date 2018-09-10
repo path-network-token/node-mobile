@@ -10,6 +10,7 @@ import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import kotlinx.coroutines.experimental.Job
 import pl.droidsonroids.minertest.Constants
+import pl.droidsonroids.minertest.json.MinerGsonMessageAdapter
 import pl.droidsonroids.minertest.service.OkHttpClientFactory
 
 private const val WEBSOCKET_URL = "ws://jobs-api.dev.udpflood.net/ws"
