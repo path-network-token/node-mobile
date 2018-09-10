@@ -19,7 +19,7 @@ class Storage(context: Context) {
     private fun stringPref(prefKey: String, defaultValue: String? = null) =
         StringStorageDelegate(prefKey, defaultValue)
 
-    private fun longPref(prefKey: String, defaultValue: Long = 0) =
+    private fun longPref(prefKey: String, defaultValue: Long = 0L) =
         LongStorageDelegate(prefKey, defaultValue)
 
     inner class StringStorageDelegate(private val prefKey: String, private val defaultValue: String?) {

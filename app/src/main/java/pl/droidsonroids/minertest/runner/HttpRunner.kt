@@ -1,42 +1,49 @@
 package pl.droidsonroids.minertest.runner
 
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.Request
+import pl.droidsonroids.minertest.Constants.TCP_UDP_PORT_RANGE
 import pl.droidsonroids.minertest.message.JobRequest
+import pl.droidsonroids.minertest.service.OkHttpClientFactory
 import java.io.IOException
 
-class HttpRunner : JobRunner {
-    private val client = OkHttpClient()
+private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
 
-    override fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest, ::runHttpJob)
+class HttpRunner : Runner {
+
+    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runHttpJob(it) }
 
     private fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)
+        val client = OkHttpClientFactory.create()
         client.newCall(request).execute().use {
-            return it.body()?.string() ?: ""
+            return it.body()?.string().orEmpty()
         }
     }
 
     private fun buildRequest(jobRequest: JobRequest): Request {
         val completeUrl = with(jobRequest) {
             val prependedProtocol = when {
-                endpointAddress.startsWith("http://", true) || endpointAddress.startsWith("https://", true) -> ""
+                endpointAddress == null -> throw IOException("Missing endpint address in $jobRequest")
+                endpointAddress.matches(httpProtocolRegex) -> ""
                 else -> "http://"
             }
-            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
-            val urlPrefixWithPort = urlPrefix.newBuilder()
-                .port(endpointPort)
-                .build()
 
-            "$urlPrefixWithPort$endpointAdditionalParams"
+            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
+            val urlPrefixWithPortBuilder = urlPrefix.newBuilder()
+            if (endpointPort != null && TCP_UDP_PORT_RANGE.contains(endpointPort)) {
+                urlPrefixWithPortBuilder.port(endpointPort)
+            }
+
+            "${urlPrefixWithPortBuilder.build()}${endpointAdditionalParams.orEmpty()}"
         }
 
+        val method = jobRequest.method ?: "GET"
         val requestBuilder = Request.Builder()
-            .method(jobRequest.method.name, null)
+            .method(method, null)
             .url(completeUrl)
 
-        jobRequest.headers.flatMap { it.entries }.forEach { entry ->
+        jobRequest.headers?.flatMap { it.entries }?.forEach { entry ->
             requestBuilder.addHeader(entry.key, entry.value)
         }
 

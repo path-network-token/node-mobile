@@ -1,18 +1,25 @@
 package pl.droidsonroids.minertest.runner
 
 import android.os.SystemClock
+import pl.droidsonroids.minertest.Constants.TCP_UDP_PORT_RANGE
 import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.message.JobResult
 import pl.droidsonroids.minertest.message.Status
 import java.io.IOException
 
-fun getRunner(jobRequest: JobRequest) = when {
-    jobRequest.protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
-    jobRequest.protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
-    else -> throw IOException("No runner found for: $jobRequest")
+private const val DEGRADED_TIMEOUT_MILLIS = 1000L
+private const val CRITICAL_TIMEOUT_MILLIS = 2000L
+private const val BODY_LENGTH_BYTES_MAX = 1 shl 15
+
+fun JobRequest.getRunner() = when {
+    protocol == null -> FallbackRunner
+    protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
+    protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
+    protocol.startsWith(prefix = "udp", ignoreCase = true) -> UdpRunner()
+    else -> FallbackRunner
 }
 
-fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): JobResult {
+suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
     var status: Status
     var requestDurationMillis: Long
@@ -24,14 +31,15 @@ fun computeJobResult(jobRequest: JobRequest, block: (JobRequest) -> String): Job
 
         status = calculateJobStatus(requestDurationMillis, jobRequest)
     } catch (e: IOException) {
-        status = Status.unknown
         requestDurationMillis = 0L
+        responseBody = e.message ?: ""
+        status = Status.unknown
     }
 
     return JobResult(
         jobUuid = jobRequest.jobUuid,
         responseTime = requestDurationMillis,
-        responseBody = responseBody,
+        responseBody = responseBody.take(BODY_LENGTH_BYTES_MAX),
         status = status
     )
 }
@@ -43,9 +51,23 @@ inline fun measureRealtimeMillis(block: () -> Unit): Long {
 }
 
 fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Status {
+    val degradedAfterMillis = jobRequest.degradedAfter ?: DEGRADED_TIMEOUT_MILLIS
+    val criticalAfterMillis = jobRequest.criticalAfter ?: CRITICAL_TIMEOUT_MILLIS
+
     return when {
-        requestDurationMillis > jobRequest.degradedAfter -> Status.degraded
-        requestDurationMillis > jobRequest.criticalAfter -> Status.critical
+        requestDurationMillis > degradedAfterMillis -> Status.degraded
+        requestDurationMillis > criticalAfterMillis -> Status.critical
         else -> Status.ok
     }
+}
+
+val JobRequest.endpointHost: String
+    get() {
+        endpointAddress ?: throw IOException("Missing endpoint address in $this")
+        val regex = "^\\w+://".toRegex(RegexOption.IGNORE_CASE)
+        return endpointAddress.replaceFirst(regex, "").replaceAfter('/', "")
+    }
+
+fun JobRequest.endpointPortOrDefault(default: Int): Int {
+    return (endpointPort ?: default).coerceIn(TCP_UDP_PORT_RANGE)
 }

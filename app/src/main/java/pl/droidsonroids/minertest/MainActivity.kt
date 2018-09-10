@@ -1,62 +1,44 @@
 package pl.droidsonroids.minertest
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import pl.droidsonroids.minertest.info.ConnectionStatus
-import pl.droidsonroids.minertest.info.InfoBroadcastReceiver
-import pl.droidsonroids.minertest.info.registerInfoReceiver
-
-const val LOG_TAG = "MinerTag"
+import pl.droidsonroids.minertest.info.ConnectionStatus.CONNECTED
+import pl.droidsonroids.minertest.info.ConnectionStatus.DISCONNECTED
+import pl.droidsonroids.minertest.service.MinerServiceConnection
+import pl.droidsonroids.minertest.service.foregroundServiceIntent
+import pl.droidsonroids.minertest.service.startForegroundMinerService
 
 class MainActivity : AppCompatActivity() {
 
-    private val storage by lazy { Storage(this) }
-    private val serviceIntent by lazy {
-        Intent(this, ForegroundService::class.java)
-    }
-    private val infoBroadcastReceiver = InfoBroadcastReceiver(
-        onCompletedJobsChanged = ::setCompletedJobsCounterText,
-        onStatusChanged = ::setStatusText
-    )
+    private val serviceConnection = MinerServiceConnection(::setStatusText, ::setCompletedJobsCounterText)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startForegroundMinerService()
         setContentView(R.layout.activity_main)
         setUpView()
+        bindService(foregroundServiceIntent, serviceConnection, 0)
     }
 
-    override fun onResume() {
-        super.onResume()
-        setCompletedJobsCounterText(storage.completedJobsCount)
-        registerInfoReceiver(infoBroadcastReceiver)
-    }
-
-    override fun onPause() {
-        unregisterReceiver(infoBroadcastReceiver)
-        super.onPause()
+    override fun onDestroy() {
+        unbindService(serviceConnection)
+        super.onDestroy()
     }
 
     private fun setUpView() {
-        startServiceButton.setOnClickListener {
-            ContextCompat.startForegroundService(this, serviceIntent)
-        }
-        stopServiceButton.setOnClickListener {
-            stopService(serviceIntent)
-        }
+        val storage = Storage(this)
         saveButton.setOnClickListener {
             storage.pathWalletAddress = addressEditText.text.toString()
             hideKeyboard()
             Toast.makeText(this, R.string.saved_toast, Toast.LENGTH_SHORT).show()
         }
         addressEditText.setText(storage.pathWalletAddress)
-        setStatusText(ConnectionStatus.DISCONNECTED)
     }
 
     private fun setCompletedJobsCounterText(count: Long) {
@@ -65,8 +47,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setStatusText(connectionStatus: ConnectionStatus) {
         val statusResId = when (connectionStatus) {
-            ConnectionStatus.CONNECTED -> R.string.state_connected
-            ConnectionStatus.DISCONNECTED -> R.string.state_disconnected
+            CONNECTED -> R.string.state_connected
+            DISCONNECTED -> R.string.state_disconnected
         }
         statusTextView.text = getString(R.string.status_label, getString(statusResId))
     }
