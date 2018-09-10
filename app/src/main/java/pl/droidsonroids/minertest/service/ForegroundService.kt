@@ -15,7 +15,7 @@ import pl.droidsonroids.minertest.R
 import pl.droidsonroids.minertest.Storage
 import timber.log.Timber
 
-private const val WAKE_LOCK_TAG = "MinerWakeLock"
+private const val WAKE_LOCK_TAG = "MinerWakeLock::Tag"
 
 private const val NOTIFICATION_ID = 3127
 private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
@@ -28,7 +28,8 @@ class ForegroundService : Service() {
     }
     private val compositeJob = Job()
 
-    private val miner by lazy { Miner(compositeJob, Storage(this)) }
+    private val storage by lazy { Storage(this) }
+    private val miner by lazy { Miner(compositeJob, storage) }
 
     override fun onBind(intent: Intent?) = MinerBinder(miner)
 
@@ -39,6 +40,7 @@ class ForegroundService : Service() {
         setUpNotificationChannelId()
         startForegroundNotification()
         miner.start()
+        storage.isServiceRunning = true
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -52,7 +54,7 @@ class ForegroundService : Service() {
             val channel = NotificationChannel(
                 CHANNEL_NOTIFICATION_ID,
                 getString(R.string.app_name),
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_MIN
             )
             notificationManager.createNotificationChannel(channel)
         }
@@ -61,8 +63,9 @@ class ForegroundService : Service() {
     private fun startForegroundNotification() {
         startForeground(
             NOTIFICATION_ID, NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
+                .setVibrate(longArrayOf(0L))
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(getString(R.string.notification_content))
                 .build()
         )
     }
@@ -71,6 +74,7 @@ class ForegroundService : Service() {
         Timber.v("Foreground service onDestroy")
         compositeJob.cancel()
         wakeLock.release()
+        storage.isServiceRunning = false
         super.onDestroy()
     }
 }

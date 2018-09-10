@@ -9,6 +9,6 @@ class BootCompletedReceiver : BroadcastReceiver() {
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
-        context.startForegroundMinerService()
+        context.startMinerService()
     }
 }
