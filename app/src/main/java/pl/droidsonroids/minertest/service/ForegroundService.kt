@@ -29,7 +29,7 @@ class ForegroundService : Service() {
     private val compositeJob = Job()
 
     private val storage by lazy { Storage(this) }
-    private val miner by lazy { Miner(compositeJob, storage) }
+    private val miner by lazy { Miner(compositeJob, storage, LastLocationProvider(this)) }
 
     override fun onBind(intent: Intent?) = MinerBinder(miner)
 

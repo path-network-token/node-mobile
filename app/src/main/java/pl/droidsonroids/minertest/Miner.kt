@@ -14,6 +14,7 @@ import pl.droidsonroids.minertest.message.CheckIn
 import pl.droidsonroids.minertest.message.JobRequest
 import pl.droidsonroids.minertest.runner.Runner
 import pl.droidsonroids.minertest.runner.getRunner
+import pl.droidsonroids.minertest.service.LastLocationProvider
 import pl.droidsonroids.minertest.websocket.WebSocketClient
 import timber.log.Timber
 
@@ -22,7 +23,8 @@ private const val RECONNECT_DELAY = 37_000L
 
 class Miner(
     private val job: Job,
-    private val storage: Storage
+    private val storage: Storage,
+    private val lastLocationProvider: LastLocationProvider
 ) {
     private val webSocketClient = WebSocketClient(job)
     private val minerService = webSocketClient.minerService
@@ -76,7 +78,7 @@ class Miner(
     }
 
     private fun sendAck(jobRequest: JobRequest) {
-        val ack = Ack(id = jobRequest.id, minerId = storage.minerId)
+        val ack = Ack(id = jobRequest.id)
         minerService.sendAck(ack)
         Timber.d("ack sent: $ack")
     }
@@ -114,14 +116,29 @@ class Miner(
     }
 
     private tailrec suspend fun sendHeartbeat(intervalMillis: Long) {
-        val wallet = storage.pathWalletAddress ?: throw IllegalStateException("Missing wallet address")
-        val checkIn = CheckIn(minerId = null, wallet = wallet)
-
+        val checkIn = createCheckInMessage()
         Timber.d("client check in: $checkIn")
 
         minerService.sendCheckIn(checkIn)
         delay(intervalMillis)
         sendHeartbeat(intervalMillis)
+    }
+
+    private suspend fun createCheckInMessage(): CheckIn {
+        val lastLocation = lastLocationProvider.getLastLocationOrNull()
+        return if (lastLocation != null && !lastLocation.isFromMockProvider) {
+            CheckIn(
+                minerId = storage.minerId,
+                wallet = storage.pathWalletAddress,
+                lat = lastLocation.latitude.toString(),
+                lon = lastLocation.longitude.toString()
+            )
+        } else {
+            CheckIn(
+                minerId = storage.minerId,
+                wallet = storage.pathWalletAddress
+            )
+        }
     }
 
     private fun launchInBackground(block: suspend () -> Unit): Job {

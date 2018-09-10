@@ -15,11 +15,14 @@ class Storage(context: Context) {
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     var pathWalletAddress by stringPref(PATH_ADDRESS_KEY, PATH_DEFAULT_WALLET_ADDRESS)
-    var minerId by stringPref(MINER_ID_KEY)
+    var minerId by nullableStringPref(MINER_ID_KEY)
     var completedJobsCount by longPref(COMPLETED_JOBS_KEY)
     var isServiceRunning by booleanPref(IS_SERVICE_RUNNING_KEY)
 
-    private fun stringPref(prefKey: String, defaultValue: String? = null) =
+    private fun nullableStringPref(prefKey: String, defaultValue: String? = null) =
+        NullableStringStorageDelegate(prefKey, defaultValue)
+
+    private fun stringPref(prefKey: String, defaultValue: String) =
         StringStorageDelegate(prefKey, defaultValue)
 
     private fun longPref(prefKey: String, defaultValue: Long = 0L) =
@@ -28,11 +31,19 @@ class Storage(context: Context) {
     private fun booleanPref(prefKey: String, defaultValue: Boolean = false) =
         BooleanStorageDelegate(prefKey, defaultValue)
 
-    inner class StringStorageDelegate(private val prefKey: String, private val defaultValue: String?) {
+    inner class NullableStringStorageDelegate(private val prefKey: String, private val defaultValue: String?) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): String? =
             sharedPreferences.getString(prefKey, defaultValue)
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) =
+            sharedPreferences.edit().putString(prefKey, value).apply()
+    }
+
+    inner class StringStorageDelegate(private val prefKey: String, private val defaultValue: String) {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String =
+            sharedPreferences.getString(prefKey, defaultValue) ?: throw IllegalStateException("a")
+
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) =
             sharedPreferences.edit().putString(prefKey, value).apply()
     }
 
