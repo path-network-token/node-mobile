@@ -8,6 +8,7 @@ import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.selects.select
+import timber.log.Timber
 
 private const val LAST_LOCATION_TIMEOUT_MILLIS = 1000
 
@@ -22,8 +23,15 @@ class LastLocationProvider(context: Context) {
 
     private fun createFusedLocationProducer(): ReceiveChannel<Location?> {
         val channel = Channel<Location?>(1)
-        fusedLocationProvider.lastLocation.addOnCompleteListener {
-            channel.offer(it.result)
+        with(fusedLocationProvider.lastLocation) {
+            addOnSuccessListener {
+                Timber.v("Last location: $it mocked: ${it.isFromMockProvider}")
+                channel.offer(it)
+            }
+            addOnFailureListener {
+                Timber.v("Could not get location: $it")
+                channel.offer(null)
+            }
         }
         return channel
     }

@@ -1,8 +1,8 @@
 package pl.droidsonroids.minertest.message
 
 data class JobRequest(
-    override val id: String,
-    override val type: MessageType,
+    override val id: String?,
+    override val type: String?,
     val protocol: String?,
     val method: String?,
     val headers: List<Map<String, String>>?,
