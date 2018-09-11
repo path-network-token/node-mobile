@@ -1,5 +1,6 @@
 package network.path.mobilenode.message
 
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.json.MessageType
 
 data class CheckIn(
@@ -9,5 +10,7 @@ data class CheckIn(
     val lon: String? = null,
     val minerId: String?,
     val wallet: String,
-    val deviceType: String? = "android"
+    val deviceType: String? = "android",
+    val pathApiVersion: String = "1.0",
+    val nodeBuildVersion: String = BuildConfig.VERSION_NAME
 ) : MinerMessage
