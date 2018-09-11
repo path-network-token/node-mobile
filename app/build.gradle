@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "pl.droidsonroids.minertest"
+        applicationId "network.path.mobilenode"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -16,6 +16,10 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.path.network/ws"'
+        }
+        debug {
+            buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
         }
     }
 }

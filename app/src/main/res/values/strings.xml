@@ -1,21 +1,21 @@
 <resources>
-    <string name="app_name">MinerTest</string>
+    <string name="app_name">Path Node</string>
 
     <string name="wallet_hint">Path Wallet Address</string>
     <string name="save_button_label">Save</string>
     <string name="address_saved_toast">Path Wallet Address was saved</string>
 
-    <string name="start_button_text">Start Mining</string>
-    <string name="stop_button_text">Stop Mining</string>
+    <string name="start_button_text">Start Path Node</string>
+    <string name="stop_button_text">Stop Path Node</string>
 
     <string name="completed_jobs_label">Completed jobs: %d</string>
     <string name="status_label">Status: %s</string>
     <string name="state_connected">connected</string>
     <string name="state_disconnected">disconnected</string>
 
-    <string name="notification_content">Mining…</string>
+    <string name="notification_content">Path Node Running…</string>
 
-    <string name="service_started_toast">Mining is running in the background</string>
-    <string name="service_stopped_toast">Mining has been stopped</string>
+    <string name="service_started_toast">Path Node is running in the background</string>
+    <string name="service_stopped_toast">Path Node has been stopped</string>
     <string name="blank_path_wallet_address_error">Wallet address cannot be blank</string>
 </resources>
