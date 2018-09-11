@@ -11,12 +11,12 @@ import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
-import network.path.mobilenode.json.MinerGsonMessageAdapter
+import network.path.mobilenode.json.PathGsonMessageAdapter
 import network.path.mobilenode.service.OkHttpClientFactory
 
 class WebSocketClient(job: Job) {
     private val lifecycleRegistry = LifecycleRegistry()
-    val minerService: MinerService
+    val pathService: PathService
 
     init {
         job.invokeOnCompletion {
@@ -31,9 +31,9 @@ class WebSocketClient(job: Job) {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
 
-        minerService = Scarlet.Builder()
+        pathService = Scarlet.Builder()
             .webSocketFactory(webSocketFactory)
-            .addMessageAdapterFactory(MinerGsonMessageAdapter.Factory(gson))
+            .addMessageAdapterFactory(PathGsonMessageAdapter.Factory(gson))
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
             .backoffStrategy(LinearBackoffStrategy(Constants.TIMEOUT_MILLIS))
             .lifecycle(lifecycleRegistry)

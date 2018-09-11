@@ -7,16 +7,16 @@ import androidx.core.content.ContextCompat
 private val Context.foregroundServiceIntent
     get() = Intent(this, ForegroundService::class.java)
 
-fun Context.startMinerService() {
+fun Context.startPathService() {
     ContextCompat.startForegroundService(this, foregroundServiceIntent)
 }
 
-fun Context.startAndBindMinerService(serviceConnection: MinerServiceConnection) {
-    startMinerService()
+fun Context.startAndBindPathService(serviceConnection: PathServiceConnection) {
+    startPathService()
     bindService(foregroundServiceIntent, serviceConnection, 0)
 }
 
-fun Context.stopAndUnbindMinerService(serviceConnection: MinerServiceConnection) {
+fun Context.stopAndUnbindPathService(serviceConnection: PathServiceConnection) {
     unbindService(serviceConnection)
     stopService(foregroundServiceIntent)
 }

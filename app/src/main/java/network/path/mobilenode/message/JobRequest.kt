@@ -13,4 +13,4 @@ data class JobRequest(
     val degradedAfter: Long?,
     val criticalAfter: Long?,
     val jobUuid: String
-) : MinerMessage
+) : PathMessage

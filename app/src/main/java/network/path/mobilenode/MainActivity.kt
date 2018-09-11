@@ -15,13 +15,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import network.path.mobilenode.info.ConnectionStatus
 import network.path.mobilenode.info.ConnectionStatus.CONNECTED
 import network.path.mobilenode.info.ConnectionStatus.DISCONNECTED
-import network.path.mobilenode.service.MinerServiceConnection
-import network.path.mobilenode.service.startAndBindMinerService
-import network.path.mobilenode.service.stopAndUnbindMinerService
+import network.path.mobilenode.service.PathServiceConnection
+import network.path.mobilenode.service.startAndBindPathService
+import network.path.mobilenode.service.stopAndUnbindPathService
 
 class MainActivity : AppCompatActivity() {
 
-    private val serviceConnection = MinerServiceConnection(::setStatusText, ::setCompletedJobsCounterText)
+    private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsCounterText)
     private val storage by lazy { Storage(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,12 +44,12 @@ class MainActivity : AppCompatActivity() {
             onWalletAddressConfirmed()
         }
         startButton.setOnClickListener {
-            startAndBindMinerService(serviceConnection)
+            startAndBindPathService(serviceConnection)
             showToast(R.string.service_started_toast)
         }
         stopButton.setOnClickListener {
             if (storage.isServiceRunning) {
-                stopAndUnbindMinerService(serviceConnection)
+                stopAndUnbindPathService(serviceConnection)
             }
             showToast(R.string.service_stopped_toast)
         }
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleServiceState() {
         if (storage.isServiceRunning) {
-            startAndBindMinerService(serviceConnection)
+            startAndBindPathService(serviceConnection)
         } else {
             setCompletedJobsCounterText(storage.completedJobsCount)
             setStatusText(DISCONNECTED)

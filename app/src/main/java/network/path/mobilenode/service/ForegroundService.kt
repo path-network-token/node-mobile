@@ -12,15 +12,15 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.MainActivity
-import network.path.mobilenode.Miner
+import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
 import timber.log.Timber
 
-private const val WAKE_LOCK_TAG = "MinerWakeLock::Tag"
+private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
 
 private const val NOTIFICATION_ID = 3127
-private const val CHANNEL_NOTIFICATION_ID = "MinerNotificationId"
+private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
 
 class ForegroundService : Service() {
 
@@ -31,9 +31,9 @@ class ForegroundService : Service() {
     private val compositeJob = Job()
 
     private val storage by lazy { Storage(this) }
-    private val miner by lazy { Miner(compositeJob, storage, LastLocationProvider(this)) }
+    private val pathNetwork by lazy { PathNetwork(compositeJob, storage, LastLocationProvider(this)) }
 
-    override fun onBind(intent: Intent?) = MinerBinder(miner)
+    override fun onBind(intent: Intent?) = PathBinder(pathNetwork)
 
     override fun onCreate() {
         super.onCreate()
@@ -41,7 +41,7 @@ class ForegroundService : Service() {
         setUpWakeLock()
         setUpNotificationChannelId()
         startForegroundNotification()
-        miner.start()
+        pathNetwork.start()
         storage.isServiceRunning = true
     }
 
@@ -78,7 +78,7 @@ class ForegroundService : Service() {
     override fun onDestroy() {
         Timber.v("Foreground service onDestroy")
         compositeJob.cancel()
-        miner.finish()
+        pathNetwork.finish()
         wakeLock.release()
         storage.isServiceRunning = false
         super.onDestroy()

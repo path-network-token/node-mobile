@@ -4,7 +4,7 @@ import android.app.Application
 
 import timber.log.Timber
 
-class MinerApplication : Application() {
+class PathApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

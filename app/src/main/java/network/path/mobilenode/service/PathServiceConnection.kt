@@ -9,19 +9,19 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.info.ConnectionStatus
 
-class MinerServiceConnection(
+class PathServiceConnection(
     private val onStatusChange: (ConnectionStatus) -> Unit,
     private val onCompletedJobsCountChange: (Long) -> Unit
 ) : ServiceConnection {
     private val job = Job()
 
     override fun onServiceConnected(name: ComponentName, service: IBinder) {
-        val minerBinder = service as MinerBinder
+        val pathBinder = service as PathBinder
         launch(context = UI, parent = job) {
-            minerBinder.receiveJobCompleted().consumeEach(onCompletedJobsCountChange)
+            pathBinder.receiveJobCompleted().consumeEach(onCompletedJobsCountChange)
         }
         launch(context = UI, parent = job) {
-            minerBinder.receiveConnectionStatus().consumeEach(onStatusChange)
+            pathBinder.receiveConnectionStatus().consumeEach(onStatusChange)
         }
     }
 

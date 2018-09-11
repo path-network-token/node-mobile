@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty
 private const val PATH_ADDRESS_KEY = "PATH_ADDRESS_KEY"
 private const val PATH_DEFAULT_WALLET_ADDRESS = "0xF1CD6d591161A7470db74d7556876A7b5C6B9135"
 
-private const val MINER_ID_KEY = "MINER_ID_KEY"
+private const val NODE_ID_KEY = "NODE_ID_KEY"
 private const val COMPLETED_JOBS_KEY = "COMPLETED_JOBS_KEY"
 private const val IS_SERVICE_RUNNING_KEY = "IS_SERVICE_RUNNING_KEY"
 
@@ -15,7 +15,7 @@ class Storage(context: Context) {
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     var pathWalletAddress by stringPref(PATH_ADDRESS_KEY, PATH_DEFAULT_WALLET_ADDRESS)
-    var minerId by nullableStringPref(MINER_ID_KEY)
+    var nodeId by nullableStringPref(NODE_ID_KEY)
     var completedJobsCount by longPref(COMPLETED_JOBS_KEY)
     var isServiceRunning by booleanPref(IS_SERVICE_RUNNING_KEY)
 

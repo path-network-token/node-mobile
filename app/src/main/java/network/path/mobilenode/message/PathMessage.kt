@@ -2,7 +2,7 @@ package network.path.mobilenode.message
 
 import java.util.*
 
-interface MinerMessage {
+interface PathMessage {
     val id: String?
     val type: String?
 }

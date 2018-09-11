@@ -21,13 +21,13 @@ import timber.log.Timber
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 private const val RECONNECT_DELAY_MILLIS = 37_000L
 
-class Miner(
+class PathNetwork(
     private val job: Job,
     private val storage: Storage,
     private val lastLocationProvider: LastLocationProvider
 ) {
     private val webSocketClient = WebSocketClient(job)
-    private val minerService = webSocketClient.minerService
+    private val pathService = webSocketClient.pathService
     private var timeoutJob = Job()
 
     private val jobCompletedChannel = ConflatedBroadcastChannel(storage.completedJobsCount)
@@ -52,7 +52,7 @@ class Miner(
     }
 
     private fun registerConnectionOpenedHandler() = launchInBackground {
-        minerService.receiveWebSocketEvent()
+        pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
             .consumeEach {
                 connectionStatusChannel.offer(CONNECTED)
@@ -61,7 +61,7 @@ class Miner(
     }
 
     private fun registerJobRequestHandler() = launchInBackground {
-        minerService.receiveJobRequest().consumeEach { jobRequest ->
+        pathService.receiveJobRequest().consumeEach { jobRequest ->
             Timber.d("job request from server: $jobRequest")
             sendAck(jobRequest)
             val runner = jobRequest.getRunner()
@@ -72,7 +72,7 @@ class Miner(
 
     private suspend fun runJob(runner: Runner, jobRequest: JobRequest) {
         val jobResult = runner.runJob(jobRequest)
-        minerService.sendJobResult(jobResult)
+        pathService.sendJobResult(jobResult)
         Timber.v("job result sent: $jobResult")
     }
 
@@ -83,25 +83,25 @@ class Miner(
 
     private fun sendAck(jobRequest: JobRequest) {
         val ack = Ack(id = jobRequest.id)
-        minerService.sendAck(ack)
+        pathService.sendAck(ack)
         Timber.d("ack sent: $ack")
     }
 
     private fun registerErrorHandler() = launchInBackground {
-        minerService.receiveError().consumeEach {
+        pathService.receiveError().consumeEach {
             Timber.w("error from server: $it")
         }
     }
 
     private fun registerAckHandler() = launchInBackground {
-        minerService.receiveAck().consumeEach {
+        pathService.receiveAck().consumeEach {
             Timber.d("ack from server: $it")
-            storage.minerId = it.minerId
+            storage.nodeId = it.nodeId
         }
     }
 
     private fun registerWatchdogResetHandler() = launchInBackground {
-        minerService.receiveWebSocketEvent()
+        pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnMessageReceived }
             .consumeEach {
                 resetWatchdog()
@@ -123,7 +123,7 @@ class Miner(
         val checkIn = createCheckInMessage()
         Timber.d("client check in: $checkIn")
 
-        minerService.sendCheckIn(checkIn)
+        pathService.sendCheckIn(checkIn)
         delay(intervalMillis)
         sendHeartbeat(intervalMillis)
     }
@@ -132,14 +132,14 @@ class Miner(
         val lastLocation = lastLocationProvider.getLastLocationOrNull()
         return if (lastLocation != null && !lastLocation.isFromMockProvider) {
             CheckIn(
-                minerId = storage.minerId,
+                nodeId = storage.nodeId,
                 wallet = storage.pathWalletAddress,
                 lat = lastLocation.latitude.toString(),
                 lon = lastLocation.longitude.toString()
             )
         } else {
             CheckIn(
-                minerId = storage.minerId,
+                nodeId = storage.nodeId,
                 wallet = storage.pathWalletAddress
             )
         }

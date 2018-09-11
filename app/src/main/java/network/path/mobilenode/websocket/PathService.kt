@@ -6,7 +6,7 @@ import com.tinder.scarlet.ws.Send
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import network.path.mobilenode.message.*
 
-interface MinerService {
+interface PathService {
     @Receive
     fun receiveWebSocketEvent(): ReceiveChannel<WebSocket.Event>
 
@@ -23,7 +23,7 @@ interface MinerService {
     fun receiveJobRequest(): ReceiveChannel<JobRequest>
 
     @Receive
-    fun receiveError(): ReceiveChannel<MinerError>
+    fun receiveError(): ReceiveChannel<PathError>
 
     @Receive
     fun receiveAck(): ReceiveChannel<Ack>

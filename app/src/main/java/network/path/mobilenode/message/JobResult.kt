@@ -9,4 +9,4 @@ data class JobResult(
     val status: String,
     val responseTime: Long,
     val responseBody: String
-) : MinerMessage
+) : PathMessage
