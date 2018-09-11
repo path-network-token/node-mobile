@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
@@ -8,7 +9,7 @@ android {
         applicationId "network.path.mobilenode"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
+        versionCode 3
         versionName "1.0.1"
     }
 
@@ -53,4 +54,7 @@ dependencies {
     implementation "com.github.tinder.scarlet:scarlet-websocket-okhttp:$scarlet_version"
     implementation "com.github.tinder.scarlet:scarlet-message-adapter-gson:$scarlet_version"
     implementation "com.github.tinder.scarlet:scarlet-stream-adapter-coroutines:$scarlet_version"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
+        transitive = true
+    }
 }

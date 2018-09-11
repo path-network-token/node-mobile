@@ -19,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
@@ -32,11 +33,16 @@
         </activity>
 
         <service android:name=".service.ForegroundService" />
+
         <receiver android:name=".service.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="527fd2797f49df936ea2585f81b0c617ebc82ca5" />
     </application>
 
 </manifest>

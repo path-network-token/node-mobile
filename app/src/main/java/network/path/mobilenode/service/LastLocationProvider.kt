@@ -24,9 +24,9 @@ class LastLocationProvider(context: Context) {
     private fun createFusedLocationProducer(): ReceiveChannel<Location?> {
         val channel = Channel<Location?>(1)
         with(fusedLocationProvider.lastLocation) {
-            addOnSuccessListener {
-                Timber.v("Last location: $it mocked: ${it.isFromMockProvider}")
-                channel.offer(it)
+            addOnSuccessListener { location: Location? ->
+                Timber.v("Last location: $location mocked: ${location?.isFromMockProvider}")
+                channel.offer(location)
             }
             addOnFailureListener {
                 Timber.v("Could not get location: $it")
