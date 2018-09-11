@@ -5,7 +5,7 @@ import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
 private const val PATH_ADDRESS_KEY = "PATH_ADDRESS_KEY"
-private const val PATH_DEFAULT_WALLET_ADDRESS = "0xF1CD6d591161A7470db74d7556876A7b5C6B9135"
+private const val PATH_DEFAULT_WALLET_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 private const val NODE_ID_KEY = "NODE_ID_KEY"
 private const val COMPLETED_JOBS_KEY = "COMPLETED_JOBS_KEY"

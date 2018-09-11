@@ -12,10 +12,20 @@ android {
         versionName "1.0.1"
     }
 
+    signingConfigs {
+        release {
+            storeFile file(keystorePath)
+            storePassword keystorePassword
+            keyAlias keyAliasName
+            keyPassword keyAliasPassword
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.path.network/ws"'
         }
         debug {

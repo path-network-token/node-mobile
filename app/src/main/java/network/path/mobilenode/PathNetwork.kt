@@ -96,7 +96,9 @@ class PathNetwork(
     private fun registerAckHandler() = launchInBackground {
         pathService.receiveAck().consumeEach {
             Timber.d("ack from server: $it")
-            storage.nodeId = it.nodeId
+            if (storage.nodeId == null) {
+                storage.nodeId = it.nodeId
+            }
         }
     }
 

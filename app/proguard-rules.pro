@@ -6,4 +6,4 @@
 # hide the original source file name.
 -renamesourcefileattribute SourceFile
 
--keepclassmembers class network.path.mobilenode.message.* { <fields>; }
+-keep class network.path.mobilenode.message.* { *; }
