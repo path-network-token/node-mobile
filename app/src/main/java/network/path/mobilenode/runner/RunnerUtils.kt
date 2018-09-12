@@ -21,19 +21,20 @@ fun JobRequest.getRunner() = when {
 
 suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
-    var status: String
-    var requestDurationMillis: Long
+    var isResponseKnown = false
 
-    try {
-        requestDurationMillis = measureRealtimeMillis {
+    val requestDurationMillis = measureRealtimeMillis {
+        try {
             responseBody = block(jobRequest)
+            isResponseKnown = true
+        } catch (e: IOException) {
+            responseBody = e.message ?: ""
         }
+    }
 
-        status = calculateJobStatus(requestDurationMillis, jobRequest)
-    } catch (e: IOException) {
-        requestDurationMillis = 0L
-        responseBody = e.message ?: ""
-        status = Status.UNKNOWN
+    val status = when (isResponseKnown) {
+        true -> calculateJobStatus(requestDurationMillis, jobRequest)
+        false -> Status.UNKNOWN
     }
 
     return JobResult(
