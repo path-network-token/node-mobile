@@ -1,4 +1,4 @@
-package network.path.mobilenode
+package network.path.mobilenode.ui
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
@@ -12,6 +12,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
+import network.path.mobilenode.R
+import network.path.mobilenode.Storage
 import network.path.mobilenode.info.ConnectionStatus
 import network.path.mobilenode.info.ConnectionStatus.CONNECTED
 import network.path.mobilenode.info.ConnectionStatus.DISCONNECTED

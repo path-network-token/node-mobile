@@ -11,7 +11,7 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.experimental.Job
-import network.path.mobilenode.MainActivity
+import network.path.mobilenode.ui.MainActivity
 import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
