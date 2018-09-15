@@ -4,17 +4,20 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
-import network.path.mobilenode.ui.MainActivity
 import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
+import network.path.mobilenode.ui.MainActivity
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ext.android.bindScope
+import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 
 private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
@@ -22,21 +25,22 @@ private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
 private const val NOTIFICATION_ID = 3127
 private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
 
-class ForegroundService : Service() {
+class ForegroundService : LifecycleService() {
 
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
-    private val compositeJob = Job()
 
-    private val storage by lazy { Storage(this) }
-    private val pathNetwork by lazy { PathNetwork(compositeJob, storage, LastLocationProvider(this)) }
+    private val compositeJob by inject<Job>()
+    private val storage by inject<Storage>()
+    private val pathNetwork by inject<PathNetwork>()
 
     override fun onBind(intent: Intent?) = PathBinder(pathNetwork)
 
     override fun onCreate() {
         super.onCreate()
+        bindScope(getOrCreateScope("service"))
         Timber.v("Foreground service onCreate")
         setUpWakeLock()
         setUpNotificationChannelId()

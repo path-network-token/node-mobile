@@ -11,14 +11,6 @@ private const val DEGRADED_TIMEOUT_MILLIS = 1000L
 private const val CRITICAL_TIMEOUT_MILLIS = 2000L
 private const val BODY_LENGTH_BYTES_MAX = 1 shl 15
 
-fun JobRequest.getRunner() = when {
-    protocol == null -> FallbackRunner
-    protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner()
-    protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
-    protocol.startsWith(prefix = "udp", ignoreCase = true) -> UdpRunner()
-    else -> FallbackRunner
-}
-
 suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
     var isResponseKnown = false

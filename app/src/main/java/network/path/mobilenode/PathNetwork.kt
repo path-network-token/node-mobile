@@ -13,7 +13,7 @@ import network.path.mobilenode.message.Ack
 import network.path.mobilenode.message.CheckIn
 import network.path.mobilenode.message.JobRequest
 import network.path.mobilenode.runner.Runner
-import network.path.mobilenode.runner.getRunner
+import network.path.mobilenode.runner.Runners
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.websocket.WebSocketClient
 import timber.log.Timber
@@ -24,9 +24,10 @@ private const val RECONNECT_DELAY_MILLIS = 37_000L
 class PathNetwork(
     private val job: Job,
     private val storage: Storage,
-    private val lastLocationProvider: LastLocationProvider
+    private val lastLocationProvider: LastLocationProvider,
+    private val webSocketClient: WebSocketClient,
+    private val runners: Runners
 ) {
-    private val webSocketClient = WebSocketClient(job)
     private val pathService = webSocketClient.pathService
     private var timeoutJob = Job()
 
@@ -64,7 +65,7 @@ class PathNetwork(
         pathService.receiveJobRequest().consumeEach { jobRequest ->
             Timber.d("job request from server: $jobRequest")
             sendAck(jobRequest)
-            val runner = jobRequest.getRunner()
+            val runner = runners[jobRequest]
             runJob(runner, jobRequest)
             dispatchCompletedJobCount()
         }
