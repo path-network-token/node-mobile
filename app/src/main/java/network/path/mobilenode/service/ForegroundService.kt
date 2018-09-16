@@ -36,7 +36,10 @@ class ForegroundService : LifecycleService() {
     private val storage by inject<Storage>()
     private val pathNetwork by inject<PathNetwork>()
 
-    override fun onBind(intent: Intent?) = PathBinder(pathNetwork)
+    override fun onBind(intent: Intent): PathBinder {
+        super.onBind(intent)
+        return PathBinder(pathNetwork)
+    }
 
     override fun onCreate() {
         super.onCreate()
