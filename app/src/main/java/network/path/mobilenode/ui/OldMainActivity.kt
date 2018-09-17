@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_old_main.*
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
 import network.path.mobilenode.info.ConnectionStatus
@@ -21,14 +21,15 @@ import network.path.mobilenode.service.PathServiceConnection
 import network.path.mobilenode.service.startAndBindPathService
 import network.path.mobilenode.service.stopAndUnbindPathService
 
-class MainActivity : AppCompatActivity() {
+//TODO keep it until the logic is enclosed in a new UI screen version
+class OldMainActivity : AppCompatActivity() {
 
     private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsCounterText)
     private val storage by lazy { Storage(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_old_main)
         setUpView()
         handleServiceState()
         ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), 1)

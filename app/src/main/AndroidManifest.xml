@@ -19,9 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
-
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.OldMainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
@@ -43,6 +42,17 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="527fd2797f49df936ea2585f81b0c617ebc82ca5" />
+
+        <activity
+            android:name=".ui.wallet.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

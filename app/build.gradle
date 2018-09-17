@@ -72,6 +72,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versions.androidX"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+    implementation "com.google.android.material:material:$versions.materialComponents"
     kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 
     //Ktx
