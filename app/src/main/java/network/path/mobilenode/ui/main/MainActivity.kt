@@ -1,8 +1,10 @@
-package network.path.mobilenode.ui.main.wallet
+package network.path.mobilenode.ui.main
 
 import android.os.Bundle
+import androidx.fragment.app.transaction
 import network.path.mobilenode.BaseActivity
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.main.wallet.WalletFragment
 import org.koin.android.architecture.ext.android.viewModel
 
 class MainActivity : BaseActivity() {
@@ -13,5 +15,12 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        supportFragmentManager.transaction {
+            val containerResId = R.id.fragmentContainer
+            add(containerResId, WalletFragment())
+
+            addToBackStack(null)
+        }
     }
 }
