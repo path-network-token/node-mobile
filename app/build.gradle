@@ -100,6 +100,8 @@ dependencies {
     implementation "org.koin:koin-android:$versions.koin"
     implementation "org.koin:koin-androidx-viewmodel:$versions.koin"
     implementation "org.koin:koin-androidx-scope:$versions.koin"
+    implementation "org.koin:koin-android-architecture:$versions.koinArchitecture"
+
 
     //GSON
     implementation "com.google.code.gson:gson:$versions.gson"
