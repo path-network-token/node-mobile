@@ -20,7 +20,6 @@ android {
         versionCode commitsOnBranchCount
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
     }
 
     testOptions {
@@ -97,6 +96,9 @@ dependencies {
 
     //DI
     implementation "org.koin:koin-core:$versions.koin"
+    implementation "org.koin:koin-android:$versions.koin"
+    implementation "org.koin:koin-androidx-viewmodel:$versions.koin"
+    implementation "org.koin:koin-androidx-scope:$versions.koin"
 
     //GSON
     implementation "com.google.code.gson:gson:$versions.gson"

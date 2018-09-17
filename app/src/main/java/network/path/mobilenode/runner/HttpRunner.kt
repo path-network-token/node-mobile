@@ -2,23 +2,22 @@ package network.path.mobilenode.runner
 
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.message.JobRequest
-import network.path.mobilenode.service.OkHttpClientFactory
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
 private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
 
-class HttpRunner : Runner {
+class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runHttpJob(it) }
 
     private fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)
-        val client = OkHttpClientFactory.create()
 
-        return client.newCall(request).execute().use {
+        return okHttpClient.newCall(request).execute().use {
             it.bodyStringOrEmpty()
         }
     }

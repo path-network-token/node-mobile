@@ -12,9 +12,12 @@ import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
 import network.path.mobilenode.json.PathGsonMessageAdapter
-import network.path.mobilenode.service.OkHttpClientFactory
+import okhttp3.OkHttpClient
 
-class WebSocketClient(job: Job) {
+class WebSocketClient(
+    job: Job,
+    okHttpClient: OkHttpClient
+) {
     private val lifecycleRegistry = LifecycleRegistry()
     val pathService: PathService
 
@@ -23,7 +26,6 @@ class WebSocketClient(job: Job) {
             lifecycleRegistry.onNext(Lifecycle.State.Destroyed)
         }
 
-        val okHttpClient = OkHttpClientFactory.create()
         val webSocketFactory = okHttpClient.newWebSocketFactory(BuildConfig.WEBSOCKET_SERVER_URL)
 
         val gson = GsonBuilder()

@@ -1,7 +1,7 @@
 package network.path.mobilenode.service
 
-import okhttp3.OkHttpClient
 import network.path.mobilenode.Constants
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 object OkHttpClientFactory {
