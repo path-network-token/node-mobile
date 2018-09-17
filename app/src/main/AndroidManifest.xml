@@ -19,17 +19,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
-        <activity
-            android:name=".ui.OldMainActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="sensorPortrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <service android:name=".service.ForegroundService" />
 
@@ -44,7 +33,7 @@
             android:value="527fd2797f49df936ea2585f81b0c617ebc82ca5" />
 
         <activity
-            android:name=".ui.wallet.MainActivity"
+            android:name="network.path.mobilenode.ui.main.wallet.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
             <intent-filter>

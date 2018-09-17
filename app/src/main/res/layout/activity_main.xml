@@ -17,9 +17,6 @@
         android:orientation="horizontal"
         android:background="@drawable/bottom_bar_gradient">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </FrameLayout>

@@ -1,4 +1,4 @@
-package network.path.mobilenode.ui.wallet
+package network.path.mobilenode.ui.main.wallet
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
