@@ -24,4 +24,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="bottom_bar_dashboard">Dashboard</string>
     <string name="bottom_bar_wallet">Wallet</string>
+    <string name="setup_wallet">Setup wallet</string>
+    <string name="hint_wallet_address">Wallet address</string>
+    <string name="wallet_address_info">To earn path tokens we\nneed your wallet address</string>
 </resources>

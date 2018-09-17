@@ -4,16 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.wallet.WalletFragment">
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.main.wallet.WalletFragment"
+    android:fitsSystemWindows="true">
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/setupWalletTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:fontFamily="@font/exo_bold"
+        android:textColor="@color/white"
+        android:letterSpacing="0.13"
+        android:textAllCaps="true"
+        android:lineSpacingExtra="10sp"
+        android:text="@string/setup_wallet" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_sky_blue" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="14sp"
+        android:fontFamily="@font/proxima_nova_regular"
         android:textColor="@color/white"
-        android:fontFamily="@font/exo_bold"
-        android:letterSpacing="0.13"
+        android:letterSpacing="0.07"
         android:lineSpacingExtra="10sp"
-        tools:text="SETUP WALLET" />
+        android:gravity="center_horizontal"
+        android:text="@string/wallet_address_info" />
 
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/walletAddressInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/exo_regular"
+            android:textSize="16sp"
+            android:hint="@string/hint_wallet_address"
+            android:maxLength="42"
+            android:inputType="text"
+            android:imeOptions="actionDone" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="205dp"
+        android:layout_height="50dp"
+        android:text="Link" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

@@ -1,4 +1,4 @@
-package network.path.mobilenode.ui.main.wallet
+package network.path.mobilenode.ui.main
 
 import androidx.lifecycle.ViewModel
 
