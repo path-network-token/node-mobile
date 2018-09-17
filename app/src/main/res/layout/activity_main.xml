@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,14 +11,44 @@
         android:layout_height="match_parent"
         android:background="#204060" />
 
-    <LinearLayout
+    <RadioGroup
         android:id="@+id/bottomBarLayout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
+        android:background="@drawable/bottom_bar_gradient"
         android:orientation="horizontal"
-        android:background="@drawable/bottom_bar_gradient">
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:weightSum="2">
 
-    </LinearLayout>
+        <RadioButton
+            android:id="@+id/dashboardButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/bottom_bar_dashboard_selector"
+            android:enabled="true"
+            android:gravity="center"
+            android:text="@string/bottom_bar_dashboard"
+            android:textColor="@color/bottom_bar_text_selector"
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
+
+        <RadioButton
+            android:id="@+id/walletButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/bottom_bar_wallet_selector"
+            android:gravity="center"
+            android:text="@string/bottom_bar_wallet"
+            android:textColor="@color/bottom_bar_text_selector"
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
+
+    </RadioGroup>
 
 </FrameLayout>
