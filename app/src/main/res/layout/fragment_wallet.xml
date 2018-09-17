@@ -12,7 +12,7 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="2" />
 
     <TextView
         android:id="@+id/setupWalletTextView"
@@ -29,7 +29,7 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0.3" />
 
     <View
         android:layout_width="50dp"
@@ -39,7 +39,7 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0.8" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0.8" />
 
     <Button
         android:layout_width="205dp"
@@ -88,5 +88,5 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="2" />
 </LinearLayout>
