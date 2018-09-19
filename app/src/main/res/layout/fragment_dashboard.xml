@@ -33,34 +33,43 @@
 
         <Button
             android:id="@+id/startButton"
-            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/link_button_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="@string/start_button_text"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
             app:layout_constraintEnd_toStartOf="@+id/stopButton"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_goneMarginEnd="8dp" />
 
         <Button
             android:id="@+id/stopButton"
-            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/link_button_background"
+            android:enabled="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="@string/stop_button_text"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/startButton" />
+            app:layout_constraintStart_toEndOf="@id/startButton"
+            app:layout_goneMarginEnd="8dp" />
 
         <LinearLayout
             android:id="@+id/infoLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:background="@color/colorPrimaryDark"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="8dp"
@@ -71,11 +80,25 @@
             <TextView
                 android:id="@+id/jobsCounterTextView"
                 style="@style/AppTheme.InfoTextView"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0.07"
+                android:lineSpacingExtra="10sp"
+                android:text="@string/wallet_address_info"
+                android:textColor="@color/white"
+                android:textSize="14sp"
                 tools:text="Jobs completed: 0" />
 
             <TextView
                 android:id="@+id/statusTextView"
                 style="@style/AppTheme.InfoTextView"
+                android:fontFamily="@font/proxima_nova_regular"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0.07"
+                android:lineSpacingExtra="10sp"
+                android:text="@string/wallet_address_info"
+                android:textColor="@color/white"
+                android:textSize="14sp"
                 tools:text="Status: connected" />
 
         </LinearLayout>

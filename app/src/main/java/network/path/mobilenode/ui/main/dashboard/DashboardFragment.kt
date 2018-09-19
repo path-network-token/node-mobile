@@ -37,12 +37,16 @@ class DashboardFragment : BaseFragment() {
         startButton.setOnClickListener {
             requireContext().startAndBindPathService(serviceConnection)
             showToast(R.string.service_started_toast)
+            startButton.isEnabled = false
+            stopButton.isEnabled = true
         }
         stopButton.setOnClickListener {
             if (storage.isServiceRunning) {
                 requireContext().stopAndUnbindPathService(serviceConnection)
             }
             showToast(R.string.service_stopped_toast)
+            startButton.isEnabled = true
+            stopButton.isEnabled = false
         }
 //        addressEditText.setText(storage.pathWalletAddress)
 //        addressEditText.setOnEditorActionListener { _, actionId, _ ->
