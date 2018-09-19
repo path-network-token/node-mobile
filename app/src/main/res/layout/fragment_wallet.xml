@@ -84,6 +84,7 @@
         android:layout_weight="0.8" />
 
     <Button
+        android:id="@+id/linkWalletButton"
         android:layout_width="205dp"
         android:layout_height="50dp"
         android:background="@drawable/link_button_background"
