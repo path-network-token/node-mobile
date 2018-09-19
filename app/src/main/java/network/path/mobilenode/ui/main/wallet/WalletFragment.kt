@@ -16,7 +16,7 @@ class WalletFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        walletAddressInput.setHorizontallyScrolling(false)
-        walletAddressInput.maxLines = WALLET_ADDRESS_MAX_LINES
+        walletAddressInputEditText.setHorizontallyScrolling(false)
+        walletAddressInputEditText.maxLines = WALLET_ADDRESS_MAX_LINES
     }
 }

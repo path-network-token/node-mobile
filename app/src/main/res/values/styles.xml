@@ -4,7 +4,7 @@
         parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/dark_slate_blue</item>
     </style>
 
     <style name="AppTheme.InfoTextView">
@@ -25,6 +25,10 @@
     <style name="WalletAddressInput"
         parent="Widget.Design.TextInputLayout">
         <item name="hintTextAppearance">@style/WalletAddressInput.FloatLabelAppearance</item>
+        <item name="android:textColorHint">@color/sky</item>
+        <item name="colorAccent">@color/dark_slate_blue</item>
+        <item name="colorControlNormal">@color/dark_slate_blue</item>
+        <item name="colorControlActivated">@color/dark_slate_blue</item>
     </style>
 
     <style name="WalletAddressInput.FloatLabelAppearance"

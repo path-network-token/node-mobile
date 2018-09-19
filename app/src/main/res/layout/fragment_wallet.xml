@@ -59,6 +59,7 @@
         android:layout_weight="1" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/walletAddressInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="22dp"
@@ -69,7 +70,7 @@
         android:paddingEnd="22dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/walletAddressInput"
+            android:id="@+id/walletAddressInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/exo_regular"
