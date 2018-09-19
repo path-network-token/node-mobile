@@ -1,12 +1,8 @@
 package network.path.mobilenode.ui.main.dashboard
 
 import android.Manifest
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import network.path.mobilenode.BaseFragment
@@ -16,6 +12,7 @@ import network.path.mobilenode.info.ConnectionStatus
 import network.path.mobilenode.service.PathServiceConnection
 import network.path.mobilenode.service.startAndBindPathService
 import network.path.mobilenode.service.stopAndUnbindPathService
+import network.path.mobilenode.showToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
@@ -36,7 +33,7 @@ class DashboardFragment : BaseFragment() {
     private fun setupViews() {
         startButton.setOnClickListener {
             requireContext().startAndBindPathService(serviceConnection)
-            showToast(R.string.service_started_toast)
+            showToast(requireContext(), R.string.service_started_toast)
             startButton.isEnabled = false
             stopButton.isEnabled = true
         }
@@ -44,35 +41,10 @@ class DashboardFragment : BaseFragment() {
             if (storage.isServiceRunning) {
                 requireContext().stopAndUnbindPathService(serviceConnection)
             }
-            showToast(R.string.service_stopped_toast)
+            showToast(requireContext(), R.string.service_stopped_toast)
             startButton.isEnabled = true
             stopButton.isEnabled = false
         }
-//        addressEditText.setText(storage.pathWalletAddress)
-//        addressEditText.setOnEditorActionListener { _, actionId, _ ->
-//            when (actionId) {
-//                EditorInfo.IME_NULL, EditorInfo.IME_ACTION_DONE -> {
-//                    onWalletAddressConfirmed()
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
-    }
-
-    private fun onWalletAddressConfirmed() {
-//        if (addressEditText.text.isBlank()) {
-//            addressEditText.error = getString(R.string.blank_path_wallet_address_error)
-//        } else {
-//            updatePathWalletAddress()
-//            addressEditText.error = null
-//        }
-    }
-
-    private fun updatePathWalletAddress() {
-//        storage.pathWalletAddress = addressEditText.text.toString()
-        hideKeyboard()
-        showToast(R.string.address_saved_toast)
     }
 
     private fun setCompletedJobsText(count: Long) {
@@ -94,18 +66,5 @@ class DashboardFragment : BaseFragment() {
             setCompletedJobsText(storage.completedJobsCount)
             setStatusText(ConnectionStatus.DISCONNECTED)
         }
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = requireContext()
-            .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(
-            requireActivity().findViewById<View>(android.R.id.content).windowToken,
-            0
-        )
-    }
-
-    private fun showToast(@StringRes messageResId: Int) {
-        Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show()
     }
 }
