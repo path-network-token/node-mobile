@@ -7,7 +7,7 @@ import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-private const val WALLET_ADDRESS_MAX_LINES = 2
+private const val WALLET_ADDRESS_MAX_LINES = 2 //not working in XML - workaround
 
 class WalletFragment : BaseFragment() {
 

@@ -64,9 +64,6 @@
         android:layout_height="wrap_content"
         android:paddingStart="22dp"
         style="@style/WalletAddressInput"
-        android:colorControlNormal="#F00"
-        android:colorControlActivated="#0F0"
-        android:colorControlHighlight="#F0F"
         android:paddingEnd="22dp">
 
         <com.google.android.material.textfield.TextInputEditText
