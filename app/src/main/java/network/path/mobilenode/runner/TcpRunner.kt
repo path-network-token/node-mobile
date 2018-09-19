@@ -1,11 +1,9 @@
 package network.path.mobilenode.runner
 
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.Constants
 import network.path.mobilenode.message.JobRequest
 import java.net.InetSocketAddress
-import java.net.Socket
 import javax.net.SocketFactory
 
 private const val DEFAULT_TCP_PORT = 80
@@ -18,28 +16,17 @@ class TcpRunner : Runner {
         SocketFactory.getDefault().createSocket().use {
             val port = jobRequest.endpointPortOrDefault(DEFAULT_TCP_PORT)
             it.connect(InetSocketAddress(jobRequest.endpointHost, port), Constants.TIMEOUT_MILLIS.toInt())
-            it.soTimeout = Constants.TIMEOUT_MILLIS.toInt()
 
-            val response = async { it.readText() }
+            if (jobRequest.payload != null) {
+                it.soTimeout = Constants.TCP_READ_TIMEOUT_MILLIS
 
-            val payload = jobRequest.payload.orEmpty()
-            it.writeText(payload)
+                val response = async { it.readText(Constants.RESPONSE_LENGTH_BYTES_MAX) }
 
-            return response.await()
-        }
-    }
-
-    private fun Socket.readText(): String {
-        return getInputStream().bufferedReader().readText()
-    }
-
-    private suspend fun Socket.writeText(payload: String) {
-        val writeJob = launch {
-            getOutputStream().bufferedWriter().apply {
-                write(payload)
-                flush()
+                it.writeText(jobRequest.payload)
+                return response.await()
             }
+
+            return "TCP connection established successfully"
         }
-        writeJob.join()
     }
 }

@@ -1,6 +1,7 @@
 package network.path.mobilenode.runner
 
 import android.os.SystemClock
+import com.crashlytics.android.Crashlytics
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.json.Status
 import network.path.mobilenode.message.JobRequest
@@ -9,7 +10,6 @@ import java.io.IOException
 
 private const val DEGRADED_TIMEOUT_MILLIS = 1000L
 private const val CRITICAL_TIMEOUT_MILLIS = 2000L
-private const val BODY_LENGTH_BYTES_MAX = 1 shl 15
 
 suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
@@ -20,7 +20,10 @@ suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest)
             responseBody = block(jobRequest)
             isResponseKnown = true
         } catch (e: IOException) {
-            responseBody = e.message ?: ""
+            responseBody = e.message.orEmpty()
+        } catch (e: Exception) {
+            responseBody = e.message.orEmpty()
+            Crashlytics.logException(e)
         }
     }
 
@@ -32,7 +35,7 @@ suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest)
     return JobResult(
         jobUuid = jobRequest.jobUuid,
         responseTime = requestDurationMillis,
-        responseBody = responseBody.take(BODY_LENGTH_BYTES_MAX),
+        responseBody = responseBody,
         status = status
     )
 }

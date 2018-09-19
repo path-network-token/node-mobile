@@ -1,5 +1,6 @@
 package network.path.mobilenode.runner
 
+import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.message.JobRequest
 import okhttp3.HttpUrl
@@ -23,7 +24,7 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
     }
 
     private fun Response.bodyStringOrEmpty(): String {
-        val responseBody = body()?.string().orEmpty()
+        val responseBody = peekBody(Constants.RESPONSE_LENGTH_BYTES_MAX.toLong()).string()
         if (!isSuccessful) {
             throw IOException("Unsuccessful response code: ${code()}, body: $responseBody")
         }

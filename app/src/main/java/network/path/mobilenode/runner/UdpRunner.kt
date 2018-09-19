@@ -12,7 +12,7 @@ private const val DEFAULT_UDP_PORT = 67
 class UdpRunner : Runner {
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runUdpJob(it) }
 
-    private suspend fun runUdpJob(jobRequest: JobRequest): String = withTimeout(Constants.TIMEOUT_MILLIS) {
+    private suspend fun runUdpJob(jobRequest: JobRequest) = withTimeout(Constants.TIMEOUT_MILLIS) {
         val port = jobRequest.endpointPortOrDefault(DEFAULT_UDP_PORT)
 
         DatagramSocket().use {
@@ -22,6 +22,6 @@ class UdpRunner : Runner {
             val datagramPacket = DatagramPacket(body.toByteArray(), body.length, socketAddress)
             it.send(datagramPacket)
         }
-        ""
+        "UDP packet sent successfully"
     }
 }

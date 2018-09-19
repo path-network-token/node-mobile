@@ -56,7 +56,6 @@ class PathNetwork(
         pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
             .consumeEach {
-                connectionStatusChannel.offer(CONNECTED)
                 sendHeartbeat(HEARTBEAT_INTERVAL_MILLIS)
             }
     }
@@ -107,6 +106,7 @@ class PathNetwork(
         pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnMessageReceived }
             .consumeEach {
+                connectionStatusChannel.offer(CONNECTED)
                 resetWatchdog()
             }
     }

@@ -78,5 +78,4 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <color name="light_teal">#79c6e1</color>
 </resources>
