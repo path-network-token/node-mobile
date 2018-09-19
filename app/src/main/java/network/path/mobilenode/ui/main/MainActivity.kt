@@ -19,7 +19,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupViews() {
-        dashboardButton.isChecked = true
+        walletButton.isChecked = true
         supportFragmentManager.transaction {
             val containerResId = R.id.fragmentContainer
             add(containerResId, WalletFragment())
