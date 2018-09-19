@@ -24,20 +24,21 @@
     <style name="AppTheme.PopupOverlay"
         parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="WalletAddressInput"
+    <style name="AppTheme.WalletAddressInput"
         parent="Widget.Design.TextInputLayout">
-        <item name="hintTextAppearance">@style/WalletAddressInput.FloatLabelAppearance</item>
+        <item name="hintTextAppearance">@style/AppTheme.WalletAddressInput.HintAppearance</item>
         <item name="android:textColorHint">@color/sky</item>
         <item name="colorAccent">@color/dark_slate_blue</item>
         <item name="colorControlNormal">@color/dark_slate_blue</item>
         <item name="colorControlActivated">@color/dark_slate_blue</item>
     </style>
 
-    <style name="WalletAddressInput.FloatLabelAppearance"
+    <style name="AppTheme.WalletAddressInput.HintAppearance"
         parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@color/sky</item>
         <item name="android:textSize">10sp</item>
         <item name="android:fontFamily">@font/exo_bold</item>
+        <item name="android:textColorHint">@color/sky</item>
         <item name="android:textAllCaps">true</item>
     </style>
 </resources>

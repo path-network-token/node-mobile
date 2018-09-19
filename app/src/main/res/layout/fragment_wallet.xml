@@ -63,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="22dp"
-        style="@style/WalletAddressInput"
+        style="@style/AppTheme.WalletAddressInput"
         android:paddingEnd="22dp">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -76,7 +76,6 @@
             android:hint="@string/hint_wallet_address"
             android:maxLength="42"
             android:inputType="text|textNoSuggestions"
-            android:textColorHint="@color/sky"
             android:imeOptions="actionDone" />
     </com.google.android.material.textfield.TextInputLayout>
 
