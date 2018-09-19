@@ -33,7 +33,7 @@
             android:value="527fd2797f49df936ea2585f81b0c617ebc82ca5" />
 
         <activity
-            android:name="network.path.mobilenode.ui.main.MainActivity"
+            android:name="network.path.mobilenode.ui.OldMainActivity"
             android:label="@string/title_activity_main"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait"
