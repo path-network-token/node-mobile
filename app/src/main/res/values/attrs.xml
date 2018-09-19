@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LatencyChart">
+        <attr name="label" format="string|reference"/>
+        <attr name="progress_millis" format="integer|reference"/>
+        <attr name="max_millis" format="integer|reference"/>
+    </declare-styleable>
+</resources>

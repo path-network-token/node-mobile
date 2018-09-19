@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools"
+       tools:showIn="@layout/fragment_job_report">
+
+    <ProgressBar
+        android:id="@+id/latencyProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="25dp"
+        android:indeterminate="false"
+        tools:max="100"
+        tools:progress="80"
+        app:layout_constraintBottom_toBottomOf="@+id/latencyValueTextView"
+        app:layout_constraintEnd_toStartOf="@+id/latencyValueTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/latencyValueTextView" />
+
+    <TextView
+        android:id="@+id/latencyValueTextView"
+        style="@style/JobReportLinearChartValue"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        tools:text="30 sec"
+        app:layout_constraintBottom_toTopOf="@+id/latencyChartLabelTextView"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/latencyChartLabelTextView"
+        style="@style/JobReportLinearChartLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="CUSTOM CHECKS"/>
+</merge>
