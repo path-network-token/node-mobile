@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.regex.Pattern
 
@@ -15,7 +16,7 @@ class WalletFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_wallet
     override val viewModel by viewModel<WalletViewModel>()
 
-    private val storage by lazy { Storage(requireContext()) }
+    private val storage by inject<Storage>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

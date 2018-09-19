@@ -13,6 +13,7 @@ import network.path.mobilenode.service.PathServiceConnection
 import network.path.mobilenode.service.startAndBindPathService
 import network.path.mobilenode.service.stopAndUnbindPathService
 import network.path.mobilenode.showToast
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
@@ -21,7 +22,7 @@ class DashboardFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_dashboard
 
     private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsText)
-    private val storage by lazy { Storage(requireContext()) }
+    private val storage by inject<Storage>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
