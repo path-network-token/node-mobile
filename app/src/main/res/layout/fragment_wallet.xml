@@ -7,6 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".ui.main.wallet.WalletFragment"
+    android:background="@drawable/blurred_background"
     android:fitsSystemWindows="true">
 
     <Space
@@ -61,6 +62,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="22dp"
+        style="@style/WalletAddressInput"
+        android:colorControlNormal="#F00"
+        android:colorControlActivated="#0F0"
+        android:colorControlHighlight="#F0F"
         android:paddingEnd="22dp">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -69,9 +74,11 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/exo_regular"
             android:textSize="16sp"
+            android:textCursorDrawable="@null"
             android:hint="@string/hint_wallet_address"
             android:maxLength="42"
-            android:inputType="text"
+            android:inputType="text|textNoSuggestions"
+            android:textColorHint="@color/sky"
             android:imeOptions="actionDone" />
     </com.google.android.material.textfield.TextInputLayout>
 
