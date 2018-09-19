@@ -19,8 +19,6 @@
     <string name="service_stopped_toast">Path Node has been stopped</string>
     <string name="blank_path_wallet_address_error">Wallet address cannot be blank</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="bottom_bar_dashboard">Dashboard</string>
     <string name="bottom_bar_wallet">Wallet</string>
