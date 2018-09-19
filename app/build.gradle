@@ -73,6 +73,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
     implementation "com.google.android.material:material:$versions.materialComponents"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
     kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 
     //Ktx
@@ -102,7 +103,7 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$versions.koin"
     implementation "org.koin:koin-androidx-scope:$versions.koin"
     implementation "org.koin:koin-android-architecture:$versions.koinArchitecture"
-    
+
     //GSON
     implementation "com.google.code.gson:gson:$versions.gson"
 
