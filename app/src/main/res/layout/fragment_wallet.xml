@@ -87,7 +87,8 @@
     <Button
         android:layout_width="205dp"
         android:layout_height="50dp"
-        android:text="Link" />
+        android:text="@string/link_button_text"
+        android:background="@drawable/link_button_background" />
 
     <Space
         android:layout_width="0dp"

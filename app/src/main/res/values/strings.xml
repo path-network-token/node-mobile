@@ -25,4 +25,5 @@
     <string name="setup_wallet">Setup wallet</string>
     <string name="hint_wallet_address">WALLET ADDRESS</string> <!--uppercase problem workaround-->
     <string name="wallet_address_info">To earn path tokens we\nneed your wallet address</string>
+    <string name="link_button_text">Link</string>
 </resources>
