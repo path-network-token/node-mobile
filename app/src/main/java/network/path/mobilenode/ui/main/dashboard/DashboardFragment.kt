@@ -4,12 +4,11 @@ import android.Manifest
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.activity_old_main.*
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
@@ -45,29 +44,29 @@ class DashboardFragment : BaseFragment() {
             }
             showToast(R.string.service_stopped_toast)
         }
-        addressEditText.setText(storage.pathWalletAddress)
-        addressEditText.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_NULL, EditorInfo.IME_ACTION_DONE -> {
-                    onWalletAddressConfirmed()
-                    true
-                }
-                else -> false
-            }
-        }
+//        addressEditText.setText(storage.pathWalletAddress)
+//        addressEditText.setOnEditorActionListener { _, actionId, _ ->
+//            when (actionId) {
+//                EditorInfo.IME_NULL, EditorInfo.IME_ACTION_DONE -> {
+//                    onWalletAddressConfirmed()
+//                    true
+//                }
+//                else -> false
+//            }
+//        }
     }
 
     private fun onWalletAddressConfirmed() {
-        if (addressEditText.text.isBlank()) {
-            addressEditText.error = getString(R.string.blank_path_wallet_address_error)
-        } else {
-            updatePathWalletAddress()
-            addressEditText.error = null
-        }
+//        if (addressEditText.text.isBlank()) {
+//            addressEditText.error = getString(R.string.blank_path_wallet_address_error)
+//        } else {
+//            updatePathWalletAddress()
+//            addressEditText.error = null
+//        }
     }
 
     private fun updatePathWalletAddress() {
-        storage.pathWalletAddress = addressEditText.text.toString()
+//        storage.pathWalletAddress = addressEditText.text.toString()
         hideKeyboard()
         showToast(R.string.address_saved_toast)
     }
