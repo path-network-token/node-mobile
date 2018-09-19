@@ -1,7 +1,7 @@
 <resources>
 
-    <style name="AppTheme"
-        parent="Theme.AppCompat.NoActionBar">
+    <!-- TODO remove old styles after removing old UI -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/dark_slate_blue</item>
@@ -40,4 +40,46 @@
         <item name="android:textColorHint">@color/sky</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
+    <!-- end of old styles -->
+
+    <style name="JobReportLinearChartLabel">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.13</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="JobReportSectionLabel">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.17</item>
+        <item name="android:lineSpacingExtra">18sp</item>
+        <item name="android:textColor">@color/sky</item>
+    </style>
+
+    <style name="JobReportTypeButton">
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="JobReportTypeButtonActive" parent="JobReportTypeButton">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/exo_bold</item>
+    </style>
+
+    <style name="JobReportTypeButtonInactive" parent="JobReportTypeButton">
+        <item name="android:textColor">@color/light_teal</item>
+        <item name="android:fontFamily">@font/exo_medium</item>
+    </style>
+
+    <style name="JobReportLinearChartValue">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <color name="light_teal">#79c6e1</color>
 </resources>

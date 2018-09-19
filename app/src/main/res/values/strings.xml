@@ -26,4 +26,10 @@
     <string name="hint_wallet_address">WALLET ADDRESS</string> <!--uppercase problem workaround-->
     <string name="wallet_address_info">To earn path tokens we\nneed your wallet address</string>
     <string name="link_button_text">Link</string>
+
+    <string name="job_report">Job report</string>
+    <string name="job_types">Job types</string>
+    <string name="average_latency">Average latency</string>
+    <string name="latency_chart_value">%d sec</string>
+
 </resources>

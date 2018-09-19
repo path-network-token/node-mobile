@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#01579B</color>
-    <color name="colorPrimaryDark">#002f6c</color>
-    <color name="colorAccent">#01579B</color>
+    <color name="colorPrimary">@color/neon_blue</color>
+    <color name="colorPrimaryDark">@color/dark_slate_blue</color>
+    <color name="colorAccent">@color/neon_blue</color>
 
+    <!-- TODO remove those old colors after removing old UI-->
+    <color name="blue">#01579B</color>
+    <color name="darkBlue">#002f6c</color>
+    <!-- end of old colors-->
+
+    <color name="almost_black">#091117</color>
+    <color name="bluish_grey">#7c8b92</color>
     <color name="white">#ffffff</color>
     <color name="neon_blue">#00eaff</color>
-    <color name="sky">#7bdcff</color>
-    <color name="light_teal">#79c6e1</color>
     <color name="dark_sky_blue">#229bd5</color>
-    <color name="dark_slate_blue">#2d5869</color>
+    <color name="dark_slate_blue">#234e5f</color>
     <color name="sky_30">#4c7bdcff</color>
+    <color name="sky">#7bdcff</color>
+    <color name="avocado_green">#6eb223</color>
 </resources>
