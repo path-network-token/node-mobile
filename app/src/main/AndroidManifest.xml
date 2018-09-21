@@ -34,7 +34,6 @@
 
         <activity
             android:name="network.path.mobilenode.ui.main.MainActivity"
-            android:label="@string/title_activity_main"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">

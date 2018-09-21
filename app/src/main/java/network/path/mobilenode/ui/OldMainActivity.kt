@@ -36,7 +36,7 @@ class OldMainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        if (storage.isServiceRunning) {
+        if (storage.isPathNetworkEnabled) {
             unbindService(serviceConnection)
         }
         super.onDestroy()
@@ -51,7 +51,7 @@ class OldMainActivity : AppCompatActivity() {
             showToast(R.string.service_started_toast)
         }
         stopButton.setOnClickListener {
-            if (storage.isServiceRunning) {
+            if (storage.isPathNetworkEnabled) {
                 stopAndUnbindPathService(serviceConnection)
             }
             showToast(R.string.service_stopped_toast)
@@ -96,7 +96,7 @@ class OldMainActivity : AppCompatActivity() {
     }
 
     private fun handleServiceState() {
-        if (storage.isServiceRunning) {
+        if (storage.isPathNetworkEnabled) {
             startAndBindPathService(serviceConnection)
         } else {
             setCompletedJobsCounterText(storage.completedJobsCount)

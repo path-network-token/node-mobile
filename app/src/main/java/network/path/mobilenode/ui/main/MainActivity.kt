@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.activity_main.*
 import network.path.mobilenode.BaseActivity
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
@@ -17,39 +16,31 @@ class MainActivity : BaseActivity() {
 
     private val walletFragment by lazy { WalletFragment() }
     private val dashboardFragment by lazy { DashboardFragment() }
-    private var currentFragment: BaseFragment = dashboardFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupViews()
-    }
-
-    private fun setupViews() {
-        dashboardButton.isChecked = true
-        initFragments()
+        if (savedInstanceState == null) {
+            dashboardRadioButton.isChecked = true
+            initFragments()
+        }
         initBottomBar()
     }
 
     private fun initFragments() {
         supportFragmentManager.transaction {
             val containerResId = R.id.fragmentContainer
-            add(containerResId, walletFragment)
             add(containerResId, dashboardFragment)
-            hide(walletFragment)
-
-            addToBackStack(null)
         }
     }
 
     private fun initBottomBar() {
-        walletButton.setOnClickListener {
-            if (currentFragment == dashboardFragment) {
+        walletRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
                 showWalletFragment()
             }
         }
-
-        dashboardButton.setOnClickListener {
-            if (currentFragment == walletFragment) {
+        dashboardRadioButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
                 showDashboardFragment()
             }
         }
@@ -57,17 +48,13 @@ class MainActivity : BaseActivity() {
 
     private fun showWalletFragment() {
         supportFragmentManager.transaction {
-            hide(dashboardFragment)
-            show(walletFragment)
+            replace(R.id.fragmentContainer, walletFragment)
         }
-        currentFragment = walletFragment
     }
 
     private fun showDashboardFragment() {
         supportFragmentManager.transaction {
-            hide(walletFragment)
-            show(dashboardFragment)
+            replace(R.id.fragmentContainer, dashboardFragment)
         }
-        currentFragment = dashboardFragment
     }
 }

@@ -2,14 +2,14 @@ package network.path.mobilenode.ui.main.wallet
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.regex.Pattern
 
 private const val WALLET_ADDRESS_MAX_LINES = 2 //not working in XML - workaround
-private const val ETH_ADDRESS_PATTERN = "^0x[a-fA-F0-9]{40}\$"
+private val ETH_ADDRESS_REGEX = "^0x[a-fA-F0-9]{40}\$".toRegex()
 
 class WalletFragment : BaseFragment() {
 
@@ -20,6 +20,9 @@ class WalletFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (savedInstanceState == null) {
+            walletAddressInputEditText.setText(storage.pathWalletAddress)
+        }
         setupViews()
     }
 
@@ -27,10 +30,15 @@ class WalletFragment : BaseFragment() {
         with(walletAddressInputEditText) {
             setHorizontallyScrolling(false)
             maxLines = WALLET_ADDRESS_MAX_LINES
-            setText(storage.pathWalletAddress)
-            onTextChanged { onWalletAddressChanged() }
-        }
 
+            onTextChanged { onWalletAddressChanged() }
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId in arrayOf(EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL)) {
+                    updatePathWalletAddress()
+                }
+                false
+            }
+        }
         linkWalletButton.setOnClickListener { onLinkWalletAddressButtonClicked() }
     }
 
@@ -55,10 +63,7 @@ class WalletFragment : BaseFragment() {
         }
     }
 
-    private fun isValidWalletAddress(text: CharSequence) = Pattern
-        .compile(ETH_ADDRESS_PATTERN)
-        .matcher(text)
-        .matches()
+    private fun isValidWalletAddress(text: CharSequence) = ETH_ADDRESS_REGEX.matches(text)
 
     private fun onLinkWalletAddressButtonClicked() {
         updatePathWalletAddress()

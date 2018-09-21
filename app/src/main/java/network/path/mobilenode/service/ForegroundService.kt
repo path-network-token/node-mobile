@@ -13,7 +13,6 @@ import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
-import network.path.mobilenode.Storage
 import network.path.mobilenode.ui.OldMainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
@@ -33,7 +32,6 @@ class ForegroundService : LifecycleService() {
     }
 
     private val compositeJob by inject<Job>()
-    private val storage by inject<Storage>()
     private val pathNetwork by inject<PathNetwork>()
 
     override fun onBind(intent: Intent): PathBinder {
@@ -49,7 +47,6 @@ class ForegroundService : LifecycleService() {
         setUpNotificationChannelId()
         startForegroundNotification()
         pathNetwork.start()
-        storage.isServiceRunning = true
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -87,7 +84,6 @@ class ForegroundService : LifecycleService() {
         compositeJob.cancel()
         pathNetwork.finish()
         wakeLock.release()
-        storage.isServiceRunning = false
         super.onDestroy()
     }
 }

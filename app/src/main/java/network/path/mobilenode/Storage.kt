@@ -17,7 +17,7 @@ class Storage(context: Context) {
     var pathWalletAddress by stringPref(PATH_ADDRESS_KEY, PATH_DEFAULT_WALLET_ADDRESS)
     var nodeId by nullableStringPref(NODE_ID_KEY)
     var completedJobsCount by longPref(COMPLETED_JOBS_KEY)
-    var isServiceRunning by booleanPref(IS_SERVICE_RUNNING_KEY)
+    var isPathNetworkEnabled by booleanPref(IS_SERVICE_RUNNING_KEY)
 
     private fun nullableStringPref(prefKey: String, defaultValue: String? = null) =
         NullableStringStorageDelegate(prefKey, defaultValue)

@@ -20,7 +20,6 @@
     <string name="blank_path_wallet_address_error">Wallet address cannot be blank</string>
     <string name="invalid_path_wallet_address_error">Invalid wallet address</string>
 
-    <string name="title_activity_main">MainActivity</string>
     <string name="bottom_bar_dashboard">Dashboard</string>
     <string name="bottom_bar_wallet">Wallet</string>
     <string name="setup_wallet">Setup wallet</string>

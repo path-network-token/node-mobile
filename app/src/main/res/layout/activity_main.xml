@@ -33,7 +33,7 @@
         android:weightSum="2">
 
         <RadioButton
-            android:id="@+id/dashboardButton"
+            android:id="@+id/dashboardRadioButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -47,7 +47,7 @@
             tools:ignore="SmallSp" />
 
         <RadioButton
-            android:id="@+id/walletButton"
+            android:id="@+id/walletRadioButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
