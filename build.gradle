@@ -8,11 +8,12 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$versions.androidGradlePlugin"
+        classpath "com.android.tools.build:gradle:$versions.androidPlugin"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:$versions.androidJunit5"
         classpath "io.fabric.tools:gradle:$versions.fabricPlugin"
         classpath "org.ajoberstar:gradle-git:$versions.gitPlugin"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$versions.versionsPlugin"
     }
 }
 

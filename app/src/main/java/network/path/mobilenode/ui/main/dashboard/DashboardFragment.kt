@@ -27,8 +27,9 @@ class DashboardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        setupServiceConnection()
         refreshButtonsState()
+        lifecycle.addObserver(serviceConnection)
+        setupServiceConnection()
         requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
     }
 

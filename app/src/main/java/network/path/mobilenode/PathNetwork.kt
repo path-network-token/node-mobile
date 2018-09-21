@@ -1,12 +1,10 @@
 package network.path.mobilenode
 
 import com.tinder.scarlet.WebSocket
-import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.filter
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.info.ConnectionStatus.CONNECTED
 import network.path.mobilenode.info.ConnectionStatus.DISCONNECTED
 import network.path.mobilenode.message.Ack
@@ -17,6 +15,7 @@ import network.path.mobilenode.runner.Runners
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.websocket.WebSocketClient
 import timber.log.Timber
+import kotlin.coroutines.experimental.CoroutineContext
 
 private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
 private const val RECONNECT_DELAY_MILLIS = 37_000L
@@ -27,12 +26,15 @@ class PathNetwork(
     private val lastLocationProvider: LastLocationProvider,
     private val webSocketClient: WebSocketClient,
     private val runners: Runners
-) {
+) : CoroutineScope {
     private val pathService = webSocketClient.pathService
     private var timeoutJob = Job()
 
     private val jobCompletedChannel = ConflatedBroadcastChannel(storage.completedJobsCount)
     private val connectionStatusChannel = ConflatedBroadcastChannel(DISCONNECTED)
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + job
 
     fun receiveJobCompleted() = jobCompletedChannel.openSubscription()
     fun receiveConnectionStatus() = connectionStatusChannel.openSubscription()
@@ -46,13 +48,15 @@ class PathNetwork(
         registerWatchdogResetHandler()
     }
 
-    fun start() = webSocketClient.connect()
+    fun start() {
+        webSocketClient.connect()
+    }
 
     fun finish() {
         connectionStatusChannel.offer(DISCONNECTED)
     }
 
-    private fun registerConnectionOpenedHandler() = launchInBackground {
+    private fun registerConnectionOpenedHandler() = launch {
         pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnConnectionOpened<*> }
             .consumeEach {
@@ -60,7 +64,7 @@ class PathNetwork(
             }
     }
 
-    private fun registerJobRequestHandler() = launchInBackground {
+    private fun registerJobRequestHandler() = launch {
         pathService.receiveJobRequest().consumeEach { jobRequest ->
             Timber.d("job request from server: $jobRequest")
             sendAck(jobRequest)
@@ -87,13 +91,13 @@ class PathNetwork(
         Timber.d("ack sent: $ack")
     }
 
-    private fun registerErrorHandler() = launchInBackground {
+    private fun registerErrorHandler() = launch {
         pathService.receiveError().consumeEach {
             Timber.w("error from server: $it")
         }
     }
 
-    private fun registerAckHandler() = launchInBackground {
+    private fun registerAckHandler() = launch {
         pathService.receiveAck().consumeEach {
             Timber.d("ack from server: $it")
             if (storage.nodeId == null) {
@@ -102,7 +106,7 @@ class PathNetwork(
         }
     }
 
-    private fun registerWatchdogResetHandler() = launchInBackground {
+    private fun registerWatchdogResetHandler() = launch {
         pathService.receiveWebSocketEvent()
             .filter { it is WebSocket.Event.OnMessageReceived }
             .consumeEach {
@@ -114,7 +118,7 @@ class PathNetwork(
     private fun resetWatchdog() {
         Timber.w("watchdog reset")
         timeoutJob.cancel()
-        timeoutJob = launchInBackground {
+        timeoutJob = launch {
             delay(RECONNECT_DELAY_MILLIS)
             connectionStatusChannel.offer(DISCONNECTED)
             Timber.w("watchdog detected timeout")
@@ -146,9 +150,5 @@ class PathNetwork(
                 wallet = storage.pathWalletAddress
             )
         }
-    }
-
-    private fun launchInBackground(block: suspend () -> Unit): Job {
-        return launch(parent = job) { block() }
     }
 }

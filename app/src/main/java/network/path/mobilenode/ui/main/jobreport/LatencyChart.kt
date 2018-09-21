@@ -1,5 +1,6 @@
 package network.path.mobilenode.ui.main.jobreport
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -7,7 +8,10 @@ import androidx.core.content.res.use
 import kotlinx.android.synthetic.main.latency_chart.view.*
 import network.path.mobilenode.R
 
-class LatencyChart @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) :
+class LatencyChart
+@SuppressLint("Recycle") //obtainStyledAttributes recycled in ktx
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) :
     ConstraintLayout(context, attrs, defStyleAttr) {
 
     init {

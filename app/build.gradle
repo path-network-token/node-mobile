@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 apply plugin: 'de.mannodermaus.android-junit5'
-
+apply plugin: 'com.github.ben-manes.versions'
 
 final def git = Grgit.open(currentDir: projectDir)
 final def shortenedCommitHash = git.head().getAbbreviatedId()
@@ -51,6 +51,11 @@ android {
             buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 kotlin {
@@ -72,8 +77,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versions.androidX"
     implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
     implementation "com.google.android.material:material:$versions.materialComponents"
-    implementation "androidx.legacy:legacy-support-v4:$versions.androidX"
     kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 
     //Ktx

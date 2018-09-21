@@ -3,6 +3,7 @@ package network.path.mobilenode.service
 import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.channels.produce
@@ -46,7 +47,7 @@ class LastLocationProvider(context: Context) {
         }
     }
 
-    private fun createFallbackLocationProducer() = produce<Location?>(capacity = 1) {
+    private fun createFallbackLocationProducer() = GlobalScope.produce<Location?>(capacity = 1) {
         delay(LAST_LOCATION_TIMEOUT_MILLIS)
         offer(null)
     }
