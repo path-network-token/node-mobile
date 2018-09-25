@@ -11,18 +11,12 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 
 class SplashFragment : BaseFragment(), CoroutineScope {
-    private lateinit var job: Job
+    private val job: Job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
     override val layoutResId: Int = R.layout.fragment_splash
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        job = Job()
-    }
 
     override fun onDestroy() {
         super.onDestroy()
