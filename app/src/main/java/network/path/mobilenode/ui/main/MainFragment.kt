@@ -30,8 +30,7 @@ class MainFragment : BaseFragment() {
 
     private fun initFragments() {
         fragmentManager!!.transaction {
-            val containerResId = R.id.fragmentContainer
-            add(containerResId, dashboardFragment)
+            add(R.id.fragmentContainer, dashboardFragment)
         }
     }
 
