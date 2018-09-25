@@ -1,64 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/blurred_background"
-    android:fitsSystemWindows="true">
+    tools:context=".ui.main.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    <fragment
+        android:id="@+id/my_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomBarLayout" />
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/navigation_graph"
+        />
 
-    <RadioGroup
-        android:id="@+id/bottomBarLayout"
-        android:layout_width="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="80dp"
-        app:layout_constraintTop_toBottomOf="@id/fragmentContainer"
-        android:layout_gravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/bottom_bar_gradient"
-        android:orientation="horizontal"
-        android:paddingTop="20dp"
-        android:paddingBottom="16dp"
-        android:weightSum="2">
-
-        <RadioButton
-            android:id="@+id/dashboardRadioButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/bottom_bar_dashboard_selector"
-            android:enabled="true"
-            android:gravity="center"
-            android:text="@string/bottom_bar_dashboard"
-            android:textColor="@color/bottom_bar_text_selector"
-            android:textSize="10sp"
-            tools:ignore="SmallSp" />
-
-        <RadioButton
-            android:id="@+id/walletRadioButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/bottom_bar_wallet_selector"
-            android:gravity="center"
-            android:text="@string/bottom_bar_wallet"
-            android:textColor="@color/bottom_bar_text_selector"
-            android:textSize="10sp"
-            tools:ignore="SmallSp" />
-
-    </RadioGroup>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

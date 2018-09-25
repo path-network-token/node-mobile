@@ -122,4 +122,5 @@ dependencies {
     implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics") {
         transitive = true
     }
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha05'
 }
