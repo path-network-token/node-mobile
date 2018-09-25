@@ -39,7 +39,7 @@ class SplashFragment : BaseFragment(), CoroutineScope {
         launch {
             delay(delayValue)
             NavHostFragment.findNavController(this@SplashFragment)
-                .navigate(R.id.action_splashFragment_to_mainFragment)
+                .navigate(R.id.action_splashFragment_to_introFragment)
         }
     }
 }
