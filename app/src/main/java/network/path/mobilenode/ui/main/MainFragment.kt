@@ -30,7 +30,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun initFragments() {
-        activity!!.supportFragmentManager.transaction {
+        fragmentManager!!.transaction {
             val containerResId = R.id.fragmentContainer
             add(containerResId, dashboardFragment)
         }
@@ -50,13 +50,13 @@ class MainFragment : BaseFragment() {
     }
 
     private fun showWalletFragment() {
-        activity!!.supportFragmentManager.transaction {
+        fragmentManager!!.transaction {
             replace(R.id.fragmentContainer, walletFragment)
         }
     }
 
     private fun showDashboardFragment() {
-        activity!!.supportFragmentManager.transaction {
+        fragmentManager!!.transaction {
             replace(R.id.fragmentContainer, dashboardFragment)
         }
     }
