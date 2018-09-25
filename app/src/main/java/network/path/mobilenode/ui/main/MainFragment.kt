@@ -12,7 +12,6 @@ import network.path.mobilenode.ui.main.wallet.WalletFragment
 
 class MainFragment : BaseFragment() {
 
-    override val viewModel = MainFragmentViewModel()
     override val layoutResId = R.layout.fragment_main
 
     private val walletFragment by lazy { WalletFragment() }

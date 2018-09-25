@@ -16,7 +16,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
 
-    override val viewModel by viewModel<DashboardViewModel>()
     override val layoutResId = R.layout.fragment_dashboard
 
     private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsText)

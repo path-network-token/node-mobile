@@ -3,10 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@+id/splashFragment">
 
     <fragment
         android:id="@+id/mainFragment"
         android:name="network.path.mobilenode.ui.main.MainFragment"
         android:label="MainFragment" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="network.path.mobilenode.ui.splash.SplashFragment"
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment_to_mainFragment"
+            app:destination="@+id/mainFragment" />
+    </fragment>
 </navigation>

@@ -14,7 +14,6 @@ private val ETH_ADDRESS_REGEX = "^0x[a-fA-F0-9]{40}\$".toRegex()
 class WalletFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_wallet
-    override val viewModel by viewModel<WalletViewModel>()
 
     private val storage by inject<Storage>()
 

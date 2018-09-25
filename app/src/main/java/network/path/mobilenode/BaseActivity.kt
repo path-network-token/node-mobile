@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected abstract val viewModel: ViewModel
     protected abstract val layoutResId: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
