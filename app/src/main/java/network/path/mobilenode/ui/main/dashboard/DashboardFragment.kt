@@ -12,7 +12,6 @@ import network.path.mobilenode.service.PathServiceConnection
 import network.path.mobilenode.service.startAndBindPathService
 import network.path.mobilenode.showToast
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
 
@@ -36,7 +35,7 @@ class DashboardFragment : BaseFragment() {
         setCompletedJobsText(storage.completedJobsCount)
         setStatusText(ConnectionStatus.DISCONNECTED)
 
-        startButton.setOnClickListener {
+        activateButton.setOnClickListener {
             isServiceBound = requireContext().startAndBindPathService(serviceConnection)
             storage.isPathNetworkEnabled = true
             showToast(requireContext(), R.string.service_started_toast)
@@ -52,7 +51,7 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun refreshButtonsState() {
-        startButton.isEnabled = !storage.isPathNetworkEnabled
+        activateButton.isEnabled = !storage.isPathNetworkEnabled
         stopButton.isEnabled = storage.isPathNetworkEnabled
     }
 
