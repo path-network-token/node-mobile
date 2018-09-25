@@ -6,10 +6,6 @@
     app:startDestination="@+id/splashFragment">
 
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="network.path.mobilenode.ui.main.MainFragment"
-        android:label="MainFragment" />
-    <fragment
         android:id="@+id/splashFragment"
         android:name="network.path.mobilenode.ui.splash.SplashFragment"
         android:label="SplashFragment" >
@@ -17,4 +13,10 @@
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@+id/mainFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="network.path.mobilenode.ui.main.MainFragment"
+        android:label="MainFragment" />
+
 </navigation>
