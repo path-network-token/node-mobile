@@ -22,16 +22,12 @@
         android:src="@drawable/loading_node"
         tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/loadingSteps"
+    <TextSwitcher
+        android:id="@+id/loadingStepsTextSwitcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="84dp"
-        android:letterSpacing="0.13"
-        android:lineSpacingExtra="7sp"
-        android:textColor="@color/denim"
-        android:textSize="6sp"
         tools:text="CECKING ASN - COMPLETE \nCECKING OPERATOR ASN - COMPLETE \nLOCATING COUNTRY ORIGIN" />
 
     <androidx.core.widget.ContentLoadingProgressBar
