@@ -3,7 +3,6 @@ package network.path.mobilenode.ui.main.dashboard
 import android.Manifest
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import network.path.mobilenode.Storage
@@ -15,7 +14,7 @@ import org.koin.android.ext.android.inject
 
 class DashboardFragment : BaseFragment() {
 
-    override val layoutResId = R.layout.fragment_dashboard
+    override val layoutResId = R.layout.dash
 
     private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsText)
     private var isServiceBound = false
@@ -25,7 +24,6 @@ class DashboardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        refreshButtonsState()
         lifecycle.addObserver(serviceConnection)
         setupServiceConnection()
         requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
@@ -35,24 +33,19 @@ class DashboardFragment : BaseFragment() {
         setCompletedJobsText(storage.completedJobsCount)
         setStatusText(ConnectionStatus.DISCONNECTED)
 
-        activateButton.setOnClickListener {
+
             isServiceBound = requireContext().startAndBindPathService(serviceConnection)
             storage.isPathNetworkEnabled = true
             showToast(requireContext(), R.string.service_started_toast)
-            refreshButtonsState()
-        }
 
-        stopButton.setOnClickListener {
+
+
+
             storage.isPathNetworkEnabled = false
             releaseServiceConnection()
             showToast(requireContext(), R.string.service_stopped_toast)
-            refreshButtonsState()
-        }
-    }
 
-    private fun refreshButtonsState() {
-        activateButton.isEnabled = !storage.isPathNetworkEnabled
-        stopButton.isEnabled = storage.isPathNetworkEnabled
+
     }
 
     private fun setCompletedJobsText(count: Long) {

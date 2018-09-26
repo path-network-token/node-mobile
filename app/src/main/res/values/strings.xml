@@ -32,7 +32,6 @@
     <string name="average_latency">Average latency</string>
     <string name="latency_chart_value">%d sec</string>
 
-
     <!-- Splash -->
     <string name="node">node</string>
     <string name="by_path_network">by path network</string>
@@ -42,5 +41,11 @@
     <string name="about_info_text">The Path Node app allows you to earn Tokens (PATH) while the app runs in the background. The app completes jobs and basic network monitoring tasks without impacting your device performance.</string>
     <string name="activate">activate</string>
     <string name="disclaimer">disclaimer</string>
+
+    <!-- Dashboard -->
+    <string name="operator_asn">operator asn:</string>
+    <string name="as">as:</string>
+    <string name="country">country:</string>
+    <string name="device_type">deviceType:</string>
 
 </resources>

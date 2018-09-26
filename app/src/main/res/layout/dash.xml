@@ -12,7 +12,7 @@
         android:id="@+id/subnetAddressLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:fontFamily="@font/exo_bold"
         android:background="@color/tealish"
         android:gravity="center_horizontal"
         android:letterSpacing="0.11"
@@ -21,50 +21,56 @@
         android:paddingTop="8dp"
         android:paddingEnd="24dp"
         android:paddingBottom="8dp"
+        android:layout_marginBottom="24dp"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/subnetAddress"
         tools:text="SUBNET ADDRESS" />
 
     <TextView
+        android:fontFamily="@font/exo_demi_bold"
         android:id="@+id/subnetAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:letterSpacing="0.06"
         android:textColor="@color/white"
-        android:textSize="42sp"
+        android:textSize="44sp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subnetAddressLabel"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
         tools:text="116.72.0.0/17" />
 
     <View
         android:id="@+id/separator"
         android:layout_width="50dp"
         android:layout_height="2dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
         android:background="@color/tealish"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subnetAddress" />
+        app:layout_constraintBottom_toTopOf="@+id/nodeId"
+        app:layout_constraintEnd_toEndOf="@+id/nodeId"
+        app:layout_constraintStart_toStartOf="@+id/nodeId" />
 
     <TextView
         android:id="@+id/nodeId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/exo_bold"
         android:gravity="center_horizontal"
         android:letterSpacing="0.14"
         android:lineSpacingExtra="16sp"
+        android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator"
-        tools:text="NODE ID: 4130" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="node id: 4130" />
 
     <include
         android:id="@+id/dashDetails"
