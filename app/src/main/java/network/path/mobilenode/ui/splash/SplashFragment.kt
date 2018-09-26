@@ -3,25 +3,16 @@ package network.path.mobilenode.ui.splash
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.NavHostFragment
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
-import kotlin.coroutines.experimental.CoroutineContext
 
 
 class SplashFragment : BaseFragment(), CoroutineScope {
-    private val job: Job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
 
     override val layoutResId: Int = R.layout.fragment_splash
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
