@@ -15,11 +15,6 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 class LoadingFragment : BaseFragment(), CoroutineScope {
 
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override val layoutResId = R.layout.fragment_loading
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
