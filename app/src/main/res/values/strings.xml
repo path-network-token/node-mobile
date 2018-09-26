@@ -47,5 +47,6 @@
     <string name="as">as:</string>
     <string name="country">country:</string>
     <string name="device_type">deviceType:</string>
+    <string name="view_job_report">view job report</string>
 
 </resources>
