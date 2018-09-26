@@ -1,106 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.dashboard.DashboardFragment">
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:background="@drawable/globe_background">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.OldMainActivity">
+    <TextView
+        android:id="@+id/subnetAddressLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@color/tealish"
+        android:fontFamily="@font/exo_bold"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.11"
+        android:lineSpacingExtra="7sp"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/subnetAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="SUBNET ADDRESS" />
 
-        <ImageView
-            android:id="@+id/logoImageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="80dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="80dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@null"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/path_logo"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/subnetAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/exo_demi_bold"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.06"
+        android:textColor="@color/white"
+        android:textSize="44sp"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="116.72.0.0/17" />
 
-        <Button
-            android:id="@+id/activateButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="40dp"
-            android:background="@drawable/link_button_background"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/start_button_text"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
-            app:layout_constraintEnd_toStartOf="@+id/stopButton"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_goneMarginEnd="8dp" />
+    <View
+        android:id="@+id/separator"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/tealish"
+        app:layout_constraintBottom_toTopOf="@+id/nodeId"
+        app:layout_constraintEnd_toEndOf="@+id/nodeId"
+        app:layout_constraintStart_toStartOf="@+id/nodeId" />
 
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="40dp"
-            android:background="@drawable/link_button_background"
-            android:enabled="false"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/stop_button_text"
-            app:layout_constraintBottom_toTopOf="@id/infoLinearLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/activateButton"
-            app:layout_goneMarginEnd="8dp" />
+    <ImageView
+        android:id="@+id/connectionStatusDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/dot"
+        app:layout_constraintBottom_toBottomOf="@+id/nodeId"
+        app:layout_constraintEnd_toStartOf="@+id/nodeId"
+        app:layout_constraintTop_toTopOf="@+id/nodeId"
+        tools:ignore="ContentDescription" />
 
-        <LinearLayout
-            android:id="@+id/infoLinearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+    <TextView
+        android:id="@+id/nodeId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/exo_bold"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.14"
+        android:lineSpacingExtra="16sp"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="node id: 4130" />
 
-            <TextView
-                android:id="@+id/jobsCounterTextView"
-                style="@style/AppTheme.InfoTextView"
-                android:fontFamily="@font/proxima_nova_regular"
-                android:gravity="center_horizontal"
-                android:letterSpacing="0.07"
-                android:lineSpacingExtra="10sp"
-                android:text="@string/wallet_address_info"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                tools:text="Jobs completed: 0" />
+    <include
+        android:id="@+id/dashboardDetails"
+        layout="@layout/dashboard_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nodeId" />
 
-            <TextView
-                android:id="@+id/statusTextView"
-                style="@style/AppTheme.InfoTextView"
-                android:fontFamily="@font/proxima_nova_regular"
-                android:gravity="center_horizontal"
-                android:letterSpacing="0.07"
-                android:lineSpacingExtra="10sp"
-                android:text="@string/wallet_address_info"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                tools:text="Status: connected" />
+    <include1
+        layout="@layout/view_job_report_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dashboardDetails" />
 
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
