@@ -31,9 +31,9 @@ class LoadingFragment : BaseFragment(), CoroutineScope {
 
     private fun animateLogs() {
         launch {
-            loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE")
+            loadingStepsTextSwitcher.setText("CHECKING ASN - COMPLETE")
             delay(500)
-            loadingStepsTextSwitcher.setText("CECKING OPERATOR ASN - COMPLETE")
+            loadingStepsTextSwitcher.setText("CHECKING OPERATOR ASN - COMPLETE")
             delay(500)
             loadingStepsTextSwitcher.setText("LOCATING COUNTRY ORIGIN")
         }
