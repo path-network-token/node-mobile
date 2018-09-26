@@ -33,8 +33,14 @@
     <string name="latency_chart_value">%d sec</string>
 
 
-    // Splash
+    <!-- Splash -->
     <string name="node">node</string>
     <string name="by_path_network">by path network</string>
+
+    <!-- Intro -->
+    <string name="about">about</string>
+    <string name="about_info_text">The Path Node app allows you to earn Tokens (PATH) while the app runs in the background. The app completes jobs and basic network monitoring tasks without impacting your device performance.</string>
+    <string name="activate">activate</string>
+    <string name="disclaimer">disclaimer</string>
 
 </resources>

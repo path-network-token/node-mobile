@@ -46,7 +46,7 @@ class OldMainActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             onWalletAddressConfirmed()
         }
-        startButton.setOnClickListener {
+        activateButton.setOnClickListener {
             startAndBindPathService(serviceConnection)
             showToast(R.string.service_started_toast)
         }
