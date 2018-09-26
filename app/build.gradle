@@ -72,6 +72,7 @@ dependencies {
     implementation "com.github.tinder.scarlet:scarlet-websocket-okhttp:$versions.scarlet"
     implementation "com.github.tinder.scarlet:scarlet-message-adapter-gson:$versions.scarlet"
     implementation "com.github.tinder.scarlet:scarlet-stream-adapter-coroutines:$versions.scarlet"
+    implementation "pl.droidsonroids:tracepath-android:$versions.tracepath"
 
     //Jetpack
     implementation "androidx.appcompat:appcompat:$versions.androidX"

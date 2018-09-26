@@ -11,6 +11,7 @@ class Runners(private val okHttpClient: OkHttpClient) {
             protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner(okHttpClient)
             protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
             protocol.startsWith(prefix = "udp", ignoreCase = true) -> UdpRunner()
+            method.orEmpty().startsWith(prefix = "traceroute", ignoreCase = true) -> TracepathRunner()
             else -> FallbackRunner
         }
     }
