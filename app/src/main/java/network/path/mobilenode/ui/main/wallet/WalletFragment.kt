@@ -6,7 +6,6 @@ import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.*
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val WALLET_ADDRESS_MAX_LINES = 2 //not working in XML - workaround
 private val ETH_ADDRESS_REGEX = "^0x[a-fA-F0-9]{40}\$".toRegex()
@@ -71,5 +70,10 @@ class WalletFragment : BaseFragment() {
     private fun updatePathWalletAddress() {
         storage.pathWalletAddress = walletAddressInputEditText.text.toString()
         showToast(requireContext(), R.string.address_saved_toast)
+    }
+
+
+    companion object {
+        fun newInstnace() = WalletFragment()
     }
 }

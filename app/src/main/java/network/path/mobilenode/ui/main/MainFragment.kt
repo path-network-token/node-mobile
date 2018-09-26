@@ -14,8 +14,8 @@ class MainFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_main
 
-    private val walletFragment by lazy { WalletFragment() }
-    private val dashboardFragment by lazy { DashboardFragment() }
+    private val walletFragment by lazy { WalletFragment.newInstnace() }
+    private val dashboardFragment by lazy { DashboardFragment.newInstance() }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

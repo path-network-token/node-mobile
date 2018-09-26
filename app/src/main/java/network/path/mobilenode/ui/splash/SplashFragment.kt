@@ -26,12 +26,12 @@ class SplashFragment : BaseFragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        openMainScreenAfterDelay(delayValue = 3000)
+        openMainScreenAfterDelay(delayMillis = 3000)
     }
 
-    private fun openMainScreenAfterDelay(delayValue: Long) {
+    private fun openMainScreenAfterDelay(delayMillis: Long) {
         launch {
-            delay(delayValue)
+            delay(delayMillis)
             NavHostFragment.findNavController(this@SplashFragment)
                 .navigate(R.id.action_splashFragment_to_introFragment)
         }
