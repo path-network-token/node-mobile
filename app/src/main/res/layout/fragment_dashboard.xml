@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
-    android:background="@drawable/globe_background">
+    android:background="@drawable/globe_background"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp">
 
     <TextView
         android:id="@+id/subnetAddressLabel"
@@ -52,9 +52,9 @@
         android:layout_height="2dp"
         android:layout_marginBottom="24dp"
         android:background="@color/tealish"
-        app:layout_constraintBottom_toTopOf="@+id/nodeId"
-        app:layout_constraintEnd_toEndOf="@+id/nodeId"
-        app:layout_constraintStart_toStartOf="@+id/nodeId" />
+        app:layout_constraintBottom_toTopOf="@+id/nodeIdTextView"
+        app:layout_constraintEnd_toEndOf="@+id/nodeIdTextView"
+        app:layout_constraintStart_toStartOf="@+id/nodeIdTextView" />
 
     <ImageView
         android:id="@+id/connectionStatusDot"
@@ -62,13 +62,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:src="@drawable/dot"
-        app:layout_constraintBottom_toBottomOf="@+id/nodeId"
-        app:layout_constraintEnd_toStartOf="@+id/nodeId"
-        app:layout_constraintTop_toTopOf="@+id/nodeId"
+        app:layout_constraintBottom_toBottomOf="@+id/nodeIdTextView"
+        app:layout_constraintEnd_toStartOf="@+id/nodeIdTextView"
+        app:layout_constraintTop_toTopOf="@+id/nodeIdTextView"
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/nodeId"
+        android:id="@+id/nodeIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -82,8 +82,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="node id: 4130" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/dashboardDetails"
@@ -91,10 +90,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nodeId" />
+        app:layout_constraintTop_toBottomOf="@+id/nodeIdTextView" />
 
     <include
         layout="@layout/view_job_report_button"

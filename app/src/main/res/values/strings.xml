@@ -51,5 +51,6 @@
     <string name="subnet_address">subnet address</string>
     <string name="n_a">n/a</string>
     <string name="no_data">no data</string>
+    <string name="node_id">node id: %1$d</string>
 
 </resources>
