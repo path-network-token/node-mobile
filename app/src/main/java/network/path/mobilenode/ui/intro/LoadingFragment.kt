@@ -9,7 +9,6 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_loading.*
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.android.UI
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import kotlin.coroutines.experimental.CoroutineContext
@@ -26,22 +25,32 @@ class LoadingFragment : BaseFragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        prepareSwitchTextAnimation()
+        animateLogs()
+    }
+
+    private fun animateLogs() {
+        launch {
+            loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE")
+            delay(500)
+            loadingStepsTextSwitcher.setText("CECKING OPERATOR ASN - COMPLETE")
+            delay(500)
+            loadingStepsTextSwitcher.setText("LOCATING COUNTRY ORIGIN")
+        }
+    }
+
+    private fun prepareSwitchTextAnimation() {
         loadingStepsTextSwitcher.setFactory {
             TextView(ContextThemeWrapper(context, R.style.ProgressLogs), null, 0)
         }
 
-        val inAnim = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left)
-            .apply { duration = 200 }
-        val outAnim = AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right)
-            .apply { duration = 200 }
+        val inAnim = AnimationUtils.loadAnimation(context, R.anim.slide_in_down)
+            .apply { duration = 300 }
+
+        val outAnim = AnimationUtils.loadAnimation(context, R.anim.slide_out_up)
+            .apply { duration = 300 }
 
         loadingStepsTextSwitcher.inAnimation = inAnim
         loadingStepsTextSwitcher.outAnimation = outAnim
-
-        launch {
-            loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE")
-            delay(3000)
-            loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE \\nCECKING OPERATOR ASN - COMPLETE")
-        }
     }
 }

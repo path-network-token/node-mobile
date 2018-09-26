@@ -11,7 +11,7 @@
         android:layout_height="38dp"
         android:layout_gravity="center"
         android:layout_marginTop="52dp"
-        android:src="@drawable/ic_path_logo_white"
+        android:src="@drawable/path_logo_with_text"
         tools:ignore="ContentDescription" />
 
     <ImageView
@@ -25,10 +25,9 @@
     <TextSwitcher
         android:id="@+id/loadingStepsTextSwitcher"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="84dp"
-        tools:text="CECKING ASN - COMPLETE \nCECKING OPERATOR ASN - COMPLETE \nLOCATING COUNTRY ORIGIN" />
+        android:layout_marginTop="84dp" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/loadingProgressBar"
