@@ -85,4 +85,8 @@ class DashboardFragment : BaseFragment() {
             requireContext().unbindService(serviceConnection)
         }
     }
+
+    companion object {
+        fun newInstance() = DashboardFragment()
+    }
 }
