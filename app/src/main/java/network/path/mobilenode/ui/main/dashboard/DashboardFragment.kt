@@ -12,11 +12,9 @@ import network.path.mobilenode.service.PathServiceConnection
 import network.path.mobilenode.service.startAndBindPathService
 import network.path.mobilenode.showToast
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
 
-    override val viewModel by viewModel<DashboardViewModel>()
     override val layoutResId = R.layout.fragment_dashboard
 
     private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsText)
@@ -86,5 +84,9 @@ class DashboardFragment : BaseFragment() {
             serviceConnection.disconnect()
             requireContext().unbindService(serviceConnection)
         }
+    }
+
+    companion object {
+        fun newInstance() = DashboardFragment()
     }
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="52dp"
+    android:paddingEnd="52dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/exo_bold"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.13"
+        android:lineSpacingExtra="10sp"
+        android:paddingTop="40dp"
+        android:paddingBottom="24dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        tools:text="ABOUT" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:background="@color/dark_sky_blue" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/proxima_nova_regular"
+        android:letterSpacing="0.06"
+        android:lineSpacingExtra="14sp"
+        android:paddingTop="36dp"
+        android:paddingBottom="40dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:text="The Path Node app allows you to earn Tokens (PATH) while the app runs in the background. The app completes jobs and basic network monitoring tasks without impacting your device performance." />
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/link_button_background"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="ACTIVATE"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/exo_medium"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.08"
+        android:paddingTop="52dp"
+        android:textColor="@color/sky"
+        android:textSize="12sp"
+        tools:text="DISCLAIMER" />
+
+</LinearLayout>
