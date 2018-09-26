@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:extractNativeLibs="false"
         android:name=".PathApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
