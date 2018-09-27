@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <View
+        android:id="@+id/jobReportsJobTypesStartDivider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_slate_blue"
+        app:layout_constraintBottom_toBottomOf="@id/jobReportsJobTypesLabel"
+        app:layout_constraintEnd_toStartOf="@id/jobReportsJobTypesLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/jobReportsJobTypesLabel" />
+
+    <TextView
+        android:id="@+id/jobReportsJobTypesLabel"
+        style="@style/JobReportSectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:text="@string/job_types"
+        app:layout_constraintEnd_toStartOf="@id/jobReportsJobTypesEndDivider"
+        app:layout_constraintStart_toEndOf="@id/jobReportsJobTypesStartDivider"
+        app:layout_constraintTop_toBottomOf="@id/jobReportHeaderDivider"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <View
+        android:id="@+id/jobReportsJobTypesEndDivider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_slate_blue"
+        app:layout_constraintBottom_toBottomOf="@id/jobReportsJobTypesLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/jobReportsJobTypesLabel"
+        app:layout_constraintTop_toTopOf="@id/jobReportsJobTypesLabel" />
+
+    <ProgressBar
+        android:id="@+id/jobReportCircularProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="32dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="20"
+        android:progressDrawable="@drawable/job_report_circular_progress"
+        android:secondaryProgress="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/jobReportsJobTypesLabel" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/exo_semi_bold"
+        android:letterSpacing="0.08"
+        android:textColor="@color/white"
+        android:textSize="28.8sp"
+        app:layout_constraintBottom_toBottomOf="@id/jobReportCircularProgressBar"
+        app:layout_constraintEnd_toEndOf="@id/jobReportCircularProgressBar"
+        app:layout_constraintStart_toStartOf="@id/jobReportCircularProgressBar"
+        app:layout_constraintTop_toTopOf="@id/jobReportCircularProgressBar"
+        tools:text="20%" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
