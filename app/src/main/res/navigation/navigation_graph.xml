@@ -20,6 +20,8 @@
         android:name="network.path.mobilenode.ui.intro.IntroFragment"
         android:label="IntroFragment">
         <action
+            app:popUpTo="@id/introFragment"
+            app:popUpToInclusive="true"
             android:id="@+id/action_introFragment_to_loadingFragment"
             app:destination="@id/loadingFragment" />
     </fragment>
@@ -30,6 +32,8 @@
         android:label="LoadingFragment">
         <action
             android:id="@+id/action_loadingFragment_to_mainFragment"
+            app:popUpTo="@id/loadingFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/mainFragment" />
     </fragment>
 
