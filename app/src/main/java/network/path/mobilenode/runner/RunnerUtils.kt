@@ -2,14 +2,13 @@ package network.path.mobilenode.runner
 
 import android.os.SystemClock
 import com.crashlytics.android.Crashlytics
+import network.path.mobilenode.Constants.DEFAULT_CRITICAL_TIMEOUT_MILLIS
+import network.path.mobilenode.Constants.DEFAULT_DEGRADED_TIMEOUT_MILLIS
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.json.Status
 import network.path.mobilenode.message.JobRequest
 import network.path.mobilenode.message.JobResult
 import java.io.IOException
-
-private const val DEGRADED_TIMEOUT_MILLIS = 1000L
-private const val CRITICAL_TIMEOUT_MILLIS = 2000L
 
 suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
@@ -20,9 +19,9 @@ suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest)
             responseBody = block(jobRequest)
             isResponseKnown = true
         } catch (e: IOException) {
-            responseBody = e.message.orEmpty()
+            responseBody = e.toString()
         } catch (e: Exception) {
-            responseBody = e.message.orEmpty()
+            responseBody = e.toString()
             Crashlytics.logException(e)
         }
     }
@@ -47,8 +46,8 @@ inline fun measureRealtimeMillis(block: () -> Unit): Long {
 }
 
 fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): String {
-    val degradedAfterMillis = jobRequest.degradedAfter ?: DEGRADED_TIMEOUT_MILLIS
-    val criticalAfterMillis = jobRequest.criticalAfter ?: CRITICAL_TIMEOUT_MILLIS
+    val degradedAfterMillis = jobRequest.degradedAfter ?: DEFAULT_DEGRADED_TIMEOUT_MILLIS
+    val criticalAfterMillis = jobRequest.criticalAfter ?: DEFAULT_CRITICAL_TIMEOUT_MILLIS
 
     return when {
         requestDurationMillis > degradedAfterMillis -> Status.DEGRADED

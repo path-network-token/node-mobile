@@ -8,9 +8,9 @@ object OkHttpClientFactory {
 
     fun create(): OkHttpClient {
         return OkHttpClient.Builder()
-            .readTimeout(Constants.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .writeTimeout(Constants.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .connectTimeout(Constants.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+            .readTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+            .writeTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+            .connectTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
             .build()
     }
 }
