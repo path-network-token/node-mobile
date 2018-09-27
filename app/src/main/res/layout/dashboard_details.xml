@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/operatorAsnLabel"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/operator_asn"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/AsLabel"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/autonomous_service"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/operatorAsnLabel" />
+
+    <TextView
+        android:id="@+id/countryLabel"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/country"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AsLabel" />
+
+    <TextView
+        android:id="@+id/deviceTypeLabel"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/device_type"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/countryLabel" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <TextView
+        android:id="@+id/operatorAsn"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/autonomousService"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/operatorAsn" />
+
+    <TextView
+        android:id="@+id/country"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/autonomousService" />
+
+    <TextView
+        android:id="@+id/deviceType"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/country" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

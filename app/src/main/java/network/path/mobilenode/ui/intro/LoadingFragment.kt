@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.animation.AnimationUtils
-
 import android.widget.TextView
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_loading.*
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.Main
@@ -21,17 +21,24 @@ class LoadingFragment : BaseFragment(), CoroutineScope {
         super.onViewCreated(view, savedInstanceState)
 
         prepareSwitchTextAnimation()
-        animateLogs()
+
+        launch {
+            animateLogs()
+            openMainScreen()
+        }
     }
 
-    private fun animateLogs() {
-        launch {
-            loadingStepsTextSwitcher.setText("CHECKING ASN - COMPLETE")
-            delay(500)
-            loadingStepsTextSwitcher.setText("CHECKING OPERATOR ASN - COMPLETE")
-            delay(500)
-            loadingStepsTextSwitcher.setText("LOCATING COUNTRY ORIGIN")
-        }
+    private suspend fun animateLogs() {
+        loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE")
+        delay(500)
+        loadingStepsTextSwitcher.setText("CECKING OPERATOR ASN - COMPLETE")
+        delay(500)
+        loadingStepsTextSwitcher.setText("LOCATING COUNTRY ORIGIN")
+    }
+
+    private fun openMainScreen() {
+        NavHostFragment.findNavController(this)
+            .navigate(R.id.action_loadingFragment_to_mainFragment)
     }
 
     private fun prepareSwitchTextAnimation() {

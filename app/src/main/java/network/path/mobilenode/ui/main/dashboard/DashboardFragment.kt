@@ -1,89 +1,47 @@
 package network.path.mobilenode.ui.main.dashboard
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import kotlinx.android.synthetic.main.view_job_report_button.*
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
-import network.path.mobilenode.Storage
-import network.path.mobilenode.info.ConnectionStatus
-import network.path.mobilenode.service.PathServiceConnection
-import network.path.mobilenode.service.startAndBindPathService
-import network.path.mobilenode.showToast
-import org.koin.android.ext.android.inject
 
 class DashboardFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_dashboard
 
-    private val serviceConnection = PathServiceConnection(::setStatusText, ::setCompletedJobsText)
-    private var isServiceBound = false
-
-    private val storage by inject<Storage>()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
-        refreshButtonsState()
-        lifecycle.addObserver(serviceConnection)
-        setupServiceConnection()
-        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+
+        setupClicks()
+        setNodeId(10001)
     }
 
-    private fun setupViews() {
-        setCompletedJobsText(storage.completedJobsCount)
-        setStatusText(ConnectionStatus.DISCONNECTED)
-
-        activateButton.setOnClickListener {
-            isServiceBound = requireContext().startAndBindPathService(serviceConnection)
-            storage.isPathNetworkEnabled = true
-            showToast(requireContext(), R.string.service_started_toast)
-            refreshButtonsState()
-        }
-
-        stopButton.setOnClickListener {
-            storage.isPathNetworkEnabled = false
-            releaseServiceConnection()
-            showToast(requireContext(), R.string.service_stopped_toast)
-            refreshButtonsState()
+    private fun setupClicks() {
+        viewJobReportButton.setOnClickListener {
+            // TODO: PAN-7
         }
     }
 
-    private fun refreshButtonsState() {
-        activateButton.isEnabled = !storage.isPathNetworkEnabled
-        stopButton.isEnabled = storage.isPathNetworkEnabled
+    private fun setNodeId(nodeId: Int) {
+        nodeIdTextView.text = getString(R.string.node_id, nodeId)
     }
 
-    private fun setCompletedJobsText(count: Long) {
-        jobsCounterTextView.text = getString(R.string.completed_jobs_label, count)
+    private fun colorConnectionStatusDot(isConnected: Boolean) {
+        val colorRes = if (isConnected) R.color.apple_green else R.color.coral_pink
+        connectionStatusDot.drawable.setTint(
+            ContextCompat.getColor(context!!, colorRes)
+        )
     }
 
-    private fun setStatusText(connectionStatus: ConnectionStatus) {
-        val statusResId = when (connectionStatus) {
-            ConnectionStatus.CONNECTED -> R.string.state_connected
-            ConnectionStatus.DISCONNECTED -> R.string.state_disconnected
-        }
-        statusTextView.text = getString(R.string.status_label, getString(statusResId))
-    }
-
-    private fun setupServiceConnection() {
-        if (storage.isPathNetworkEnabled) {
-            isServiceBound = requireContext().startAndBindPathService(serviceConnection)
-        }
-    }
-
-    override fun onDestroyView() {
-        releaseServiceConnection()
-        super.onDestroyView()
-    }
-
-    private fun releaseServiceConnection() {
-        if (isServiceBound) {
-            isServiceBound = false
-            serviceConnection.disconnect()
-            requireContext().unbindService(serviceConnection)
-        }
+    private fun setDashboardDetails(details: DashboardDetailsViewState) {
+        operatorAsn.text = details.operatorAsn
+        autonomousService.text = details.autonomousService
+        country.text = details.country
+        deviceType.text = details.deviceType
     }
 
     companion object {
