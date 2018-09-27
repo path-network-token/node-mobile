@@ -37,7 +37,7 @@ class WebSocketClient(
             .webSocketFactory(webSocketFactory)
             .addMessageAdapterFactory(PathGsonMessageAdapter.Factory(gson))
             .addStreamAdapterFactory(CoroutinesStreamAdapterFactory())
-            .backoffStrategy(LinearBackoffStrategy(Constants.TIMEOUT_MILLIS))
+            .backoffStrategy(LinearBackoffStrategy(Constants.JOB_TIMEOUT_MILLIS))
             .lifecycle(lifecycleRegistry)
             .build()
             .create()
