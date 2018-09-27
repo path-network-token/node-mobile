@@ -1,7 +1,9 @@
 package network.path.mobilenode.ui.main
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -10,13 +12,14 @@ import network.path.mobilenode.R
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
 
+private const val DASHBOARD_FRAGMENT_TAG = "DASHBOARD_FRAGMENT"
+
 class MainFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_main
 
     private val walletFragment by lazy { WalletFragment.newInstnace() }
     private val dashboardFragment by lazy { DashboardFragment.newInstance() }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +33,7 @@ class MainFragment : BaseFragment() {
 
     private fun initFragments() {
         fragmentManager!!.transaction {
-            add(R.id.fragmentContainer, dashboardFragment)
+            replace(R.id.fragmentContainer, dashboardFragment)
         }
     }
 
