@@ -28,7 +28,7 @@ abstract class BaseFragment : Fragment(), CoroutineScope {
         inflater.inflate(layoutResId, container, false)
 
     override fun onDestroy() {
-        super.onDestroy()
         job.cancel()
+        super.onDestroy()
     }
 }
