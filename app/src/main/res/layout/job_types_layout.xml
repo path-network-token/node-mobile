@@ -67,38 +67,33 @@
         app:layout_constraintTop_toTopOf="@id/jobReportCircularProgressBar"
         tools:text="20%" />
 
-    <network.path.mobilenode.ui.main.jobreport.JobTypeButton
-        android:id="@+id/httpChecksButton"
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/jobTypesButtonsPanel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        app:is_selected="true"
         app:layout_constraintEnd_toStartOf="@+id/centerGuideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/jobReportsJobTypesLabel"
-        app:text="Http checks" />
+        app:layout_constraintTop_toTopOf="@+id/jobReportsJobTypesLabel">
 
-    <network.path.mobilenode.ui.main.jobreport.JobTypeButton
-        android:id="@+id/dnsChecksButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:is_selected="false"
-        app:layout_constraintEnd_toStartOf="@+id/centerGuideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/httpChecksButton"
-        app:text="DNS checks" />
+        <RadioButton
+            android:id="@+id/httpChecksButton"
+            style="@style/JobTypeRadioButton"
+            android:text="@string/http_checks" />
 
-    <network.path.mobilenode.ui.main.jobreport.JobTypeButton
-        android:id="@+id/customChecksButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:is_selected="false"
-        app:layout_constraintEnd_toStartOf="@+id/centerGuideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dnsChecksButton"
-        app:text="Custom checks" />
+        <RadioButton
+            android:id="@+id/dnsChecksButton"
+            style="@style/JobTypeRadioButton"
+            android:layout_marginTop="8dp"
+            android:text="@string/dns_checks" />
+
+        <RadioButton
+            android:id="@+id/customChecksButton"
+            style="@style/JobTypeRadioButton"
+            android:layout_marginTop="8dp"
+            android:text="@string/custom_checks" />
+
+    </RadioGroup>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/centerGuideline"
