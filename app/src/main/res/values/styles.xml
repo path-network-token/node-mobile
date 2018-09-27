@@ -15,14 +15,11 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay"
-        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay"
-        parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.WalletAddressInput"
-        parent="Widget.Design.TextInputLayout">
+    <style name="AppTheme.WalletAddressInput" parent="Widget.Design.TextInputLayout">
         <item name="hintTextAppearance">@style/AppTheme.WalletAddressInput.HintAppearance</item>
         <item name="android:textColorHint">@color/sky</item>
         <item name="colorAccent">@color/dark_slate_blue</item>
@@ -30,8 +27,7 @@
         <item name="colorControlActivated">@color/dark_slate_blue</item>
     </style>
 
-    <style name="AppTheme.WalletAddressInput.HintAppearance"
-        parent="TextAppearance.Design.Hint">
+    <style name="AppTheme.WalletAddressInput.HintAppearance" parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@color/sky</item>
         <item name="android:textSize">10sp</item>
         <item name="android:fontFamily">@font/exo_bold</item>
@@ -77,6 +73,14 @@
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ProgressLogs">
+        <item name="android:letterSpacing">0.13</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:textColor">#37677a</item>
+        <item name="android:fontFamily">@font/exo_demi_bold</item>
+        <item name="android:textSize">6sp</item>
     </style>
 
 </resources>

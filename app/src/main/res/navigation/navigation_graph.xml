@@ -16,7 +16,16 @@
     <fragment
         android:id="@+id/introFragment"
         android:name="network.path.mobilenode.ui.intro.IntroFragment"
-        android:label="IntroFragment" />
+        android:label="IntroFragment" >
+        <action
+            android:id="@+id/action_introFragment_to_loadingFragment"
+            app:destination="@id/loadingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="network.path.mobilenode.ui.intro.LoadingFragment"
+        android:label="LoadingFragment" />
 
     <fragment
         android:id="@+id/mainFragment"
