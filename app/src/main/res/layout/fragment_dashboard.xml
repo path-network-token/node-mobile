@@ -97,7 +97,7 @@
         app:layout_constraintTop_toBottomOf="@+id/nodeIdTextView" />
 
     <include
-        layout="@layout/view_job_report_button"
+        layout="@layout/job_report_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
