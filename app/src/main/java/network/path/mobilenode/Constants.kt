@@ -9,6 +9,7 @@ object Constants {
     val TCP_UDP_PORT_RANGE = 1..0xFFFF
     const val DEFAULT_UDP_PORT = 67
     const val DEFAULT_TCP_PORT = 80
+    const val DEFAULT_TRACEPATH_PORT = 53
 
     const val RESPONSE_LENGTH_BYTES_MAX = 1 shl 15
 }
