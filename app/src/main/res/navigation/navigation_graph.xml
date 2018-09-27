@@ -10,7 +10,9 @@
         android:label="SplashFragment">
         <action
             android:id="@+id/action_splashFragment_to_introFragment"
-            app:destination="@id/introFragment" />
+            app:destination="@id/introFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -34,6 +36,15 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="network.path.mobilenode.ui.main.MainFragment"
-        android:label="MainFragment" />
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_jobReportFragment"
+            app:destination="@id/jobReportFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/jobReportFragment"
+        android:name="network.path.mobilenode.ui.main.jobreport.JobReportFragment"
+        android:label="JobReportFragment" />
 
 </navigation>

@@ -9,7 +9,6 @@ import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 
-
 class SplashFragment : BaseFragment(), CoroutineScope {
 
     override val layoutResId: Int = R.layout.fragment_splash

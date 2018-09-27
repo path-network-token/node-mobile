@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/jobReportsLatencyStartDivider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_slate_blue"
+        app:layout_constraintBottom_toBottomOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintEnd_toStartOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/jobReportsLatencyLabel" />
+
+    <TextView
+        android:id="@+id/jobReportsLatencyLabel"
+        style="@style/JobReportSectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/average_latency"
+        app:layout_constraintEnd_toStartOf="@id/jobReportsLatencyEndDivider"
+        app:layout_constraintStart_toEndOf="@id/jobReportsLatencyStartDivider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <View
+        android:id="@+id/jobReportsLatencyEndDivider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_slate_blue"
+        app:layout_constraintBottom_toBottomOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintTop_toTopOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <network.path.mobilenode.ui.main.jobreport.LatencyChart
+        android:id="@+id/httpLatencyChart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        app:label="@string/http_checks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jobReportsLatencyLabel"
+        app:max_millis="10000"
+        app:progress_millis="200" />
+
+    <network.path.mobilenode.ui.main.jobreport.LatencyChart
+        android:id="@+id/dnsLatencyChart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:label="@string/dns_checks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/httpLatencyChart"
+        app:max_millis="10000"
+        app:progress_millis="200" />
+
+    <network.path.mobilenode.ui.main.jobreport.LatencyChart
+        android:id="@+id/customLatencyChart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:label="@string/custom_checks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dnsLatencyChart"
+        app:max_millis="10000"
+        app:progress_millis="200" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

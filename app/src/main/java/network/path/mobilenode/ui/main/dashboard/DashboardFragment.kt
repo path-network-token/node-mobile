@@ -3,9 +3,10 @@ package network.path.mobilenode.ui.main.dashboard
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import kotlinx.android.synthetic.main.view_job_report_button.*
+import kotlinx.android.synthetic.main.job_report_button.*
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 
@@ -22,7 +23,8 @@ class DashboardFragment : BaseFragment() {
 
     private fun setupClicks() {
         viewJobReportButton.setOnClickListener {
-            // TODO: PAN-7
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.action_mainFragment_to_jobReportFragment)
         }
     }
 

@@ -4,15 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/blurred_background">
+    android:background="@drawable/blurred_background"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="16dp">
+
+    <ImageView
+        android:id="@+id/closeScreenImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/jobReportTitleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/exo_bold"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:letterSpacing="0.13"
         android:lineSpacingExtra="10sp"
         android:text="@string/job_report"
@@ -27,122 +41,29 @@
         android:id="@+id/jobReportHeaderDivider"
         android:layout_width="50dp"
         android:layout_height="2dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="16dp"
         android:background="@color/dark_sky_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/jobReportTitleTextView" />
 
-    <View
-        android:id="@+id/jobReportsJobTypesStartDivider"
+    <include
+        android:id="@+id/jobTypesLayout"
+        layout="@layout/job_types_layout"
         android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:background="@color/dark_slate_blue"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportsJobTypesLabel"
-        app:layout_constraintEnd_toStartOf="@id/jobReportsJobTypesLabel"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/jobReportsJobTypesLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/jobReportHeaderDivider" />
 
-    <TextView
-        android:id="@+id/jobReportsJobTypesLabel"
-        style="@style/JobReportSectionLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="34dp"
-        android:text="@string/job_types"
-        app:layout_constraintEnd_toStartOf="@id/jobReports_job_typesEndDivider"
-        app:layout_constraintStart_toEndOf="@id/jobReportsJobTypesStartDivider"
-        app:layout_constraintTop_toBottomOf="@id/jobReportHeaderDivider"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <View
-        android:id="@+id/jobReports_job_typesEndDivider"
+    <include
+        layout="@layout/average_latency_layout"
         android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/dark_slate_blue"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportsJobTypesLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/jobReportsJobTypesLabel"
-        app:layout_constraintTop_toTopOf="@id/jobReportsJobTypesLabel"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <ProgressBar
-        android:id="@+id/jobReportCircularProgressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="48dp"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="20"
-        android:progressDrawable="@drawable/job_report_circular_progress"
-        android:secondaryProgress="100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/jobReportsJobTypesLabel" />
-
-    <TextView
-        android:layout_width="wrap_content"
+        android:layout_marginTop="60dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/exo_semi_bold"
-        android:letterSpacing="0.08"
-        android:textColor="@color/white"
-        android:textSize="28.8sp"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintEnd_toEndOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintStart_toStartOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintTop_toTopOf="@id/jobReportCircularProgressBar"
-        tools:text="20%" />
-
-    <View
-        android:id="@+id/jobReportsLatencyStartDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="20dp"
-        android:background="@color/dark_slate_blue"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportsLatencyLabel"
-        app:layout_constraintEnd_toStartOf="@id/jobReportsLatencyLabel"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/jobReportsLatencyLabel" />
-
-    <TextView
-        android:id="@+id/jobReportsLatencyLabel"
-        style="@style/JobReportSectionLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:text="@string/average_latency"
-        app:layout_constraintBottom_toTopOf="@+id/customLatencyChart"
-        app:layout_constraintEnd_toStartOf="@id/jobReportsLatencyEndDivider"
-        app:layout_constraintStart_toEndOf="@id/jobReportsLatencyStartDivider"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <View
-        android:id="@+id/jobReportsLatencyEndDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginEnd="20dp"
-        android:background="@color/dark_slate_blue"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportsLatencyLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/jobReportsLatencyLabel"
-        app:layout_constraintTop_toTopOf="@id/jobReportsLatencyLabel"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <network.path.mobilenode.ui.main.jobreport.LatencyChart
-        android:id="@+id/customLatencyChart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:label="CUSTOM CHECKS"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:max_millis="10000"
-        app:progress_millis="200" />
+        app:layout_constraintTop_toBottomOf="@+id/jobTypesLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
