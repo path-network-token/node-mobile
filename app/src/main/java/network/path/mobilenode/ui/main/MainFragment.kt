@@ -1,18 +1,13 @@
 package network.path.mobilenode.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main.*
-
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
-
-private const val DASHBOARD_FRAGMENT_TAG = "DASHBOARD_FRAGMENT"
 
 class MainFragment : BaseFragment() {
 
@@ -32,7 +27,7 @@ class MainFragment : BaseFragment() {
     }
 
     private fun initFragments() {
-        fragmentManager!!.transaction {
+        childFragmentManager.transaction {
             replace(R.id.fragmentContainer, dashboardFragment)
         }
     }
@@ -51,13 +46,13 @@ class MainFragment : BaseFragment() {
     }
 
     private fun showWalletFragment() {
-        fragmentManager!!.transaction {
+        childFragmentManager.transaction {
             replace(R.id.fragmentContainer, walletFragment)
         }
     }
 
     private fun showDashboardFragment() {
-        fragmentManager!!.transaction {
+        childFragmentManager.transaction {
             replace(R.id.fragmentContainer, dashboardFragment)
         }
     }
