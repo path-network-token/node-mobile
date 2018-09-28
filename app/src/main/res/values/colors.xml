@@ -26,4 +26,6 @@
     <color name="apple_green">#7ed321</color>
     <color name="coral_pink">#ff576b</color>
 
+    <color name="five_percent_opacity_black">#0D000000</color>
+
 </resources>

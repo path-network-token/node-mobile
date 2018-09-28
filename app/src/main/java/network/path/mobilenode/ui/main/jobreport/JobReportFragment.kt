@@ -27,9 +27,9 @@ class JobReportFragment : BaseFragment() {
     private fun setupJobTypesClickListeners() {
         jobTypesButtonsPanel.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.httpChecksButton -> {/* TODO: PAN-8 */}
-                R.id.dnsChecksButton -> {/* TODO: PAN-8 */}
-                R.id.customChecksButton -> {/* TODO: PAN-8 */}
+                R.id.httpChecksButton -> {/* TODO: PAN-8 */ }
+                R.id.dnsChecksButton -> {/* TODO: PAN-8 */ }
+                R.id.customChecksButton -> {/* TODO: PAN-8 */ }
             }
         }
     }
