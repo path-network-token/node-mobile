@@ -6,30 +6,26 @@ import network.path.mobilenode.Storage
 import network.path.mobilenode.runner.Runners
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.OkHttpClientFactory
+import network.path.mobilenode.ui.intro.IntroViewModel
+import network.path.mobilenode.service.PathServiceLauncher
+import network.path.mobilenode.ui.splash.SplashViewModel
 import network.path.mobilenode.websocket.WebSocketClient
 import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 
 val appModule = module {
     single { Storage(androidApplication()) }
     single { LastLocationProvider(androidApplication()) }
+    single { PathServiceLauncher(androidApplication()) }
 
     scope("service") { Job() }
+
     factory { OkHttpClientFactory.create() }
     factory { Runners(get()) }
-    factory {
-        WebSocketClient(
-            job = get(),
-            okHttpClient = get()
-        )
-    }
-    factory {
-        PathNetwork(
-            job = get(),
-            lastLocationProvider = get(),
-            storage = get(),
-            webSocketClient = get(),
-            runners = get()
-        )
-    }
+    factory { WebSocketClient(get(), get()) }
+    factory { PathNetwork(get(), get(), get(), get(), get()) }
+
+    viewModel { IntroViewModel(get(), get()) }
+    viewModel { SplashViewModel(get()) }
 }

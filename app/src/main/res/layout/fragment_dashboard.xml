@@ -30,18 +30,22 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        tools:text="255.255.255.255/32"
+        tools:text="255.255.255.255/0"
+        android:lines="1"
         android:id="@+id/subnetAddress"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/exo_demi_bold"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:letterSpacing="0.06"
         android:text="@string/n_a"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="44sp"
+        app:autoSizeMaxTextSize="44sp"
+        app:autoSizeMinTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -69,7 +73,6 @@
         tools:tint="@color/coral_pink" />
 
     <TextView
-        tools:text="NODE ID: 1234"
         android:id="@+id/nodeIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,7 +87,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="NODE ID: 1234" />
 
     <include
         android:id="@+id/dashboardDetails"
@@ -102,8 +106,8 @@
         layout="@layout/job_report_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

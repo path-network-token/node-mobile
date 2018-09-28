@@ -10,13 +10,3 @@ private val Context.foregroundServiceIntent
 fun Context.startPathService() {
     ContextCompat.startForegroundService(this, foregroundServiceIntent)
 }
-
-fun Context.startAndBindPathService(serviceConnection: PathServiceConnection): Boolean {
-    startPathService()
-    return bindService(foregroundServiceIntent, serviceConnection, 0)
-}
-
-fun Context.stopAndUnbindPathService(serviceConnection: PathServiceConnection) {
-    unbindService(serviceConnection)
-    stopService(foregroundServiceIntent)
-}

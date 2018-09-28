@@ -13,7 +13,7 @@ import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.OldMainActivity
+import network.path.mobilenode.ui.main.MainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
@@ -67,7 +67,7 @@ class ForegroundService : LifecycleService() {
     }
 
     private fun startForegroundNotification() {
-        val intent = Intent(this, OldMainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         startForeground(
             NOTIFICATION_ID, NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)

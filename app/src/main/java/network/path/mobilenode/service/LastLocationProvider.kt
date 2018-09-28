@@ -11,7 +11,7 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.selects.select
 import timber.log.Timber
 
-private const val LAST_LOCATION_TIMEOUT_MILLIS = 1000
+private const val LAST_LOCATION_TIMEOUT_MILLIS = 1000L
 
 class LastLocationProvider(context: Context) {
 
