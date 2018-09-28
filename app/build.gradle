@@ -20,6 +20,7 @@ android {
         versionCode commitsOnBranchCount
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
     }
 
     testOptions {
@@ -48,7 +49,10 @@ android {
         }
         debug {
             versionNameSuffix "$shortenedCommitHash.${commitsOnBranchCount}.debug"
-            buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
+        }
+        mock {
+            initWith debug
+            buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://yehq4vtxw3nu.serveo.net"'
         }
     }
 

@@ -12,7 +12,7 @@ ext.versions = [
         fabricPlugin        : '1.25.4',
         gitPlugin           : '1.7.2',
         googleServicesPlugin: '4.0.1',
-        androidPlugin       : '3.3.0-alpha11',
+        androidPlugin       : '3.3.0-alpha12',
         versionsPlugin      : '0.20.0',
         gson                : '2.8.5',
         oldJunit            : '4.12',
@@ -21,13 +21,13 @@ ext.versions = [
         koinArchitecture    : '1.0.0-alpha-12',
         kotlin              : '1.2.71',
         lifecycle           : '2.0.0',
-        navigation          : '1.0.0-alpha05',
+        navigation          : '1.0.0-alpha06',
         location            : '15.0.1',
         materialComponents  : '1.0.0',
         mockito             : '2.21.0',
         mockitoKotlin       : '1.6.0',
         okhttp              : '3.11.0',
-        scarlet             : '0.1.4',
+        scarlet             : '0.1.5',
         timber              : '4.7.1',
-        tracepath           : '0.0.4-SNAPSHOT'
+        tracepath           : '0.0.5-SNAPSHOT'
 ]
