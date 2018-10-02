@@ -1,0 +1,11 @@
+{
+  "name": "mock-websocket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "dependencies": {
+    "ws": "^6.0.0"
+  },
+  "devDependencies": {},
+  "license": "ISC"
+}

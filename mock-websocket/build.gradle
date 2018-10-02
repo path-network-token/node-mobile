@@ -1,0 +1,10 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+task startMockServer( type: NodeTask, dependsOn: 'npmInstall' ) {
+    script = file( 'src' )
+    execOverrides {
+        it.standardInput = System.in
+    }
+}
