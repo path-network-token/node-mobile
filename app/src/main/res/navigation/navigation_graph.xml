@@ -29,6 +29,9 @@
             app:destination="@id/loadingFragment"
             app:popUpTo="@id/introFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_introFragment_to_disclaimerFragment"
+            app:destination="@id/disclaimerFragment" />
     </fragment>
 
     <fragment
@@ -55,5 +58,10 @@
         android:id="@+id/jobReportFragment"
         android:name="network.path.mobilenode.ui.main.jobreport.JobReportFragment"
         android:label="JobReportFragment" />
+
+    <fragment
+        android:id="@+id/disclaimerFragment"
+        android:name="network.path.mobilenode.ui.intro.DisclaimerFragment"
+        android:label="DisclaimerFragment" />
 
 </navigation>

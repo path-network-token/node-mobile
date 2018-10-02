@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import kotlinx.coroutines.experimental.*
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SplashFragment : BaseFragment(), CoroutineScope {
+class SplashFragment : BaseFragment() {
 
     override val layoutResId: Int = R.layout.fragment_splash
     private val viewModel by viewModel<SplashViewModel>()

@@ -7,13 +7,12 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_loading.*
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
-import kotlin.coroutines.experimental.CoroutineContext
 
-class LoadingFragment : BaseFragment(), CoroutineScope {
+class LoadingFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_loading
 

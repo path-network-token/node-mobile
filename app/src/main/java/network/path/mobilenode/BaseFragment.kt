@@ -13,7 +13,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 abstract class BaseFragment : Fragment(), CoroutineScope {
 
-    protected val job = Job()
+    private val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job

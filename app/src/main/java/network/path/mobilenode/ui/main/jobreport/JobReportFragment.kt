@@ -20,7 +20,7 @@ class JobReportFragment : BaseFragment() {
 
     private fun setupCloseScreenButton() {
         closeScreenImageView.setOnClickListener {
-            activity!!.onBackPressed()
+            requireActivity().onBackPressed()
         }
     }
 

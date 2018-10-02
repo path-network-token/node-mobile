@@ -107,4 +107,11 @@
         <item name="android:background">@drawable/link_button_background</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="DisclaimerText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/cloudy_blue</item>
+    </style>
 </resources>

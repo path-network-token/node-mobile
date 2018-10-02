@@ -13,9 +13,4 @@ class IntroViewModel(
         storage.isJobProcessingActivated = true
         serviceLauncher.startService()
     }
-
-    fun onDisclaimerClick() {
-        // TODO: PAN-35
-    }
-
 }
