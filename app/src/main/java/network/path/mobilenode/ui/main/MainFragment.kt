@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main.*
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
 

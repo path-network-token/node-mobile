@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_disclaimer.*
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.BaseFragment
 
 class DisclaimerFragment : BaseFragment() {
 

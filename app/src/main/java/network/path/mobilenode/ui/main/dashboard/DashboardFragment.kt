@@ -7,18 +7,25 @@ import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.BaseFragment
+import network.path.mobilenode.ui.observe
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_dashboard
+    private val dashboardViewModel by viewModel<DashboardViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupClicks()
-        setNodeId(10001)
+        dashboardViewModel.let {
+            it.nodeId.observe(this, ::setNodeId)
+            it.isConnected.observe(this, ::colorConnectionStatusDot)
+            it.operatorDetails.observe(this, ::setOperatorDetails)
+        }
     }
 
     private fun setupClicks() {
@@ -28,22 +35,24 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    private fun setNodeId(nodeId: Int) {
-        nodeIdTextView.text = getString(R.string.node_id, nodeId)
+    private fun setNodeId(nodeId: String?) {
+        nodeIdTextView.text = getString(
+            R.string.node_id, nodeId
+                ?: getString(R.string.unconfirmed_node_id)
+        )
     }
 
     private fun colorConnectionStatusDot(isConnected: Boolean) {
         val colorRes = if (isConnected) R.color.apple_green else R.color.coral_pink
         connectionStatusDot.drawable.setTint(
-            ContextCompat.getColor(context!!, colorRes)
+            ContextCompat.getColor(requireContext(), colorRes)
         )
     }
 
-    private fun setDashboardDetails(details: DashboardDetailsViewState) {
+    private fun setOperatorDetails(details: OperatorDetails) {
         operatorAsn.text = details.operatorAsn
         autonomousService.text = details.autonomousService
         country.text = details.country
-        deviceType.text = details.deviceType
     }
 
     companion object {

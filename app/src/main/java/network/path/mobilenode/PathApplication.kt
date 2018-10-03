@@ -5,6 +5,7 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import network.path.mobilenode.di.appModule
 import network.path.mobilenode.service.startPathService
+import network.path.mobilenode.storage.Storage
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.startKoin
 import timber.log.Timber

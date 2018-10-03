@@ -2,12 +2,14 @@ package network.path.mobilenode.di
 
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.PathNetwork
-import network.path.mobilenode.Storage
+import network.path.mobilenode.http.OkHttpClientFactory
 import network.path.mobilenode.runner.Runners
 import network.path.mobilenode.service.LastLocationProvider
-import network.path.mobilenode.service.OkHttpClientFactory
-import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.service.PathServiceLauncher
+import network.path.mobilenode.storage.PathRepository
+import network.path.mobilenode.storage.Storage
+import network.path.mobilenode.ui.intro.IntroViewModel
+import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.splash.SplashViewModel
 import network.path.mobilenode.websocket.WebSocketClient
 import org.koin.android.ext.koin.androidApplication
@@ -18,6 +20,7 @@ val appModule = module {
     single { Storage(androidApplication()) }
     single { LastLocationProvider(androidApplication()) }
     single { PathServiceLauncher(androidApplication()) }
+    single { PathRepository(get()) }
 
     scope("service") { Job() }
 
@@ -28,4 +31,5 @@ val appModule = module {
 
     viewModel { IntroViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }
+    viewModel { DashboardViewModel(get()) }
 }

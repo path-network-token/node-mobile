@@ -1,4 +1,4 @@
-package network.path.mobilenode
+package network.path.mobilenode.storage
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -16,50 +16,50 @@ class Storage(context: Context) {
 
     var pathWalletAddress by stringPref(PATH_ADDRESS_KEY, PATH_DEFAULT_WALLET_ADDRESS)
     var nodeId by nullableStringPref(NODE_ID_KEY)
-    var completedJobsCount by longPref(COMPLETED_JOBS_KEY)
     var isJobProcessingActivated by booleanPref(IS_SERVICE_RUNNING_KEY)
 
     private fun nullableStringPref(prefKey: String, defaultValue: String? = null) =
-        NullableStringStorageDelegate(prefKey, defaultValue)
+            NullableStringStorageDelegate(prefKey, defaultValue)
 
     private fun stringPref(prefKey: String, defaultValue: String) =
-        StringStorageDelegate(prefKey, defaultValue)
+            StringStorageDelegate(prefKey, defaultValue)
 
     private fun longPref(prefKey: String, defaultValue: Long = 0L) =
-        LongStorageDelegate(prefKey, defaultValue)
+            LongStorageDelegate(prefKey, defaultValue)
 
     private fun booleanPref(prefKey: String, defaultValue: Boolean = false) =
-        BooleanStorageDelegate(prefKey, defaultValue)
+            BooleanStorageDelegate(prefKey, defaultValue)
 
     inner class NullableStringStorageDelegate(private val prefKey: String, private val defaultValue: String?) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): String? =
-            sharedPreferences.getString(prefKey, defaultValue)
+                sharedPreferences.getString(prefKey, defaultValue)
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) =
-            sharedPreferences.edit().putString(prefKey, value).apply()
+                sharedPreferences.edit().putString(prefKey, value).apply()
     }
 
     inner class StringStorageDelegate(private val prefKey: String, private val defaultValue: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): String =
-            sharedPreferences.getString(prefKey, defaultValue) ?: throw IllegalStateException("a")
+                sharedPreferences.getString(prefKey, defaultValue)
+                        ?: throw IllegalStateException("a")
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) =
-            sharedPreferences.edit().putString(prefKey, value).apply()
+                sharedPreferences.edit().putString(prefKey, value).apply()
     }
 
     inner class LongStorageDelegate(private val prefKey: String, private val defaultValue: Long) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Long =
-            sharedPreferences.getLong(prefKey, defaultValue)
+                sharedPreferences.getLong(prefKey, defaultValue)
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Long) =
-            sharedPreferences.edit().putLong(prefKey, value).apply()
+                sharedPreferences.edit().putLong(prefKey, value).apply()
     }
 
     inner class BooleanStorageDelegate(private val prefKey: String, private val defaultValue: Boolean) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Boolean =
-            sharedPreferences.getBoolean(prefKey, defaultValue)
+                sharedPreferences.getBoolean(prefKey, defaultValue)
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) =
-            sharedPreferences.edit().putBoolean(prefKey, value).apply()
+                sharedPreferences.edit().putBoolean(prefKey, value).apply()
     }
 }

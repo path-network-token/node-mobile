@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.Main
-import network.path.mobilenode.Storage
+import network.path.mobilenode.storage.Storage
 import kotlin.coroutines.experimental.CoroutineContext
 
 typealias ShowScreen = Unit

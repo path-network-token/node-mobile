@@ -34,11 +34,6 @@ class ForegroundService : LifecycleService() {
     private val compositeJob by inject<Job>()
     private val pathNetwork by inject<PathNetwork>()
 
-    override fun onBind(intent: Intent): PathBinder {
-        super.onBind(intent)
-        return PathBinder(pathNetwork)
-    }
-
     override fun onCreate() {
         super.onCreate()
         bindScope(getOrCreateScope("service"))

@@ -86,7 +86,7 @@
         style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/no_data"
+        android:text="@string/android"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/country" />

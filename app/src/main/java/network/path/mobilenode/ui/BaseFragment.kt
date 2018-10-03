@@ -1,4 +1,4 @@
-package network.path.mobilenode
+package network.path.mobilenode.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,11 +21,11 @@ abstract class BaseFragment : Fragment(), CoroutineScope {
     protected abstract val layoutResId: Int
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View =
-        inflater.inflate(layoutResId, container, false)
+            inflater.inflate(layoutResId, container, false)
 
     override fun onDestroy() {
         job.cancel()

@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_job_report.*
 import kotlinx.android.synthetic.main.job_types_layout.*
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.BaseFragment
 
 class JobReportFragment : BaseFragment() {
 

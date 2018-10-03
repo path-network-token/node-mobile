@@ -9,8 +9,8 @@ import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_loading.*
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import network.path.mobilenode.BaseFragment
 import network.path.mobilenode.R
+import network.path.mobilenode.ui.BaseFragment
 
 class LoadingFragment : BaseFragment() {
 

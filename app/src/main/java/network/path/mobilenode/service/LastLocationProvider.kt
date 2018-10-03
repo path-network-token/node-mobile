@@ -3,52 +3,22 @@ package network.path.mobilenode.service
 import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.selects.select
+import kotlinx.coroutines.experimental.tasks.await
 import timber.log.Timber
-
-private const val LAST_LOCATION_TIMEOUT_MILLIS = 1000L
 
 class LastLocationProvider(context: Context) {
 
     private val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(context)
 
-    suspend fun getLastLocationOrNull(): Location? = select {
-        createFusedLocationProducer().onReceive { it }
-        createFallbackLocationProducer().onReceive { it }
-    }
+    suspend fun getLastRealLocationOrNull(): Location? {
+        return try {
+            val location = fusedLocationProvider.lastLocation.await()
+            Timber.v("$location, mocked: ${location?.isFromMockProvider}")
 
-    private fun createFusedLocationProducer(): ReceiveChannel<Location?> {
-        val channel = Channel<Location?>(1)
-        try {
-            offerLastLocation(channel)
+            return if (location?.isFromMockProvider == true) null else location
         } catch (e: SecurityException) {
             Timber.v(e)
-            channel.offer(null)
+            null
         }
-        return channel
-    }
-
-    @Throws(SecurityException::class)
-    private fun offerLastLocation(channel: Channel<Location?>) {
-        with(fusedLocationProvider.lastLocation) {
-            addOnSuccessListener { location: Location? ->
-                Timber.v("Last location: $location mocked: ${location?.isFromMockProvider}")
-                channel.offer(location)
-            }
-            addOnFailureListener {
-                Timber.v(it)
-                channel.offer(null)
-            }
-        }
-    }
-
-    private fun createFallbackLocationProducer() = GlobalScope.produce<Location?>(capacity = 1) {
-        delay(LAST_LOCATION_TIMEOUT_MILLIS)
-        offer(null)
     }
 }

@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import network.path.mobilenode.*
+import network.path.mobilenode.R
+import network.path.mobilenode.storage.Storage
+import network.path.mobilenode.ui.BaseFragment
+import network.path.mobilenode.ui.onTextChanged
+import network.path.mobilenode.ui.showToast
 import org.koin.android.ext.android.inject
 
 private const val WALLET_ADDRESS_MAX_LINES = 2 //not working in XML - workaround

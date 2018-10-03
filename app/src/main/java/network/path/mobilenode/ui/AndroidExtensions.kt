@@ -1,4 +1,4 @@
-package network.path.mobilenode
+package network.path.mobilenode.ui
 
 import android.content.Context
 import android.text.Editable
@@ -15,8 +15,7 @@ fun EditText.onTextChanged(callback: (CharSequence) -> Unit) {
 
         override fun afterTextChanged(editable: Editable?) = Unit
 
-        override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) =
-            Unit
+        override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) = Unit
     })
 }
 
