@@ -8,8 +8,8 @@ private const val PATH_ADDRESS_KEY = "PATH_ADDRESS_KEY"
 private const val PATH_DEFAULT_WALLET_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 private const val NODE_ID_KEY = "NODE_ID_KEY"
-private const val COMPLETED_JOBS_KEY = "COMPLETED_JOBS_KEY"
 private const val IS_SERVICE_RUNNING_KEY = "IS_SERVICE_RUNNING_KEY"
+//Reserved keys: "COMPLETED_JOBS_KEY"
 
 class Storage(context: Context) {
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)

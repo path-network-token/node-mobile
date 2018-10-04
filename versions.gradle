@@ -29,5 +29,7 @@ ext.versions = [
         okhttp              : '3.11.0',
         scarlet             : '0.1.5',
         timber              : '4.7.1',
-        tracepath           : '0.0.5-SNAPSHOT'
+        tracepath           : '0.0.5-SNAPSHOT',
+        retrofit            : '2.4.0',
+        retrofitCoroutines  : '1.0.0',
 ]

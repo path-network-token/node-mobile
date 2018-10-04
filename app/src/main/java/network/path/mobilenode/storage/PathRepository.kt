@@ -2,7 +2,7 @@ package network.path.mobilenode.storage
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import network.path.mobilenode.info.ConnectionStatus
+import network.path.mobilenode.model.ConnectionStatus
 
 class PathRepository(private val storage: Storage) {
 

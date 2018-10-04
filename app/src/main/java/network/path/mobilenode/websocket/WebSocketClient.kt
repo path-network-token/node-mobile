@@ -1,7 +1,6 @@
 package network.path.mobilenode.websocket
 
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.lifecycle.LifecycleRegistry
@@ -16,7 +15,8 @@ import okhttp3.OkHttpClient
 
 class WebSocketClient(
     job: Job,
-    okHttpClient: OkHttpClient
+    okHttpClient: OkHttpClient,
+    gson: Gson
 ) {
     private val lifecycleRegistry = LifecycleRegistry()
     val pathService: PathService
@@ -27,11 +27,6 @@ class WebSocketClient(
         }
 
         val webSocketFactory = okHttpClient.newWebSocketFactory(BuildConfig.WEBSOCKET_SERVER_URL)
-
-        val gson = GsonBuilder()
-            .setLenient()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .create()
 
         pathService = Scarlet.Builder()
             .webSocketFactory(webSocketFactory)

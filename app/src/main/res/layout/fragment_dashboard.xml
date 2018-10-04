@@ -25,14 +25,14 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/subnetAddress"
+        app:layout_constraintBottom_toTopOf="@+id/ipWithSubnetAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        tools:text="255.255.255.255/0"
+        tools:text="255.255.255.255/32"
         android:lines="1"
-        android:id="@+id/subnetAddress"
+        android:id="@+id/ipWithSubnetAddress"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginBottom="16dp"
@@ -70,13 +70,13 @@
         app:layout_constraintEnd_toStartOf="@+id/nodeIdTextView"
         app:layout_constraintTop_toTopOf="@+id/nodeIdTextView"
         tools:ignore="ContentDescription"
-        tools:tint="@color/coral_pink" />
+        android:tint="@color/coral_pink" />
 
     <TextView
+        app:layout_constraintVertical_bias="0.37"
         android:id="@+id/nodeIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:fontFamily="@font/exo_bold"
         android:gravity="center_horizontal"
         android:letterSpacing="0.14"
@@ -95,9 +95,9 @@
         layout="@layout/dashboard_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nodeIdTextView" />

@@ -4,11 +4,11 @@ import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.filter
-import network.path.mobilenode.info.ConnectionStatus.CONNECTED
-import network.path.mobilenode.info.ConnectionStatus.DISCONNECTED
 import network.path.mobilenode.message.Ack
 import network.path.mobilenode.message.CheckIn
 import network.path.mobilenode.message.JobRequest
+import network.path.mobilenode.model.ConnectionStatus.CONNECTED
+import network.path.mobilenode.model.ConnectionStatus.DISCONNECTED
 import network.path.mobilenode.runner.Runner
 import network.path.mobilenode.runner.Runners
 import network.path.mobilenode.service.LastLocationProvider

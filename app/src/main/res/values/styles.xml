@@ -54,6 +54,7 @@
     </style>
 
     <style name="DashboardDetails">
+        <item name="android:maxLines">1</item>
         <item name="android:letterSpacing">0.17</item>
         <item name="android:lineSpacingExtra">13sp</item>
         <item name="android:textColor">@color/white</item>
