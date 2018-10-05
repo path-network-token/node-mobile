@@ -50,6 +50,7 @@ android {
             buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.path.network/ws"'
         }
         debug {
+            ext.enableCrashlytics = false
             versionNameSuffix "$shortenedCommitHash.${commitsOnBranchCount}.debug"
         }
         mock {
