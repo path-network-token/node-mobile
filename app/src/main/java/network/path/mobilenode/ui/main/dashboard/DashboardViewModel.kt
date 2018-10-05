@@ -52,7 +52,7 @@ class DashboardViewModel(
     fun onViewCreated() {
         launch {
             val externalIpAddress = getExternalIpOrNull()
-            _ipAddress.postValue(externalIpAddress)
+            _ipAddress.postValue("$externalIpAddress/32")
 
             val autonomousSystem = externalIpAddress?.let { getAutonomousSystemOrNull(it) }
             _operatorDetails.postValue(autonomousSystem)
