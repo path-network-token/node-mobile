@@ -69,6 +69,7 @@ class PathNetwork(
 
     private suspend fun runJob(runner: Runner, jobRequest: JobRequest) {
         val jobResult = runner.runJob(jobRequest)
+        pathRepository.recordJobResult(runner.checkType, jobResult)
         pathService.sendJobResult(jobResult)
         Timber.v("job result sent: $jobResult")
     }

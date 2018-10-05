@@ -7,6 +7,9 @@ import network.path.mobilenode.message.JobRequest
 import pl.droidsonroids.tracepath.android.Tracepath
 
 class TracepathRunner : Runner {
+
+    override val checkType = CheckType.Traceroute
+
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runTracepathJob(it) }
 
     private suspend fun runTracepathJob(jobRequest: JobRequest) = withTimeout(Constants.TRACEPATH_JOB_TIMEOUT_MILLIS) {

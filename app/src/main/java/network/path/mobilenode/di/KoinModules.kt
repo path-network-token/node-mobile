@@ -13,6 +13,7 @@ import network.path.mobilenode.storage.PathRepository
 import network.path.mobilenode.storage.Storage
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
+import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
 import network.path.mobilenode.ui.splash.SplashViewModel
 import network.path.mobilenode.websocket.WebSocketClient
 import okhttp3.OkHttpClient
@@ -37,6 +38,7 @@ val appModule = module {
 
     viewModel { IntroViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }
+    viewModel { JobReportViewModel(get()) }
     viewModel { DashboardViewModel(get(), get(), get()) }
 }
 
