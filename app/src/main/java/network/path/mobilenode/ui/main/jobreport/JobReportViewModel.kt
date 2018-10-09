@@ -26,12 +26,12 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
     val customChecksPercentage: LiveData<Int> = _customCheckPercentage
 
     fun onViewCreated() {
+        var customCheckCount = 0L
+        var customCheckAverageLatencyMillis = 0
         val allChecksCount = CheckType
             .values()
             .map { pathRepository.getCheckStatistics(it).count }
             .sum()
-        var customCheckCount = 0L
-        var customCheckAverageLatencyMillis = 0
 
 
         CheckType.values().forEach {
