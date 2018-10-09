@@ -13,7 +13,7 @@ private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
 
 class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
 
-    override val checkType = CheckType.Http
+    override val checkType = CheckType.HTTP
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runHttpJob(it) }
 

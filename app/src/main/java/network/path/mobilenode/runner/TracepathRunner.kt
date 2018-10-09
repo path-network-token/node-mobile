@@ -8,7 +8,7 @@ import pl.droidsonroids.tracepath.android.Tracepath
 
 class TracepathRunner : Runner {
 
-    override val checkType = CheckType.Traceroute
+    override val checkType = CheckType.TRACEROUTE
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runTracepathJob(it) }
 

@@ -10,7 +10,7 @@ import java.net.InetAddress
 
 class UdpRunner : Runner {
 
-    override val checkType = CheckType.Udp
+    override val checkType = CheckType.UDP
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runUdpJob(it) }
 

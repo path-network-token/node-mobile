@@ -37,23 +37,26 @@ class Storage(context: Context) {
 
     inner class CheckStatistics {
         operator fun get(type: CheckType): CheckTypeStatistics {
-            val count by longPref("$type$CHECKS_COUNT_KEY_SUFFIX")
-            val averageLatency by longPref("$type$AVERAGE_LATENCY_KEY_SUFFIX")
+            val count by longPref(createPrefKey(type, CHECKS_COUNT_KEY_SUFFIX))
+            val averageLatency by longPref(createPrefKey(type, AVERAGE_LATENCY_KEY_SUFFIX))
             return CheckTypeStatistics(count, averageLatency)
         }
 
         operator fun set(type: CheckType, checkTypeStatistics: CheckTypeStatistics) {
-            var count by longPref("$type$CHECKS_COUNT_KEY_SUFFIX")
-            var averageLatency by longPref("$type$AVERAGE_LATENCY_KEY_SUFFIX")
+            var count by longPref(createPrefKey(type, CHECKS_COUNT_KEY_SUFFIX))
+            var averageLatency by longPref(createPrefKey(type, AVERAGE_LATENCY_KEY_SUFFIX))
             count = checkTypeStatistics.count
             averageLatency = checkTypeStatistics.averageLatencyMillis
         }
     }
 
+    private fun createPrefKey(type: CheckType, key: String) = "$type$key"
+
     inner class NullableStringStorageDelegate(private val prefKey: String, private val defaultValue: String?) {
 
         operator fun getValue(thisRef: Any?, property: KProperty<*>): String? =
             sharedPreferences.getString(prefKey, defaultValue)
+
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) =
             sharedPreferences.edit().putString(prefKey, value).apply()
 

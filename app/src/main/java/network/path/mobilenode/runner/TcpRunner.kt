@@ -12,7 +12,7 @@ import javax.net.SocketFactory
 
 class TcpRunner : Runner {
 
-    override val checkType = CheckType.Tcp
+    override val checkType = CheckType.TCP
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runTcpJob(it) }
 

@@ -26,7 +26,10 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
     val customChecksPercentage: LiveData<Int> = _customCheckPercentage
 
     fun onViewCreated() {
-        val allChecksCount = CheckType.values().map { pathRepository.getCheckStatistics(it).count }.sum()
+        val allChecksCount = CheckType
+            .values()
+            .map { pathRepository.getCheckStatistics(it).count }
+            .sum()
         var customCheckCount = 0L
         var customCheckAverageLatencyMillis = 0
 
@@ -36,8 +39,8 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
             val averageLatencyMillis = checkStatistics.averageLatencyMillis.toInt()
 
             when (it) {
-                CheckType.Http -> _httpLatencyMillis.postValue(averageLatencyMillis)
-                CheckType.Dns -> _dnsLatencyMillis.postValue(averageLatencyMillis)
+                CheckType.HTTP -> _httpLatencyMillis.postValue(averageLatencyMillis)
+                CheckType.DNS -> _dnsLatencyMillis.postValue(averageLatencyMillis)
                 else -> {
                     customCheckCount += checkStatistics.count
                     customCheckAverageLatencyMillis += (averageLatencyMillis * checkStatistics.count / allChecksCount.toFloat()).toInt()
@@ -59,8 +62,8 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
 
 
         if (allChecksCount > 0) {
-            _httpCheckPercentage.postValue(getChecksPercentage(CheckType.Http))
-            _dnsCheckPercentage.postValue(getChecksPercentage(CheckType.Dns))
+            _httpCheckPercentage.postValue(getChecksPercentage(CheckType.HTTP))
+            _dnsCheckPercentage.postValue(getChecksPercentage(CheckType.DNS))
             _customCheckPercentage.postValue(calculatePercentage(customCheckCount))
         }
     }
