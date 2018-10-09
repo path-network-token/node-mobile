@@ -9,6 +9,9 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 
 class UdpRunner : Runner {
+
+    override val checkType = CheckType.UDP
+
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runUdpJob(it) }
 
     private suspend fun runUdpJob(jobRequest: JobRequest) = withTimeout(JOB_TIMEOUT_MILLIS) {

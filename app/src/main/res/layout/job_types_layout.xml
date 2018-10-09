@@ -40,32 +40,32 @@
         app:layout_constraintTop_toTopOf="@id/jobTypesLabel" />
 
     <ProgressBar
-        android:id="@+id/jobReportCircularProgressBar"
+        android:id="@+id/jobPercentageProgressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_marginEnd="20dp"
         android:indeterminate="false"
         android:max="100"
-        android:progress="20"
         android:progressDrawable="@drawable/job_report_circular_progress"
         android:secondaryProgress="100"
         app:layout_constraintBottom_toBottomOf="@+id/jobTypesButtonsPanel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/jobTypesButtonsPanel" />
+        app:layout_constraintTop_toTopOf="@+id/jobTypesButtonsPanel"
+        tools:progress="33" />
 
     <TextView
-        android:id="@+id/progressTextView"
+        android:id="@+id/jobPercentageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/exo_semi_bold"
         android:letterSpacing="0.08"
         android:textColor="@color/white"
         android:textSize="28.8sp"
-        app:layout_constraintBottom_toBottomOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintEnd_toEndOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintStart_toStartOf="@id/jobReportCircularProgressBar"
-        app:layout_constraintTop_toTopOf="@id/jobReportCircularProgressBar"
+        app:layout_constraintBottom_toBottomOf="@id/jobPercentageProgressBar"
+        app:layout_constraintEnd_toEndOf="@id/jobPercentageProgressBar"
+        app:layout_constraintStart_toStartOf="@id/jobPercentageProgressBar"
+        app:layout_constraintTop_toTopOf="@id/jobPercentageProgressBar"
         tools:text="20%" />
 
     <RadioGroup

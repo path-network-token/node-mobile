@@ -12,6 +12,8 @@ import javax.net.SocketFactory
 
 class TcpRunner : Runner {
 
+    override val checkType = CheckType.TCP
+
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runTcpJob(it) }
 
     private suspend fun runTcpJob(jobRequest: JobRequest): String = withTimeout(JOB_TIMEOUT_MILLIS) {

@@ -46,8 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/latencyLabelTextView"
-        app:max_millis="10000"
-        app:progress_millis="200" />
+        app:max_millis="10000" />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
         android:id="@+id/dnsLatencyChart"
@@ -57,8 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/httpLatencyChart"
-        app:max_millis="10000"
-        app:progress_millis="200" />
+        app:max_millis="10000" />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
         android:id="@+id/customLatencyChart"
@@ -68,7 +66,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dnsLatencyChart"
-        app:max_millis="10000"
-        app:progress_millis="200" />
+        app:max_millis="10000" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

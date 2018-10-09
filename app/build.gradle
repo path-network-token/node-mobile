@@ -54,6 +54,7 @@ android {
             versionNameSuffix "$shortenedCommitHash.${commitsOnBranchCount}.debug"
         }
         mock {
+            ext.enableCrashlytics = false
             initWith debug
             buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://yehq4vtxw3nu.serveo.net"'
         }

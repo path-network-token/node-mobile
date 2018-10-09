@@ -45,6 +45,7 @@
     <string name="custom_checks">Custom checks</string>
     <string name="average_latency">Average latency</string>
     <string name="latency_chart_value">%d sec</string>
+    <string name="job_percentage">%d%%</string>
 
     <!-- Disclaimer -->
     <string name="disclaimer_header">Path Network, Inc.</string>
