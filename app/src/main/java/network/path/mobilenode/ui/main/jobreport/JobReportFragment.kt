@@ -27,8 +27,9 @@ class JobReportFragment : BaseFragment() {
             it.httpLatencyMillis.observe(this, httpLatencyChart::setLatencyMillis)
             it.dnsLatencyMillis.observe(this, dnsLatencyChart::setLatencyMillis)
             it.customLatencyMillis.observe(this, customLatencyChart::setLatencyMillis)
+
+            it.chartType.observe(this, ::setJobPercentage)
         }
-        //TODO set up percentage chart initial value
         //TODO add support for N/A value in latency checks if there is no data
     }
 
@@ -41,15 +42,15 @@ class JobReportFragment : BaseFragment() {
     private fun setupJobTypesClickListeners() {
         jobTypesButtonsPanel.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.httpChecksButton -> setJobPercentage(jobReportViewModel.httpChecksPercentage.value)
-                R.id.dnsChecksButton -> setJobPercentage(jobReportViewModel.dnsChecksPercentage.value)
-                R.id.customChecksButton -> setJobPercentage(jobReportViewModel.customChecksPercentage.value)
+                R.id.httpChecksButton -> jobReportViewModel.chartType.postValue(JobReportViewModel.ChartType.HTTP)
+                R.id.dnsChecksButton -> jobReportViewModel.chartType.postValue(JobReportViewModel.ChartType.DNS)
+                R.id.customChecksButton -> jobReportViewModel.chartType.postValue(JobReportViewModel.ChartType.CUSTOM)
             }
         }
     }
 
-    private fun setJobPercentage(value: Int?) {
-        val coercedValue = value ?: 0
+    private fun setJobPercentage(chartType: JobReportViewModel.ChartType) {
+        val coercedValue = jobReportViewModel.valueForType(chartType) ?: 0
         jobPercentageTextView.text = getString(R.string.job_percentage, coercedValue)
         jobPercentageProgressBar.progress = coercedValue
     }

@@ -1,10 +1,8 @@
--keepclasseswithmembers class network.path.mobilenode.message.* { *; }
+-keepclasseswithmembers class network.path.mobilenode.message.** { *; }
+-keepclasseswithmembers class network.path.mobilenode.model.** { *; }
+-keep class network.path.mobilenode.websocket.** { *; }
 
-##okio https://github.com/square/okio/blob/master/okio/jvm/src/main/resources/META-INF/proguard/okio.pro
-# Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
--dontwarn org.codehaus.mojo.animal_sniffer.*
-
-## okhttp https://github.com/square/okio/blob/master/okio/jvm/src/main/resources/META-INF/proguard/okio.pro
+## https://github.com/square/okhttp/blob/master/okhttp/src/main/resources/META-INF/proguard/okhttp3.pro
 # JSR 305 annotations are for embedding nullability information.
 -dontwarn javax.annotation.**
 
@@ -26,14 +24,10 @@
     @retrofit2.http.* <methods>;
 }
 
-# Ignore annotation used for build tooling.
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
-# Ignore JSR 305 annotations for embedding nullability information.
--dontwarn javax.annotation.**
-
 # Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
 -dontwarn kotlin.Unit
 
 # Top-level functions that can only be used by Kotlin.
 -dontwarn retrofit2.-KotlinExtensions
+
+-dontwarn org.koin.**

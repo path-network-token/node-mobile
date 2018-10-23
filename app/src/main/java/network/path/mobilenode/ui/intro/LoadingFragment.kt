@@ -28,11 +28,11 @@ class LoadingFragment : BaseFragment() {
     }
 
     private suspend fun animateLogs() {
-        loadingStepsTextSwitcher.setText("CECKING ASN - COMPLETE")
+        loadingStepsTextSwitcher.setText(getString(R.string.check_asn_complete))
         delay(500)
-        loadingStepsTextSwitcher.setText("CECKING OPERATOR ASN - COMPLETE")
+        loadingStepsTextSwitcher.setText(getString(R.string.check_operator_asn_complete))
         delay(500)
-        loadingStepsTextSwitcher.setText("LOCATING COUNTRY ORIGIN")
+        loadingStepsTextSwitcher.setText(getString(R.string.location_country_origin))
     }
 
     private fun openMainScreen() {

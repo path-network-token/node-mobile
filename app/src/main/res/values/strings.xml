@@ -51,5 +51,9 @@
     <string name="disclaimer_header">Path Network, Inc.</string>
     <string name="disclaimer_body">Last updated: September 18, 2018\n\nThe information contained on Path Node App mobile app (the "Service") is for general information purposes only.\n\nassumes no responsibility for errors or omissions in the contents on the Service.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius, augue a condimentum ullamcorper, lacus nulla posuere nibh, et mattis velit sapien non massa. Nunc quis ligula eleifend, euismod tellus vitae, mattis diam. Curabitur pharetra tortor tristique, suscipit diam id, luctus sapien. Pellentesque sed egestas leo.</string>
     <string name="android">android</string>
+    <string name="check_asn_complete">CHECKING ASN - COMPLETE</string>
+    <string name="check_operator_asn_complete">CHECKING OPERATOR ASN - COMPLETE</string>
+    <string name="location_country_origin">LOCATING COUNTRY ORIGIN</string>
+    <string name="locating_node">Locating node...</string>
 
 </resources>

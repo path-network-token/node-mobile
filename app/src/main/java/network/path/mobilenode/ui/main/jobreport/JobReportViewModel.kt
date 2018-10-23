@@ -7,6 +7,8 @@ import network.path.mobilenode.runner.CheckType
 import network.path.mobilenode.storage.PathRepository
 
 class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel() {
+    enum class ChartType { HTTP, DNS, CUSTOM }
+
     private val _httpLatencyMillis = MutableLiveData<Int>()
     val httpLatencyMillis: LiveData<Int> = _httpLatencyMillis
 
@@ -25,13 +27,23 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
     private val _customCheckPercentage = MutableLiveData<Int>()
     val customChecksPercentage: LiveData<Int> = _customCheckPercentage
 
+    var chartType = MutableLiveData<ChartType>()
+
+    fun valueForType(chartType: ChartType) =
+            when (chartType) {
+                ChartType.HTTP -> _httpCheckPercentage.value
+                ChartType.DNS -> _dnsCheckPercentage.value
+                ChartType.CUSTOM -> _customCheckPercentage.value
+            }
+
+
     fun onViewCreated() {
         var customCheckCount = 0L
         var customCheckAverageLatencyMillis = 0
         val allChecksCount = CheckType
-            .values()
-            .map { pathRepository.getCheckStatistics(it).count }
-            .sum()
+                .values()
+                .map { pathRepository.getCheckStatistics(it).count }
+                .sum()
 
 
         CheckType.values().forEach {
@@ -66,6 +78,7 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
             _dnsCheckPercentage.postValue(getChecksPercentage(CheckType.DNS))
             _customCheckPercentage.postValue(calculatePercentage(customCheckCount))
         }
+        chartType.postValue(ChartType.HTTP)
     }
 
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/operatorAsnLabel"
@@ -13,7 +14,7 @@
         android:text="@string/operator_asn"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/AsLabel"
@@ -23,7 +24,7 @@
         android:text="@string/autonomous_service"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/operatorAsnLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/operatorAsnLabel"/>
 
     <TextView
         android:id="@+id/countryLabel"
@@ -33,7 +34,7 @@
         android:text="@string/country"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/autonomousSystemDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/autonomousSystemDescription"/>
 
     <TextView
         android:id="@+id/deviceTypeLabel"
@@ -43,14 +44,14 @@
         android:text="@string/device_type"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countryLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/countryLabel"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.65"/>
 
     <TextView
         android:id="@+id/operatorAsn"
@@ -60,31 +61,31 @@
         android:text="@string/no_data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/autonomousSystemDescription"
         style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:maxLines="2"
         android:text="@string/no_data"
-        android:ellipsize="end"
-        tools:text="FOOBARBAZ-AS-AP FOOBAZBAR FOOBARBAZ COMMUNICATION TECHNOLOGY CO., LTD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/operatorAsn" />
+        app:layout_constraintTop_toBottomOf="@+id/operatorAsn"
+        tools:text="FOOBARBAZ-AS-AP FOOBAZBAR FOOBARBAZ COMMUNICATION TECHNOLOGY CO., LTD"/>
 
     <TextView
         android:id="@+id/country"
-        android:text="@string/no_data"
         style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="unknown"
+        android:text="@string/no_data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/autonomousSystemDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/autonomousSystemDescription"
+        tools:text="unknown"/>
 
     <TextView
         android:id="@+id/deviceType"
@@ -94,6 +95,6 @@
         android:text="@string/android"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/country" />
+        app:layout_constraintTop_toBottomOf="@+id/country"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

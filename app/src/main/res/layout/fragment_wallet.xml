@@ -90,7 +90,9 @@
         android:background="@drawable/link_button_background"
         android:enabled="false"
         android:text="@string/link_button_text"
-        android:textColor="@color/link_button_text_selector" />
+        android:textColor="@color/link_button_text_selector"
+        android:stateListAnimator="@animator/button_state_list"
+        />
 
     <Space
         android:layout_width="0dp"

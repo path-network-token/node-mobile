@@ -9,7 +9,10 @@
 
     <TextView
         android:id="@+id/screenTitleTextView"
-        style="@style/ScreenHeader"
+        style="@style/Text.Default.Header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:text="@string/about"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +52,9 @@
         android:text="@string/activate"
         app:layout_constraintEnd_toEndOf="@id/pathDescriptionTextView"
         app:layout_constraintStart_toStartOf="@id/pathDescriptionTextView"
-        app:layout_constraintTop_toBottomOf="@id/pathDescriptionTextView" />
+        app:layout_constraintTop_toBottomOf="@id/pathDescriptionTextView"
+        android:stateListAnimator="@animator/button_state_list"
+        />
 
     <TextView
         android:id="@+id/disclaimerButton"

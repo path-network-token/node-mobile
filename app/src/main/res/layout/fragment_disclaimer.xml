@@ -5,8 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/disclaimer_background"
-    android:padding="@dimen/screen_root_layout_padding">
+    android:background="@drawable/gradient_background"
+    android:padding="@dimen/screen_root_layout_padding"
+    >
 
     <ImageView
         android:id="@+id/closeScreenImageView"
@@ -17,22 +18,28 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/screenTitleTextView"
-        style="@style/ScreenHeader"
+        style="@style/Text.Default.Header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_header"
         android:text="@string/disclaimer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <View
         android:id="@+id/headerDivider"
         style="@style/ScreenHeaderDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/screenTitleTextView" />
+        app:layout_constraintTop_toBottomOf="@id/screenTitleTextView"
+        />
 
     <TextView
         android:id="@+id/disclaimerHeaderTextView"
@@ -44,7 +51,8 @@
         android:text="@string/disclaimer_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerDivider" />
+        app:layout_constraintTop_toBottomOf="@id/headerDivider"
+        />
 
     <TextView
         android:id="@+id/disclaimerBodyTextView"
@@ -58,6 +66,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/disclaimerHeaderTextView" />
+        app:layout_constraintTop_toBottomOf="@id/disclaimerHeaderTextView"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

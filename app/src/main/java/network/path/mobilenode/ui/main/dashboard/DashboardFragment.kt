@@ -2,6 +2,7 @@ package network.path.mobilenode.ui.main.dashboard
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
@@ -29,6 +30,14 @@ class DashboardFragment : BaseFragment() {
             it.operatorDetails.observe(this, ::setOperatorDetails)
             it.ipAddress.observe(this, ::setIpAddress)
         }
+
+        animateIn()
+    }
+
+    private fun animateIn() {
+        val scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up)
+        scaleUp.fillAfter = true
+        image_globe.startAnimation(scaleUp)
     }
 
     private fun setupClicks() {
@@ -49,6 +58,8 @@ class DashboardFragment : BaseFragment() {
     private fun colorConnectionStatusDot(isConnected: Boolean) {
         val colorRes = if (isConnected) R.color.apple_green else R.color.coral_pink
         connectionStatusDot.drawable.setTint(ContextCompat.getColor(requireContext(), colorRes))
+        val colorLabelRes = if (isConnected) R.color.tealish else R.color.coral_pink
+        subnetAddressLabel.setBackgroundColor(ContextCompat.getColor(requireContext(), colorLabelRes))
     }
 
     private fun setOperatorDetails(details: AutonomousSystem?) {
