@@ -7,18 +7,15 @@ import kotlinx.coroutines.experimental.tasks.await
 import timber.log.Timber
 
 class LastLocationProvider(context: Context) {
-
     private val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(context)
 
-    suspend fun getLastRealLocationOrNull(): Location? {
-        return try {
-            val location = fusedLocationProvider.lastLocation.await()
-            Timber.v("$location, mocked: ${location?.isFromMockProvider}")
+    suspend fun getLastRealLocationOrNull(): Location? = try {
+        val location = fusedLocationProvider.lastLocation.await()
+        Timber.v("$location, mocked: ${location?.isFromMockProvider}")
 
-            return if (location?.isFromMockProvider == true) null else location
-        } catch (e: SecurityException) {
-            Timber.v(e)
-            null
-        }
+        if (location?.isFromMockProvider == true) null else location
+    } catch (e: SecurityException) {
+        Timber.v(e)
+        null
     }
 }

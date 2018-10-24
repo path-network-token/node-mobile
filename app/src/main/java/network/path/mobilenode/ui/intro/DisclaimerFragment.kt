@@ -5,10 +5,9 @@ import android.text.method.ScrollingMovementMethod
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_disclaimer.*
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.BaseFragment
+import network.path.mobilenode.ui.base.BaseFragment
 
 class DisclaimerFragment : BaseFragment() {
-
     override val layoutResId = R.layout.fragment_disclaimer
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

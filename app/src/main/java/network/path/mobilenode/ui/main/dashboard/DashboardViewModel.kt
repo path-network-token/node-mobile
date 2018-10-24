@@ -10,11 +10,11 @@ import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
-import network.path.mobilenode.http.AutonomousSystemDetailsDownloader
-import network.path.mobilenode.http.ExternalIpAddressDownloader
-import network.path.mobilenode.model.AutonomousSystem
-import network.path.mobilenode.model.ConnectionStatus.CONNECTED
-import network.path.mobilenode.storage.PathRepository
+import network.path.mobilenode.data.http.AutonomousSystemDetailsDownloader
+import network.path.mobilenode.data.http.ExternalIpAddressDownloader
+import network.path.mobilenode.data.storage.PathRepository
+import network.path.mobilenode.domain.entity.AutonomousSystem
+import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.*

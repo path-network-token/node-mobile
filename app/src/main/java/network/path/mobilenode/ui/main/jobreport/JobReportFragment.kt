@@ -6,8 +6,8 @@ import kotlinx.android.synthetic.main.average_latency_layout.*
 import kotlinx.android.synthetic.main.fragment_job_report.*
 import kotlinx.android.synthetic.main.job_types_layout.*
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.BaseFragment
-import network.path.mobilenode.ui.observe
+import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class JobReportFragment : BaseFragment() {

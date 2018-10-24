@@ -9,14 +9,18 @@ import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
 import network.path.mobilenode.R
-import network.path.mobilenode.model.AutonomousSystem
-import network.path.mobilenode.ui.BaseFragment
-import network.path.mobilenode.ui.observe
+import network.path.mobilenode.domain.entity.AutonomousSystem
+import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DashboardFragment : BaseFragment() {
+    companion object {
+        fun newInstance() = DashboardFragment()
+    }
 
     override val layoutResId = R.layout.fragment_dashboard
+
     private val dashboardViewModel by viewModel<DashboardViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,8 +73,4 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun String?.orNoData() = this ?: getString(R.string.no_data)
-
-    companion object {
-        fun newInstance() = DashboardFragment()
-    }
 }

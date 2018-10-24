@@ -3,8 +3,8 @@ package network.path.mobilenode.ui.main.jobreport
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import network.path.mobilenode.runner.CheckType
-import network.path.mobilenode.storage.PathRepository
+import network.path.mobilenode.data.runner.CheckType
+import network.path.mobilenode.data.storage.PathRepository
 
 class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel() {
     enum class ChartType { HTTP, DNS, CUSTOM }

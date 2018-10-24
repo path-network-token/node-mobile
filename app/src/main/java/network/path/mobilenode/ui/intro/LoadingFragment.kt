@@ -10,10 +10,9 @@ import kotlinx.android.synthetic.main.fragment_loading.*
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.BaseFragment
+import network.path.mobilenode.ui.base.BaseFragment
 
 class LoadingFragment : BaseFragment() {
-
     override val layoutResId = R.layout.fragment_loading
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +40,8 @@ class LoadingFragment : BaseFragment() {
     }
 
     private fun prepareSwitchTextAnimation() {
+        val context = requireContext()
+
         loadingStepsTextSwitcher.setFactory {
             TextView(ContextThemeWrapper(context, R.style.ProgressLogs), null, 0)
         }

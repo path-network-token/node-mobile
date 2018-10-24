@@ -5,12 +5,11 @@ import android.view.View
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main.*
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.BaseFragment
+import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
 
 class MainFragment : BaseFragment() {
-
     override val layoutResId = R.layout.fragment_main
 
     private val walletFragment by lazy { WalletFragment.newInstance() }
@@ -21,15 +20,9 @@ class MainFragment : BaseFragment() {
 
         if (savedInstanceState == null) {
             dashboardRadioButton.isChecked = true
-            initFragments()
+            showDashboardFragment()
         }
         initBottomBar()
-    }
-
-    private fun initFragments() {
-        childFragmentManager.transaction {
-            replace(R.id.fragmentContainer, dashboardFragment)
-        }
     }
 
     private fun initBottomBar() {

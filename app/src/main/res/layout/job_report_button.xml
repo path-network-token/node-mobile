@@ -24,6 +24,7 @@
         android:textAllCaps="true"
         android:textColor="@color/sky"
         android:textSize="14sp"
+        android:stateListAnimator="@animator/button_state_list"
         />
 
     <View

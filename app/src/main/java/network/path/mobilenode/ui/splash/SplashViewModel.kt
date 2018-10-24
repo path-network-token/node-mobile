@@ -3,30 +3,30 @@ package network.path.mobilenode.ui.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.android.Main
-import network.path.mobilenode.storage.Storage
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import network.path.mobilenode.data.storage.Storage
 import kotlin.coroutines.experimental.CoroutineContext
 
-typealias ShowScreen = Unit
-
-private const val SPLASH_SHOW_TIME_MILLIS = 2000L
 
 class SplashViewModel(private val storage: Storage) : ViewModel(), CoroutineScope {
+    companion object {
+        private const val SPLASH_SHOW_TIME_MILLIS = 2000L
+    }
 
-    private val _showIntroScreen = MutableLiveData<ShowScreen>()
-    val showIntroScreen: LiveData<ShowScreen> = _showIntroScreen
+    enum class NextScreen { INTRO, MAIN }
 
-    private val _showMainScreen = MutableLiveData<ShowScreen>()
-    val showMainScreen: LiveData<ShowScreen> = _showMainScreen
+    private val _nextScreen = MutableLiveData<NextScreen>()
+    val nextScreen: LiveData<NextScreen> = _nextScreen
 
     private val showNextScreenJob = launch(start = CoroutineStart.LAZY) {
         delay(SPLASH_SHOW_TIME_MILLIS)
-        if (storage.isJobProcessingActivated) {
-            _showMainScreen
-        } else {
-            _showIntroScreen
-        }.postValue(ShowScreen)
+        val value = if (storage.isJobProcessingActivated) NextScreen.MAIN else NextScreen.INTRO
+        _nextScreen.postValue(value)
     }
 
     override val coroutineContext: CoroutineContext
@@ -38,7 +38,7 @@ class SplashViewModel(private val storage: Storage) : ViewModel(), CoroutineScop
 
     fun onResume() {
         if (showNextScreenJob.isCompleted) {
-            _showIntroScreen.postValue(ShowScreen)
+            _nextScreen.postValue(NextScreen.INTRO)
         }
     }
 
@@ -46,5 +46,4 @@ class SplashViewModel(private val storage: Storage) : ViewModel(), CoroutineScop
         showNextScreenJob.cancel()
         super.onCleared()
     }
-
 }

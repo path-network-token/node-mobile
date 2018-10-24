@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import network.path.mobilenode.storage.Storage
+import network.path.mobilenode.data.storage.Storage
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 

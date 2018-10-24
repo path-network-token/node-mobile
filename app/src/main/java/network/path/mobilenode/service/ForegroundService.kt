@@ -11,9 +11,9 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
-import network.path.mobilenode.PathNetwork
 import network.path.mobilenode.R
-import network.path.mobilenode.ui.main.MainActivity
+import network.path.mobilenode.data.PathNetwork
+import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope

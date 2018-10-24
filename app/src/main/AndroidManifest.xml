@@ -30,7 +30,7 @@
         </receiver>
 
         <activity
-            android:name="network.path.mobilenode.ui.main.MainActivity"
+            android:name="network.path.mobilenode.ui.MainActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
