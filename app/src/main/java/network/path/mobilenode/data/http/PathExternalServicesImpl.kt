@@ -10,12 +10,13 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathExternalServices
 import network.path.mobilenode.domain.entity.AutonomousSystem
+import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
-import timber.log.Timber
 import java.io.IOException
 import kotlin.coroutines.experimental.CoroutineContext
 
 class PathExternalServicesImpl(
+        private val networkMonitor: NetworkMonitor,
         okHttpClient: OkHttpClient,
         gson: Gson
 ) : PathExternalServices, CoroutineScope {
@@ -33,18 +34,19 @@ class PathExternalServicesImpl(
 
     init {
         registerDetailsHandler()
+        registerNetworkHandler()
     }
 
     override fun start() {
-        // TODO: Start receiving loop
-        registerIpHandler()
+        networkMonitor.start()
     }
 
     override fun stop() {
+        networkMonitor.stop()
         job.cancel()
     }
 
-    private fun registerIpHandler() = launch {
+    private fun retrieveIp() = launch {
         val externalIpAddress = getExternalIpOrNull()
         ip.send(externalIpAddress)
     }
@@ -53,6 +55,12 @@ class PathExternalServicesImpl(
         ip.openSubscription().consumeEach { ipAddress ->
             val asDetails = ipAddress?.let { getAutonomousSystemOrNull(it) }
             details.send(asDetails)
+        }
+    }
+
+    private fun registerNetworkHandler() = launch {
+        networkMonitor.connected.consumeEach {
+            retrieveIp()
         }
     }
 

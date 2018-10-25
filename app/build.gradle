@@ -23,6 +23,7 @@ android {
         buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
         buildConfigField 'String', 'ICANHAZIP_BASE_URL', '"https://icanhazip.com/"'
         buildConfigField 'String', 'IPTOASN_BASE_URL', '"https://api.iptoasn.com/"'
+        buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
     }
 
     testOptions {
@@ -84,6 +85,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-scalars:$versions.retrofit"
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
     implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:$versions.retrofitCoroutines"
 
     //Jetpack

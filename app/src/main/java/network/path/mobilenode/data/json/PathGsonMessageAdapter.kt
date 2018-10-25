@@ -5,7 +5,7 @@ import com.tinder.scarlet.Message
 import com.tinder.scarlet.MessageAdapter
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
 import network.path.mobilenode.data.websocket.message.Ack
-import network.path.mobilenode.data.websocket.message.CheckIn
+import network.path.mobilenode.data.websocket.message.SocketCheckIn
 import network.path.mobilenode.data.websocket.message.SocketJobRequest
 import network.path.mobilenode.data.websocket.message.SocketJobResult
 import network.path.mobilenode.data.websocket.message.PathError
@@ -32,7 +32,7 @@ class PathGsonMessageAdapter<T>(private val wrappedAdapter: MessageAdapter<T>) :
 }
 
 private val messageTypeNames = mapOf(
-    CheckIn::class to MessageType.CHECK_IN,
+    SocketCheckIn::class to MessageType.CHECK_IN,
     Ack::class to MessageType.ACK,
     PathError::class to MessageType.ERROR,
     SocketJobRequest::class to MessageType.JOB_REQUEST,

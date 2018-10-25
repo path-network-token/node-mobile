@@ -11,7 +11,7 @@ import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.data.websocket.message.Ack
-import network.path.mobilenode.data.websocket.message.CheckIn
+import network.path.mobilenode.data.websocket.message.SocketCheckIn
 import network.path.mobilenode.data.websocket.message.SocketJobRequest
 import network.path.mobilenode.data.websocket.message.SocketJobResult
 import network.path.mobilenode.domain.PathEngine
@@ -102,7 +102,6 @@ class PathSocketEngine(
             Timber.d("ACK received [$it]")
             if (it.nodeId != null) {
                 nodeId.send(it.nodeId)
-                storage.nodeId = it.nodeId
             }
         }
     }
@@ -137,9 +136,9 @@ class PathSocketEngine(
         sendHeartbeat(intervalMillis)
     }
 
-    private suspend fun createCheckInMessage(): CheckIn {
+    private suspend fun createCheckInMessage(): SocketCheckIn {
         val location = lastLocationProvider.getLastRealLocationOrNull()
-        return CheckIn(
+        return SocketCheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
                 lat = location?.latitude?.toString(),

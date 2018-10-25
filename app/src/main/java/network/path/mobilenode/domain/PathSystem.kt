@@ -28,6 +28,7 @@ class PathSystem(
 
     init {
         registerJobRequestHandler()
+        registerNodeIdHandler()
     }
 
     fun activate() {
@@ -50,11 +51,20 @@ class PathSystem(
         }
     }
 
+    private fun registerNodeIdHandler() = launch {
+        engine.nodeId.consumeEach {
+            if (it != null) {
+                // Update nodeId in storage if it is not null
+                storage.nodeId = it
+            }
+        }
+    }
+
     private suspend fun process(request: JobRequest) {
-        Timber.d("!!! SYSTEM: received [$request]...")
+        Timber.d("SYSTEM: received [$request]")
         val result = jobExecutor.execute(request).await()
         storage.recordStatistics(result.checkType, result.responseTime)
         engine.sendResult(result)
-        Timber.d("job result sent: $result")
+        Timber.d("SYSTEM: request result [$result]")
     }
 }

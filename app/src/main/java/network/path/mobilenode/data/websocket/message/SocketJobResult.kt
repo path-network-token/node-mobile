@@ -13,6 +13,7 @@ class SocketJobResult(
         responseTime: Long,
         responseBody: String
 ) : JobResult(
+        type,
         checkType,
         jobUuid,
         status,

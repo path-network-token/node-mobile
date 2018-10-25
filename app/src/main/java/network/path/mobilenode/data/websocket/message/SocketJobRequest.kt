@@ -4,7 +4,7 @@ import network.path.mobilenode.domain.entity.JobRequest
 
 class SocketJobRequest(
     override val id: String?,
-    override val type: String?,
+    type: String,
     protocol: String?,
     method: String?,
     headers: List<Map<String, String>>?,
@@ -14,8 +14,9 @@ class SocketJobRequest(
     endpointAdditionalParams: String?,
     degradedAfter: Long?,
     criticalAfter: Long?,
-    val jobUuid: String
-) : JobRequest(protocol,
+    jobUuid: String
+) : JobRequest(type,
+        protocol,
         method,
         headers,
         payload,
