@@ -2,46 +2,31 @@ package network.path.mobilenode.ui.main.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
-import network.path.mobilenode.data.http.AutonomousSystemDetailsDownloader
-import network.path.mobilenode.data.http.ExternalIpAddressDownloader
-import network.path.mobilenode.data.storage.PathRepository
+import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
-import okhttp3.OkHttpClient
-import java.io.IOException
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.experimental.CoroutineContext
 
-class DashboardViewModel(
-    pathRepository: PathRepository,
-    okHttpClient: OkHttpClient,
-    gson: Gson
-) : ViewModel(), CoroutineScope {
-
-    private val autonomousSystemDetailsDownloader = AutonomousSystemDetailsDownloader(okHttpClient, gson)
-    private val externalIpAddressDownloader = ExternalIpAddressDownloader(okHttpClient)
-
+class DashboardViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
     private val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    val nodeId: LiveData<String?> = Transformations.map(pathRepository.nodeId) {
-        it?.toAdler32hex()
-    }
+    private val _nodeId = MutableLiveData<String?>()
+    val nodeId: LiveData<String?> = _nodeId
 
-    val isConnected: LiveData<Boolean> = Transformations.map(pathRepository.connectionStatus) {
-        it == CONNECTED
-    }
+    private val _isConnected = MutableLiveData<Boolean>()
+    val isConnected: LiveData<Boolean> = _isConnected
 
     private val _operatorDetails = MutableLiveData<AutonomousSystem?>()
     val operatorDetails: LiveData<AutonomousSystem?> = _operatorDetails
@@ -50,31 +35,34 @@ class DashboardViewModel(
     val ipAddress: LiveData<String?> = _ipAddress
 
     fun onViewCreated() {
-        launch {
-            val externalIpAddress = getExternalIpOrNull()
-            _ipAddress.postValue("$externalIpAddress/32")
+        registerNodeIdHandler()
+        registerStatusHandler()
+        registerIpHandler()
+        registerDetailsHandler()
+    }
 
-            val autonomousSystem = externalIpAddress?.let { getAutonomousSystemOrNull(it) }
-            _operatorDetails.postValue(autonomousSystem)
+    private fun registerNodeIdHandler() = launch {
+        system.nodeId.openSubscription().consumeEach {
+            _nodeId.postValue(it?.toAdler32hex())
         }
     }
 
-    private suspend fun getAutonomousSystemOrNull(externalIpAddress: String) = try {
-        autonomousSystemDetailsDownloader.getAutonomousSystem(externalIpAddress)
-            .await()
-            .run {
-                if (announced) this else null
-            }
-    } catch (e: IOException) {
-        null
+    private fun registerStatusHandler() = launch {
+        system.status.openSubscription().consumeEach {
+            _isConnected.postValue(it == CONNECTED)
+        }
     }
 
-    private suspend fun getExternalIpOrNull() = try {
-        externalIpAddressDownloader.getExternalIp()
-            .await()
-            .trimEnd()
-    } catch (e: IOException) {
-        null
+    private fun registerIpHandler() = launch {
+        system.ip.openSubscription().consumeEach {
+            _ipAddress.postValue(if (it != null) "$it/32" else null)
+        }
+    }
+
+    private fun registerDetailsHandler() = launch {
+        system.details.openSubscription().consumeEach {
+            _operatorDetails.postValue(it)
+        }
     }
 
     override fun onCleared() {

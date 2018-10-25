@@ -1,4 +1,4 @@
-package network.path.mobilenode.data.runner
+package network.path.mobilenode.domain.entity
 
 enum class CheckType {
     HTTP, TCP, UDP, TRACEROUTE, DNS, UNKNOWN

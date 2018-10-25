@@ -1,42 +1,51 @@
-package network.path.mobilenode.data
+package network.path.mobilenode.data.websocket
 
 import com.tinder.scarlet.WebSocket
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.channels.filter
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import network.path.mobilenode.data.runner.Runner
-import network.path.mobilenode.data.runner.Runners
-import network.path.mobilenode.data.storage.PathRepository
-import network.path.mobilenode.data.websocket.WebSocketClient
-import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
-import network.path.mobilenode.domain.entity.ConnectionStatus.DISCONNECTED
-import network.path.mobilenode.domain.entity.message.Ack
-import network.path.mobilenode.domain.entity.message.CheckIn
-import network.path.mobilenode.domain.entity.message.JobRequest
+import network.path.mobilenode.data.websocket.message.Ack
+import network.path.mobilenode.data.websocket.message.CheckIn
+import network.path.mobilenode.data.websocket.message.SocketJobRequest
+import network.path.mobilenode.data.websocket.message.SocketJobResult
+import network.path.mobilenode.domain.PathEngine
+import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.domain.entity.ConnectionStatus
+import network.path.mobilenode.domain.entity.JobRequest
+import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.LastLocationProvider
 import timber.log.Timber
 import kotlin.coroutines.experimental.CoroutineContext
 
-private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
-private const val RECONNECT_DELAY_MILLIS = 37_000L
-
-class PathNetwork(
+class PathSocketEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
         private val webSocketClient: WebSocketClient,
-        private val runners: Runners,
-        private val pathRepository: PathRepository
-) : CoroutineScope {
+        private val storage: PathStorage
+) : PathEngine, CoroutineScope {
+
+    companion object {
+        private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
+        private const val RECONNECT_DELAY_MILLIS = 37_000L
+    }
+
     private val pathService = webSocketClient.pathService
     private var timeoutJob = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
+
+    override val status = ConflatedBroadcastChannel(ConnectionStatus.DISCONNECTED)
+
+    override val requests = ConflatedBroadcastChannel<JobRequest>()
+
+    override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
 
     init {
         resetWatchdog()
@@ -47,12 +56,16 @@ class PathNetwork(
         registerWatchdogResetHandler()
     }
 
-    fun start() {
+    override fun start() {
         webSocketClient.connect()
     }
 
-    fun finish() {
-        pathRepository.postConnectionStatus(DISCONNECTED)
+    override fun sendResult(result: JobResult) {
+        pathService.sendJobResult(SocketJobResult(result))
+    }
+
+    override fun stop() {
+        job.cancel()
     }
 
     private fun registerConnectionOpenedHandler() = launch {
@@ -64,37 +77,33 @@ class PathNetwork(
     }
 
     private fun registerJobRequestHandler() = launch {
-        pathService.receiveJobRequest().consumeEach { jobRequest ->
-            Timber.d("job request from server: $jobRequest")
-            sendAck(jobRequest)
-            val runner = runners[jobRequest]
-            runJob(runner, jobRequest)
+        pathService.receiveJobRequest().consumeEach { request ->
+            Timber.d("Request received [$request]")
+            sendAck(request)
+            requests.send(request)
         }
     }
 
-    private suspend fun runJob(runner: Runner, jobRequest: JobRequest) {
-        val jobResult = runner.runJob(jobRequest)
-        pathRepository.recordJobResult(runner.checkType, jobResult)
-        pathService.sendJobResult(jobResult)
-        Timber.v("job result sent: $jobResult")
-    }
-
-    private fun sendAck(jobRequest: JobRequest) {
+    private fun sendAck(jobRequest: SocketJobRequest) {
         val ack = Ack(id = jobRequest.id)
         pathService.sendAck(ack)
-        Timber.d("ack sent: $ack")
+        Timber.d("ACK sent [$ack]")
     }
 
     private fun registerErrorHandler() = launch {
         pathService.receiveError().consumeEach {
-            Timber.w("error from server: $it")
+            Timber.w("Server error [$it]")
         }
     }
 
     private fun registerAckHandler() = launch {
         pathService.receiveAck().consumeEach {
-            Timber.d("ack from server: $it")
-            pathRepository.nodeIdString = it.nodeId
+            status.send(ConnectionStatus.CONNECTED)
+            Timber.d("ACK received [$it]")
+            if (it.nodeId != null) {
+                nodeId.send(it.nodeId)
+                storage.nodeId = it.nodeId
+            }
         }
     }
 
@@ -102,18 +111,18 @@ class PathNetwork(
         pathService.receiveWebSocketEvent()
                 .filter { it is WebSocket.Event.OnMessageReceived }
                 .consumeEach {
-                    pathRepository.postConnectionStatus(CONNECTED)
+                    status.send(ConnectionStatus.CONNECTED)
                     resetWatchdog()
                 }
     }
 
     private fun resetWatchdog() {
-        Timber.w("watchdog reset")
+        Timber.d("Watchdog reset")
         timeoutJob.cancel()
         timeoutJob = launch {
             delay(RECONNECT_DELAY_MILLIS)
-            pathRepository.postConnectionStatus(DISCONNECTED)
-            Timber.w("watchdog detected timeout")
+            status.send(ConnectionStatus.DISCONNECTED)
+            Timber.w("Watchdog timeout")
             webSocketClient.reconnect()
             resetWatchdog()
         }
@@ -121,7 +130,7 @@ class PathNetwork(
 
     private tailrec suspend fun sendHeartbeat(intervalMillis: Long) {
         val checkIn = createCheckInMessage()
-        Timber.d("client check in: $checkIn")
+        Timber.d("Check in [$checkIn]")
 
         pathService.sendCheckIn(checkIn)
         delay(intervalMillis)
@@ -130,10 +139,9 @@ class PathNetwork(
 
     private suspend fun createCheckInMessage(): CheckIn {
         val location = lastLocationProvider.getLastRealLocationOrNull()
-
         return CheckIn(
-                nodeId = pathRepository.nodeIdString,
-                wallet = pathRepository.pathWalletAddress,
+                nodeId = storage.nodeId,
+                wallet = storage.walletAddress,
                 lat = location?.latitude?.toString(),
                 lon = location?.longitude?.toString()
         )

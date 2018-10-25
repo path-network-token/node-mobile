@@ -3,10 +3,10 @@ package network.path.mobilenode.ui.main.jobreport
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import network.path.mobilenode.data.runner.CheckType
-import network.path.mobilenode.data.storage.PathRepository
+import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.domain.entity.CheckType
 
-class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel() {
+class JobReportViewModel(private val storage: PathStorage) : ViewModel() {
     enum class ChartType { HTTP, DNS, CUSTOM }
 
     private val _httpLatencyMillis = MutableLiveData<Int>()
@@ -42,12 +42,12 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
         var customCheckAverageLatencyMillis = 0
         val allChecksCount = CheckType
                 .values()
-                .map { pathRepository.getCheckStatistics(it).count }
+                .map { storage.statisticsForType(it).count }
                 .sum()
 
 
         CheckType.values().forEach {
-            val checkStatistics = pathRepository.getCheckStatistics(it)
+            val checkStatistics = storage.statisticsForType(it)
             val averageLatencyMillis = checkStatistics.averageLatencyMillis.toInt()
 
             when (it) {
@@ -68,7 +68,7 @@ class JobReportViewModel(private val pathRepository: PathRepository) : ViewModel
         }
 
         fun getChecksPercentage(checkType: CheckType): Int {
-            val checkCount = pathRepository.getCheckStatistics(checkType).count
+            val checkCount = storage.statisticsForType(checkType).count
             return calculatePercentage(checkCount)
         }
 

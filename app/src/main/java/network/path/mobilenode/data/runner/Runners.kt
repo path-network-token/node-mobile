@@ -1,10 +1,9 @@
 package network.path.mobilenode.data.runner
 
-import network.path.mobilenode.domain.entity.message.JobRequest
+import network.path.mobilenode.domain.entity.JobRequest
 import okhttp3.OkHttpClient
 
 class Runners(private val okHttpClient: OkHttpClient) {
-
     operator fun get(jobRequest: JobRequest) = with(jobRequest) {
         when {
             protocol == null -> FallbackRunner

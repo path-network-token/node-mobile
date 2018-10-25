@@ -4,13 +4,13 @@ import android.os.SystemClock
 import com.crashlytics.android.Crashlytics
 import network.path.mobilenode.Constants.DEFAULT_CRITICAL_TIMEOUT_MILLIS
 import network.path.mobilenode.Constants.DEFAULT_DEGRADED_TIMEOUT_MILLIS
-import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.data.json.Status
-import network.path.mobilenode.domain.entity.message.JobRequest
-import network.path.mobilenode.domain.entity.message.JobResult
+import network.path.mobilenode.domain.entity.CheckType
+import network.path.mobilenode.domain.entity.JobRequest
+import network.path.mobilenode.domain.entity.JobResult
 import java.io.IOException
 
-suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
+suspend fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
     var responseBody = ""
     var isResponseKnown = false
 
@@ -32,10 +32,11 @@ suspend fun computeJobResult(jobRequest: JobRequest, block: suspend (JobRequest)
     }
 
     return JobResult(
-        jobUuid = jobRequest.jobUuid,
-        responseTime = requestDurationMillis,
-        responseBody = responseBody,
-        status = status
+            checkType = checkType,
+            executionUuid = jobRequest.executionUuid,
+            responseTime = requestDurationMillis,
+            responseBody = responseBody,
+            status = status
     )
 }
 
@@ -54,15 +55,4 @@ fun calculateJobStatus(requestDurationMillis: Long, jobRequest: JobRequest): Str
         requestDurationMillis > criticalAfterMillis -> Status.CRITICAL
         else -> Status.OK
     }
-}
-
-val JobRequest.endpointHost: String
-    get() {
-        endpointAddress ?: throw IOException("Missing endpoint address in $this")
-        val regex = "^\\w+://".toRegex(RegexOption.IGNORE_CASE)
-        return endpointAddress.replaceFirst(regex, "").replaceAfter('/', "")
-    }
-
-fun JobRequest.endpointPortOrDefault(default: Int): Int {
-    return (endpointPort ?: default).coerceIn(TCP_UDP_PORT_RANGE)
 }

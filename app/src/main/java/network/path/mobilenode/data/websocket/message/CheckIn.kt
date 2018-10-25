@@ -1,4 +1,4 @@
-package network.path.mobilenode.domain.entity.message
+package network.path.mobilenode.data.websocket.message
 
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.data.json.MessageType

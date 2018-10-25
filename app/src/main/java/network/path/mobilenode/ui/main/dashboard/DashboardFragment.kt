@@ -1,9 +1,11 @@
 package network.path.mobilenode.ui.main.dashboard
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
@@ -47,12 +49,13 @@ class DashboardFragment : BaseFragment() {
     private fun setupClicks() {
         viewJobReportButton.setOnClickListener {
             NavHostFragment.findNavController(this)
-                .navigate(R.id.action_mainFragment_to_jobReportFragment)
+                    .navigate(R.id.action_mainFragment_to_jobReportFragment)
         }
     }
 
     private fun setNodeId(nodeId: String?) {
-        nodeIdTextView.text = getString(R.string.node_id, nodeId ?: getString(R.string.unconfirmed_node_id))
+        nodeIdTextView.text = getString(R.string.node_id, nodeId
+                ?: getString(R.string.unconfirmed_node_id))
     }
 
     private fun setIpAddress(ipAddress: String?) {
@@ -61,7 +64,9 @@ class DashboardFragment : BaseFragment() {
 
     private fun colorConnectionStatusDot(isConnected: Boolean) {
         val colorRes = if (isConnected) R.color.apple_green else R.color.coral_pink
-        connectionStatusDot.drawable.setTint(ContextCompat.getColor(requireContext(), colorRes))
+        ImageViewCompat.setImageTintList(connectionStatusDot,
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorRes)))
+
         val colorLabelRes = if (isConnected) R.color.tealish else R.color.coral_pink
         subnetAddressLabel.setBackgroundColor(ContextCompat.getColor(requireContext(), colorLabelRes))
     }

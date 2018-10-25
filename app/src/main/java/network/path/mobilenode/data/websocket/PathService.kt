@@ -4,11 +4,11 @@ import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.ws.Receive
 import com.tinder.scarlet.ws.Send
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import network.path.mobilenode.domain.entity.message.Ack
-import network.path.mobilenode.domain.entity.message.CheckIn
-import network.path.mobilenode.domain.entity.message.JobRequest
-import network.path.mobilenode.domain.entity.message.JobResult
-import network.path.mobilenode.domain.entity.message.PathError
+import network.path.mobilenode.data.websocket.message.Ack
+import network.path.mobilenode.data.websocket.message.CheckIn
+import network.path.mobilenode.data.websocket.message.PathError
+import network.path.mobilenode.data.websocket.message.SocketJobRequest
+import network.path.mobilenode.data.websocket.message.SocketJobResult
 
 interface PathService {
     @Receive
@@ -21,10 +21,10 @@ interface PathService {
     fun sendAck(ack: Ack)
 
     @Send
-    fun sendJobResult(jobResult: JobResult)
+    fun sendJobResult(jobResult: SocketJobResult)
 
     @Receive
-    fun receiveJobRequest(): ReceiveChannel<JobRequest>
+    fun receiveJobRequest(): ReceiveChannel<SocketJobRequest>
 
     @Receive
     fun receiveError(): ReceiveChannel<PathError>

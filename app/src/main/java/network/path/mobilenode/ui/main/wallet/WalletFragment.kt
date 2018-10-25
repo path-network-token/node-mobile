@@ -5,7 +5,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.R
-import network.path.mobilenode.data.storage.Storage
+import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.onTextChanged
 import network.path.mobilenode.utils.showToast
@@ -22,12 +22,12 @@ class WalletFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_wallet
 
-    private val storage by inject<Storage>()
+    private val storage by inject<PathStorage>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
-            walletAddressInputEditText.setText(storage.pathWalletAddress)
+            walletAddressInputEditText.setText(storage.walletAddress)
         }
         setupViews()
     }
@@ -61,7 +61,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updatePathWalletAddress() {
         if (linkWalletButton.isEnabled) {
-            storage.pathWalletAddress = walletAddressInputEditText.text.toString()
+            storage.walletAddress = walletAddressInputEditText.text.toString()
             showToast(requireContext(), R.string.address_saved_toast)
         }
     }

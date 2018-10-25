@@ -2,7 +2,8 @@ package network.path.mobilenode.data.runner
 
 import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
-import network.path.mobilenode.domain.entity.message.JobRequest
+import network.path.mobilenode.domain.entity.CheckType
+import network.path.mobilenode.domain.entity.JobRequest
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +16,7 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
 
     override val checkType = CheckType.HTTP
 
-    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(jobRequest) { runHttpJob(it) }
+    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runHttpJob(it) }
 
     private fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)

@@ -4,12 +4,12 @@ import com.google.gson.Gson
 import com.tinder.scarlet.Message
 import com.tinder.scarlet.MessageAdapter
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
-import network.path.mobilenode.domain.entity.message.Ack
-import network.path.mobilenode.domain.entity.message.CheckIn
-import network.path.mobilenode.domain.entity.message.JobRequest
-import network.path.mobilenode.domain.entity.message.JobResult
-import network.path.mobilenode.domain.entity.message.PathError
-import network.path.mobilenode.domain.entity.message.PathMessage
+import network.path.mobilenode.data.websocket.message.Ack
+import network.path.mobilenode.data.websocket.message.CheckIn
+import network.path.mobilenode.data.websocket.message.SocketJobRequest
+import network.path.mobilenode.data.websocket.message.SocketJobResult
+import network.path.mobilenode.data.websocket.message.PathError
+import network.path.mobilenode.data.websocket.message.PathMessage
 import java.io.IOException
 import java.lang.reflect.Type
 
@@ -35,8 +35,8 @@ private val messageTypeNames = mapOf(
     CheckIn::class to MessageType.CHECK_IN,
     Ack::class to MessageType.ACK,
     PathError::class to MessageType.ERROR,
-    JobRequest::class to MessageType.JOB_REQUEST,
-    JobResult::class to MessageType.JOB_RESULT
+    SocketJobRequest::class to MessageType.JOB_REQUEST,
+    SocketJobResult::class to MessageType.JOB_RESULT
 )
 
 private fun PathMessage.isTypeOf(type: String?) = type == messageTypeNames[this::class]
