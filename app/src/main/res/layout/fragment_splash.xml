@@ -16,10 +16,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/imageGlobe"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_gravity="center"
             android:src="@drawable/globe"
+            android:transitionName="image_globe"
             tools:ignore="ContentDescription" />
 
         <ImageView

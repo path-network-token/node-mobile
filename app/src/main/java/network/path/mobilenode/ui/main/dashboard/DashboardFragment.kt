@@ -3,7 +3,6 @@ package network.path.mobilenode.ui.main.dashboard
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -36,14 +35,6 @@ class DashboardFragment : BaseFragment() {
             it.operatorDetails.observe(this, ::setOperatorDetails)
             it.ipAddress.observe(this, ::setIpAddress)
         }
-
-        animateIn()
-    }
-
-    private fun animateIn() {
-        val scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up)
-        scaleUp.fillAfter = true
-        image_globe.startAnimation(scaleUp)
     }
 
     private fun setupClicks() {

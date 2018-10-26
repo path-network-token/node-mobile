@@ -31,10 +31,6 @@ class PathSystem(
         registerNodeIdHandler()
     }
 
-    fun activate() {
-        storage.isActivated = true
-    }
-
     fun start() {
         engine.start()
         externalServices.start()

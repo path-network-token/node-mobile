@@ -2,7 +2,10 @@ package network.path.mobilenode.ui.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.transaction
+import androidx.transition.TransitionInflater
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
@@ -23,6 +26,21 @@ class MainFragment : BaseFragment() {
             showDashboardFragment()
         }
         initBottomBar()
+        setupTransition()
+    }
+
+    private fun setupTransition() {
+        val transition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element_transition)
+        transition.duration = 500
+        sharedElementEnterTransition = transition
+
+        setEnterSharedElementCallback(object : SharedElementCallback() {
+            override fun onMapSharedElements(names: MutableList<String>, sharedElements: MutableMap<String, View>) {
+                super.onMapSharedElements(names, sharedElements)
+
+                sharedElements[names.first()] = dashboardFragment.imageGlobe
+            }
+        })
     }
 
     private fun initBottomBar() {

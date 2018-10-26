@@ -5,6 +5,7 @@ import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_loading.*
 import kotlinx.coroutines.experimental.delay
@@ -35,8 +36,10 @@ class LoadingFragment : BaseFragment() {
     }
 
     private fun openMainScreen() {
+        val builder = FragmentNavigator.Extras.Builder()
+                .addSharedElement(imageGlobe, imageGlobe.transitionName)
         NavHostFragment.findNavController(this)
-            .navigate(R.id.action_loadingFragment_to_mainFragment)
+            .navigate(R.id.action_loadingFragment_to_mainFragment, null, null, builder.build())
     }
 
     private fun prepareSwitchTextAnimation() {

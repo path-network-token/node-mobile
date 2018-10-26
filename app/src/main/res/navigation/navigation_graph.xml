@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation_graph"
     app:startDestination="@+id/splashFragment">
@@ -12,26 +13,34 @@
             android:id="@+id/action_splashFragment_to_introFragment"
             app:destination="@id/introFragment"
             app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_splashFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/introFragment"
         android:name="network.path.mobilenode.ui.intro.IntroFragment"
         android:label="IntroFragment">
+
         <action
             android:id="@+id/action_introFragment_to_loadingFragment"
             app:destination="@id/loadingFragment"
             app:popUpTo="@id/introFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"/>
+
         <action
             android:id="@+id/action_introFragment_to_disclaimerFragment"
-            app:destination="@id/disclaimerFragment" />
+            app:destination="@id/disclaimerFragment"
+            app:enterAnim="@animator/slide_up"
+            app:exitAnim="@animator/slide_down"
+            app:popEnterAnim="@animator/slide_up"
+            app:popExitAnim="@animator/slide_down"
+            />
+
     </fragment>
 
     <fragment
@@ -51,17 +60,17 @@
         android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_jobReportFragment"
-            app:destination="@id/jobReportFragment" />
+            app:destination="@id/jobReportFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/jobReportFragment"
         android:name="network.path.mobilenode.ui.main.jobreport.JobReportFragment"
-        android:label="JobReportFragment" />
+        android:label="JobReportFragment"/>
 
     <fragment
         android:id="@+id/disclaimerFragment"
         android:name="network.path.mobilenode.ui.intro.DisclaimerFragment"
-        android:label="DisclaimerFragment" />
+        android:label="DisclaimerFragment"/>
 
 </navigation>

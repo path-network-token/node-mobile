@@ -72,7 +72,7 @@ class PathHttpEngine(
 
     private suspend fun performCheckIn() {
         try {
-            processJobs(httpService.checkIn(storage.nodeId, createCheckInMessage()).await())
+            processJobs(httpService.checkIn(storage.nodeId ?: "", createCheckInMessage()).await())
         } catch (e: Exception) {
             Timber.w(e)
             status.send(ConnectionStatus.DISCONNECTED)

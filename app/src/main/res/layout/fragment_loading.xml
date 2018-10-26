@@ -24,9 +24,11 @@
         >
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/imageGlobe"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:src="@drawable/globe"
+            android:transitionName="image_globe"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

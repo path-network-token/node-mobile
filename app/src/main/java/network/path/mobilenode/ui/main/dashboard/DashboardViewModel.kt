@@ -55,7 +55,7 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
 
     private fun registerIpHandler() = launch {
         system.ip.openSubscription().consumeEach {
-            _ipAddress.postValue(if (it != null) "$it/32" else null)
+            _ipAddress.postValue(it)
         }
     }
 
