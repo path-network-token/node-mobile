@@ -18,5 +18,5 @@ interface PathService {
     fun requestDetails(@Path("executionId") executionId: String): Deferred<JobRequest>
 
     @POST("/job_result/{nodeId}/{executionId}")
-    fun postResult(@Path("nodeId") nodeId: String, @Path("executionId") executionId: String, @Body result: JobResult)
+    fun postResult(@Path("nodeId") nodeId: String, @Path("executionId") executionId: String, @Body result: JobResult): Deferred<Unit>
 }

@@ -4,24 +4,15 @@ import network.path.mobilenode.data.json.MessageType
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobResult
 
-class SocketJobResult(
+data class SocketJobResult(
         override val id: String = randomId(),
         override val type: String = MessageType.JOB_RESULT,
-        checkType: CheckType,
-        jobUuid: String,
-        status: String,
-        responseTime: Long,
-        responseBody: String
-) : JobResult(
-        type,
-        checkType,
-        jobUuid,
-        status,
-        responseTime,
-        responseBody,
-        responseBody.length),
-        PathMessage {
-
+        val checkType: CheckType,
+        val jobUuid: String,
+        val status: String,
+        val responseTime: Long,
+        val responseBody: String
+) : PathMessage {
     constructor(result: JobResult) : this(
             checkType = result.checkType,
             jobUuid = result.executionUuid,

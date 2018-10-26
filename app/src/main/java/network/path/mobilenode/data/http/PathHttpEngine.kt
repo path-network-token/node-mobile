@@ -31,6 +31,8 @@ class PathHttpEngine(
         private const val HEARTBEAT_INTERVAL_MILLIS = 30_000L
     }
 
+    private val currentExecutionUuids = mutableSetOf<String>()
+
     private val httpService = PathServiceImpl(okHttpClient, gson)
     private var timeoutJob = Job()
 
@@ -51,6 +53,12 @@ class PathHttpEngine(
             httpService.postResult(nodeId, result.executionUuid, result)
         } catch (e: Exception) {
             Timber.w(e)
+        }
+
+        currentExecutionUuids.remove(result.executionUuid)
+        Timber.d("HTTP: ${currentExecutionUuids.size} jobs left to process...")
+        if (currentExecutionUuids.isEmpty()) {
+            checkIn()
         }
     }
 
@@ -81,19 +89,22 @@ class PathHttpEngine(
         if (jobList.jobs.isEmpty()) {
             scheduleCheckIn()
         } else {
-            jobList.jobs.forEach {
-                try {
-                    val details = httpService.requestDetails(it.executionId).await()
-                    requests.send(details)
-                } catch (e: Exception) {
-                    Timber.w(e)
-                    // TODO: Error handling?
-                }
-            }
-            performCheckIn()
+            val uuids = jobList.jobs.map { it.executionUuid }
+            currentExecutionUuids.addAll(uuids)
+            uuids.forEach { processJob(it) }
         }
     }
 
+    private suspend fun processJob(executionUuid: String) {
+        try {
+            val details = httpService.requestDetails(executionUuid).await()
+            details.executionUuid = executionUuid
+            requests.send(details)
+        } catch (e: Exception) {
+            Timber.w(e)
+            // TODO: Error handling?
+        }
+    }
 
     private suspend fun createCheckInMessage(): CheckIn {
         val location = lastLocationProvider.getLastRealLocationOrNull()

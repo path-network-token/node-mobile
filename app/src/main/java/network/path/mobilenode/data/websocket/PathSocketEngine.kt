@@ -80,7 +80,7 @@ class PathSocketEngine(
         pathService.receiveJobRequest().consumeEach { request ->
             Timber.d("Request received [$request]")
             sendAck(request)
-            requests.send(request)
+            requests.send(request.jobRequest())
         }
     }
 

@@ -11,6 +11,7 @@ import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
+import network.path.mobilenode.data.websocket.PathSocketEngine
 import network.path.mobilenode.data.websocket.WebSocketClient
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathExternalServices
@@ -38,8 +39,11 @@ val appModule = module {
     single { createLenientGson() }
 
     single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
-//    single<PathEngine> { PathSocketEngine(get(), get(), get(), get()) }
-    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get()) }
+    single<PathEngine> { if (BuildConfig.IS_HTTP) {
+        PathHttpEngine(get(), get(), get(), get(), get())
+    } else {
+        PathSocketEngine(get(), get(), get(), get())
+    }}
 
     scope("service") { Job() }
     scope("service") { PathSystem(get(), get(), get(), get(), get()) }

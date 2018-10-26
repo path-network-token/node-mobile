@@ -8,6 +8,7 @@ import network.path.mobilenode.data.json.Status
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
+import timber.log.Timber
 import java.io.IOException
 
 suspend fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
@@ -31,6 +32,7 @@ suspend fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block
         false -> Status.UNKNOWN
     }
 
+    Timber.d("RUNNER: [$jobRequest] => $status")
     return JobResult(
             checkType = checkType,
             executionUuid = jobRequest.executionUuid,

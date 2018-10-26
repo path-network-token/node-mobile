@@ -5,11 +5,11 @@ import com.tinder.scarlet.Message
 import com.tinder.scarlet.MessageAdapter
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
 import network.path.mobilenode.data.websocket.message.Ack
+import network.path.mobilenode.data.websocket.message.PathError
+import network.path.mobilenode.data.websocket.message.PathMessage
 import network.path.mobilenode.data.websocket.message.SocketCheckIn
 import network.path.mobilenode.data.websocket.message.SocketJobRequest
 import network.path.mobilenode.data.websocket.message.SocketJobResult
-import network.path.mobilenode.data.websocket.message.PathError
-import network.path.mobilenode.data.websocket.message.PathMessage
 import java.io.IOException
 import java.lang.reflect.Type
 

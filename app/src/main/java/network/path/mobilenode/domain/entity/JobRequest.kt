@@ -3,8 +3,8 @@ package network.path.mobilenode.domain.entity
 import network.path.mobilenode.Constants
 import java.io.IOException
 
-open class JobRequest(
-        open val type: String = "job-request",
+data class JobRequest(
+        val type: String = "job-request",
         val protocol: String?,
         val method: String?,
         val headers: List<Map<String, String>>?,
@@ -16,11 +16,9 @@ open class JobRequest(
         val criticalAfter: Long?,
         val criticalResponses: List<Map<String, Any>>,
         val validResponses: List<Map<String, Any>>,
-        val executionUuid: String
-) {
-    override fun toString(): String =
-            "${javaClass.simpleName}($protocol, $method, $headers, $payload, $endpointAddress, $endpointPort, $endpointAdditionalParams, $degradedAfter, $criticalAfter, $criticalResponses, $validResponses, $executionUuid)"
-}
+        val jobUuid: String,
+        var executionUuid: String
+)
 
 val JobRequest.endpointHost: String
     get() {
