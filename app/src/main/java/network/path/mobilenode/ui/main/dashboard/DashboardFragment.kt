@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
 import network.path.mobilenode.R
 import network.path.mobilenode.domain.entity.AutonomousSystem
+import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,6 +35,7 @@ class DashboardFragment : BaseFragment() {
             it.isConnected.observe(this, ::colorConnectionStatusDot)
             it.operatorDetails.observe(this, ::setOperatorDetails)
             it.ipAddress.observe(this, ::setIpAddress)
+            it.jobList.observe(this, ::setJobList)
         }
     }
 
@@ -66,6 +68,11 @@ class DashboardFragment : BaseFragment() {
         operatorAsn.text = details?.asNumber.orNoData()
         autonomousSystemDescription.text = details?.asDescription.orNoData()
         country.text = details?.asCountryCode.orNoData()
+    }
+
+    private fun setJobList(jobList: JobList) {
+        operatorAsn.text = jobList.asn?.orNoData()
+        ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
     }
 
     private fun String?.orNoData() = this ?: getString(R.string.no_data)

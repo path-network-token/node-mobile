@@ -12,6 +12,7 @@ import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
+import network.path.mobilenode.domain.entity.JobList
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.experimental.CoroutineContext
@@ -34,11 +35,15 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _ipAddress = MutableLiveData<String?>()
     val ipAddress: LiveData<String?> = _ipAddress
 
+    private val _jobList = MutableLiveData<JobList>()
+    val jobList: LiveData<JobList> = _jobList
+
     fun onViewCreated() {
         registerNodeIdHandler()
         registerStatusHandler()
         registerIpHandler()
         registerDetailsHandler()
+        registerJobListHandler()
     }
 
     private fun registerNodeIdHandler() = launch {
@@ -62,6 +67,12 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private fun registerDetailsHandler() = launch {
         system.details.openSubscription().consumeEach {
             _operatorDetails.postValue(it)
+        }
+    }
+
+    private fun registerJobListHandler() = launch {
+        system.jobList.openSubscription().consumeEach {
+            _jobList.postValue(it)
         }
     }
 

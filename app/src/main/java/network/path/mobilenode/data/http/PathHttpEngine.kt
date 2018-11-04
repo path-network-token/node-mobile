@@ -42,6 +42,7 @@ class PathHttpEngine(
     override val status = ConflatedBroadcastChannel(ConnectionStatus.DISCONNECTED)
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
+    override val jobList = ConflatedBroadcastChannel<JobList>()
 
     override fun start() {
         checkIn()
@@ -81,9 +82,11 @@ class PathHttpEngine(
     }
 
     private suspend fun processJobs(jobList: JobList) {
+        Timber.d("HTTP: received job list [$jobList]")
         if (jobList.nodeId != null) {
             nodeId.send(jobList.nodeId)
         }
+        this.jobList.send(jobList)
 
         status.send(ConnectionStatus.CONNECTED)
         if (jobList.jobs.isEmpty()) {

@@ -25,6 +25,7 @@ class PathSystem(
     val details = externalServices.details
     val status = engine.status
     val nodeId = engine.nodeId
+    val jobList = engine.jobList
 
     init {
         registerJobRequestHandler()

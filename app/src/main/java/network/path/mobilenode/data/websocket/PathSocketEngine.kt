@@ -17,6 +17,7 @@ import network.path.mobilenode.data.websocket.message.SocketJobResult
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.entity.ConnectionStatus
+import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.LastLocationProvider
@@ -46,6 +47,8 @@ class PathSocketEngine(
     override val requests = ConflatedBroadcastChannel<JobRequest>()
 
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
+
+    override val jobList = ConflatedBroadcastChannel<JobList>()
 
     init {
         resetWatchdog()
