@@ -10,8 +10,8 @@ fun Socket.readText(maxSize: Int): String {
     }
 }
 
-fun writeTextToSocket(socket: Socket, payload: String) {
-    socket.getOutputStream().bufferedWriter().apply {
+fun Socket.writeText(payload: String) {
+    this.getOutputStream().bufferedWriter().apply {
         write(payload)
         flush()
     }

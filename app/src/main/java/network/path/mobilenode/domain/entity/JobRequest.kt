@@ -5,17 +5,17 @@ import java.io.IOException
 
 data class JobRequest(
         val type: String = "job-request",
-        val protocol: String?,
-        val method: String?,
-        val headers: List<Map<String, String>>?,
-        val payload: String?,
-        val endpointAddress: String?,
-        val endpointPort: Int?,
-        val endpointAdditionalParams: String?,
-        val degradedAfter: Long?,
-        val criticalAfter: Long?,
-        val criticalResponses: List<Map<String, Any>>,
-        val validResponses: List<Map<String, Any>>,
+        val protocol: String? = null,
+        val method: String? = null,
+        val headers: List<Map<String, String>>? = null,
+        val payload: String? = null,
+        val endpointAddress: String? = null,
+        val endpointPort: Int? = null,
+        val endpointAdditionalParams: String? = null,
+        val degradedAfter: Long? = null,
+        val criticalAfter: Long? = null,
+        val criticalResponses: List<Map<String, Any>> = emptyList(),
+        val validResponses: List<Map<String, Any>> = emptyList(),
         val jobUuid: String,
         var executionUuid: String
 )

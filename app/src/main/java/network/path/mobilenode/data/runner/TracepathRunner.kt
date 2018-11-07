@@ -10,7 +10,6 @@ import network.path.mobilenode.domain.entity.endpointPortOrDefault
 import pl.droidsonroids.tracepath.android.Tracepath
 
 class TracepathRunner : Runner {
-
     override val checkType = CheckType.TRACEROUTE
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runTracepathJob(it) }

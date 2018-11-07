@@ -30,7 +30,7 @@ class TcpRunner : Runner {
                 it.soTimeout = TCP_UDP_READ_WRITE_TIMEOUT_MILLIS.toInt()
 
                 val response = async { it.readText(RESPONSE_LENGTH_BYTES_MAX) }
-                writeTextToSocket(it, jobRequest.payload)
+                it.writeText(jobRequest.payload)
 
                 return@use response.await()
             }
