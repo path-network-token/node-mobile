@@ -25,6 +25,7 @@ class SplashViewModel(private val storage: PathStorage) : ViewModel(), Coroutine
 
     private val showNextScreenJob = launch(start = CoroutineStart.LAZY) {
         delay(SPLASH_SHOW_TIME_MILLIS)
+//        val value = NextScreen.INTRO
         val value = if (storage.isActivated) NextScreen.MAIN else NextScreen.INTRO
         _nextScreen.postValue(value)
     }

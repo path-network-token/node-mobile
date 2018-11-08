@@ -12,7 +12,7 @@ ext.versions = [
         fabricPlugin        : '1.25.4',
         gitPlugin           : '1.7.2',
         googleServicesPlugin: '4.0.1',
-        androidPlugin       : '3.3.0-alpha13',
+        androidPlugin       : '3.2.1',
         versionsPlugin      : '0.20.0',
         gson                : '2.8.5',
         oldJunit            : '4.12',
