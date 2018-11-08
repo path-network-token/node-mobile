@@ -2,6 +2,7 @@ package network.path.mobilenode.data.http
 
 import com.google.gson.Gson
 import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
@@ -17,6 +18,7 @@ import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.LastLocationProvider
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import timber.log.Timber
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.math.max
@@ -57,10 +59,10 @@ class PathHttpEngine(
         if (result.executionUuid == "DUMMY_UUID") return
 
         val nodeId = storage.nodeId ?: return
-        try {
-            httpService.postResult(nodeId, result.executionUuid, result)
-        } catch (e: Exception) {
-            Timber.w(e)
+        launch {
+            executeServiceCall {
+                httpService.postResult(nodeId, result.executionUuid, result)
+            }
         }
 
         currentExecutionUuids.remove(result.executionUuid)
@@ -82,12 +84,16 @@ class PathHttpEngine(
         performCheckIn()
     }
 
-    private suspend fun performCheckIn() = try {
-        processJobs(httpService.checkIn(storage.nodeId ?: "", createCheckInMessage()).await())
-    } catch (e: Exception) {
-        Timber.w(e)
-        status.send(ConnectionStatus.DISCONNECTED)
-        scheduleCheckIn()
+    private suspend fun performCheckIn() {
+        val result = executeServiceCall {
+            httpService.checkIn(storage.nodeId ?: "", createCheckInMessage())
+        }
+        if (result != null) {
+            processJobs(result)
+        } else {
+            status.send(ConnectionStatus.DISCONNECTED)
+            scheduleCheckIn()
+        }
     }
 
     private suspend fun processJobs(list: JobList) {
@@ -109,16 +115,18 @@ class PathHttpEngine(
 //        test()
     }
 
-    private suspend fun processJob(executionUuid: String) = try {
-        val details = httpService.requestDetails(executionUuid).await()
-        details.executionUuid = executionUuid
-        // Mark job as active
-        currentExecutionUuids[executionUuid] = true
-        requests.send(details)
-    } catch (e: Exception) {
-        // We could not receive job details. Let's remove this job from the pool.
-        currentExecutionUuids.remove(executionUuid)
-        Timber.w(e)
+    private suspend fun processJob(executionUuid: String) {
+        val details = executeServiceCall {
+            httpService.requestDetails(executionUuid)
+        }
+        if (details != null) {
+            details.executionUuid = executionUuid
+            // Mark job as active
+            currentExecutionUuids[executionUuid] = true
+            requests.send(details)
+        } else {
+            currentExecutionUuids.remove(executionUuid)
+        }
     }
 
     private suspend fun createCheckInMessage(): CheckIn {
@@ -164,5 +172,21 @@ class PathHttpEngine(
 //        val dummyRequest = JobRequest(protocol = "tcp", payload = "GET /\n\n", endpointAddress = "www.google.com", endpointPort = 80, jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
 //        val dummyRequest = JobRequest(protocol = "", method="traceroute", payload = "HELLO", endpointAddress = "www.google.com", jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
         requests.send(dummyRequest)
+    }
+
+    private suspend fun <T>executeServiceCall(call: suspend () -> Deferred<T>): T? {
+        return try {
+            call().await()
+        } catch (e: Exception) {
+            if (e is HttpException) {
+                if (e.code() == 422) {
+                    val body = e.response()?.body()
+                    Timber.w("HTTP exception: $body")
+                    // TODO: Parse
+                }
+            }
+            Timber.w("Service call exception: $e", e)
+            null
+        }
     }
 }
