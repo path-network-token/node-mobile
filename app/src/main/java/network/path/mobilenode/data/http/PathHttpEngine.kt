@@ -30,11 +30,11 @@ class PathHttpEngine(
 ) : PathEngine, CoroutineScope {
     companion object {
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
-        private const val POLL_INTERVAL_MS = 30_000L
+        private const val POLL_INTERVAL_MS = 9_000L
         private const val MAX_JOBS = 10
     }
 
-    private val currentExecutionUuids = mutableSetOf<String>()
+    private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
     private val httpService = PathServiceImpl(okHttpClient, gson)
     private var timeoutJob = Job()
@@ -53,7 +53,7 @@ class PathHttpEngine(
         pollJobs()
     }
 
-    override fun sendResult(result: JobResult) {
+    override fun processResult(result: JobResult) {
         if (result.executionUuid == "DUMMY_UUID") return
 
         val nodeId = storage.nodeId ?: return
@@ -64,10 +64,12 @@ class PathHttpEngine(
         }
 
         currentExecutionUuids.remove(result.executionUuid)
-        Timber.d("HTTP: ${currentExecutionUuids.size} jobs left to process...")
-        if (currentExecutionUuids.isEmpty()) {
-            checkIn()
-        }
+
+        val inactiveUuids = currentExecutionUuids.filterValues { !it }
+        Timber.d("HTTP: ${currentExecutionUuids.size} jobs in the pool, ${inactiveUuids.size} jobs not yet active...")
+//        if (inactiveUuids.isEmpty()) {
+//            checkIn()
+//        }
     }
 
     override fun stop() {
@@ -80,43 +82,43 @@ class PathHttpEngine(
         performCheckIn()
     }
 
-    private suspend fun performCheckIn() {
-        try {
-            processJobs(httpService.checkIn(storage.nodeId ?: "", createCheckInMessage()).await())
-        } catch (e: Exception) {
-            Timber.w(e)
-            status.send(ConnectionStatus.DISCONNECTED)
-            scheduleCheckIn()
-        }
+    private suspend fun performCheckIn() = try {
+        processJobs(httpService.checkIn(storage.nodeId ?: "", createCheckInMessage()).await())
+    } catch (e: Exception) {
+        Timber.w(e)
+        status.send(ConnectionStatus.DISCONNECTED)
+        scheduleCheckIn()
     }
 
-    private suspend fun processJobs(jobList: JobList) {
-        Timber.d("HTTP: received job list [$jobList]")
-        if (jobList.nodeId != null) {
-            nodeId.send(jobList.nodeId)
+    private suspend fun processJobs(list: JobList) {
+        Timber.d("HTTP: received job list [$list]")
+        if (list.nodeId != null) {
+            nodeId.send(list.nodeId)
         }
-        this.jobList.send(jobList)
+        jobList.send(list)
 
         status.send(ConnectionStatus.CONNECTED)
 
-        if (jobList.jobs.isNotEmpty()) {
-            val ids = jobList.jobs.map { it.executionUuid }
-            currentExecutionUuids.addAll(ids)
+        if (list.jobs.isNotEmpty()) {
+            val ids = list.jobs.map { it.executionUuid to false }
+            // Add new jobs to the pool
+            currentExecutionUuids.putAll(ids)
         }
         scheduleCheckIn()
 
 //        test()
     }
 
-    private suspend fun processJob(executionUuid: String) {
-        try {
-            val details = httpService.requestDetails(executionUuid).await()
-            details.executionUuid = executionUuid
-            requests.send(details)
-        } catch (e: Exception) {
-            Timber.w(e)
-            // TODO: Error handling?
-        }
+    private suspend fun processJob(executionUuid: String) = try {
+        val details = httpService.requestDetails(executionUuid).await()
+        details.executionUuid = executionUuid
+        // Mark job as active
+        currentExecutionUuids[executionUuid] = true
+        requests.send(details)
+    } catch (e: Exception) {
+        // We could not receive job details. Let's remove this job from the pool.
+        currentExecutionUuids.remove(executionUuid)
+        Timber.w(e)
     }
 
     private suspend fun createCheckInMessage(): CheckIn {
@@ -136,7 +138,8 @@ class PathHttpEngine(
         pollJob.cancel()
         pollJob = launch {
             if (currentExecutionUuids.isNotEmpty()) {
-                val ids = currentExecutionUuids.toList()
+                // Process only jobs which were not marked as active.
+                val ids = currentExecutionUuids.filterValues { !it }.keys.toList()
                 Timber.d("HTTP: ${ids.size} jobs to be processed")
                 ids.forEach { processJob(it) }
             }

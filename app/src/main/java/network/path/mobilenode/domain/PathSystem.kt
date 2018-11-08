@@ -61,7 +61,7 @@ class PathSystem(
         Timber.d("SYSTEM: received [$request]")
         val result = jobExecutor.execute(request).await()
         storage.recordStatistics(result.checkType, result.responseTime)
-        engine.sendResult(result)
+        engine.processResult(result)
         Timber.d("SYSTEM: request result [$result]")
     }
 }

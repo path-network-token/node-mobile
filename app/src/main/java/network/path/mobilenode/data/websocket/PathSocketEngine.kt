@@ -63,7 +63,7 @@ class PathSocketEngine(
         webSocketClient.connect()
     }
 
-    override fun sendResult(result: JobResult) {
+    override fun processResult(result: JobResult) {
         pathService.sendJobResult(SocketJobResult(result))
     }
 

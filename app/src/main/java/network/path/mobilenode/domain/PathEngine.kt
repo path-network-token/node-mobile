@@ -16,7 +16,7 @@ interface PathEngine {
     fun start()
 
     // Send result of a job back to server
-    fun sendResult(result: JobResult)
+    fun processResult(result: JobResult)
 
     // Stop any interaction with the server
     fun stop()
