@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">20sp</dimen>
+
+    <style name="Text.Default" parent="@android:style/TextAppearance.Small">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:fontFamily">@font/exo_demi_bold</item>
+    </style>
+
+    <style name="Text.Default.Bold">
+        <item name="android:fontFamily">@font/exo_bold</item>
+    </style>
+
+    <style name="Text.Default.Header">
+        <item name="android:fontFamily">@font/exo_bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:letterSpacing">0.13</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+</resources>

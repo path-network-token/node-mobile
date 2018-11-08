@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <View
+        android:id="@+id/viewJobReportTopSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/dark_grey_blue"/>
+
+    <TextView
+        android:id="@+id/viewJobReportButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/exo_medium"
+        android:gravity="center"
+        android:letterSpacing="0.14"
+        android:padding="16dp"
+        android:text="@string/view_job_report"
+        android:textAllCaps="true"
+        android:textColor="@color/sky"
+        android:textSize="14sp"
+        android:stateListAnimator="@animator/button_state_list"
+        />
+
+    <View
+        android:id="@+id/viewJobReportBottomSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/dark_grey_blue"/>
+
+</LinearLayout>
