@@ -14,11 +14,14 @@ data class JobRequest(
         val endpointAdditionalParams: String? = null,
         val degradedAfter: Long? = null,
         val criticalAfter: Long? = null,
-        val criticalResponses: List<Map<String, Any>> = emptyList(),
-        val validResponses: List<Map<String, Any>> = emptyList(),
+        val criticalResponses: List<JobCriticalResponse> = emptyList(),
+        val validResponses: List<JobValidResponse> = emptyList(),
         val jobUuid: String,
         var executionUuid: String
 )
+
+data class JobValidResponse(val headerStatus: String, val bodyContains: String)
+data class JobCriticalResponse(val headerStatus: String, val bodyContains: String)
 
 val JobRequest.endpointHost: String
     get() {
