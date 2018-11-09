@@ -11,20 +11,30 @@ final def git = Grgit.open(currentDir: projectDir)
 final def shortenedCommitHash = git.head().getAbbreviatedId()
 final def commitsOnBranchCount = git.log(includes: ['HEAD']).size()
 
+final def ver = rootProject.ext.versions
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "network.path.mobilenode"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode commitsOnBranchCount
-        versionName "1.0.1"
+        versionCode ver.appVersionCode
+        versionName ver.appVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.dev.udpflood.net/ws"'
         buildConfigField 'String', 'ICANHAZIP_BASE_URL', '"https://icanhazip.com/"'
         buildConfigField 'String', 'IPTOASN_BASE_URL', '"https://api.iptoasn.com/"'
         buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
         buildConfigField 'boolean', 'IS_HTTP', 'true'
+    }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.isDebuggable()) {
+            variant.outputs.each { output ->
+                output.versionCodeOverride = commitsOnBranchCount
+            }
+        }
     }
 
     testOptions {
@@ -50,15 +60,12 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://jobs-api.path.network/ws"'
+            buildConfigField 'String', 'HTTP_SERVER_URL', '"https://jobs-api.path.network/"'
         }
         debug {
             ext.enableCrashlytics = false
             versionNameSuffix "$shortenedCommitHash.${commitsOnBranchCount}.debug"
-        }
-        mock {
-            ext.enableCrashlytics = false
-            initWith debug
-            buildConfigField 'String', 'WEBSOCKET_SERVER_URL', '"ws://yehq4vtxw3nu.serveo.net"'
+            applicationIdSuffix = ".debug"
         }
     }
 
