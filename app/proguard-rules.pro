@@ -30,3 +30,5 @@
 -dontwarn retrofit2.-KotlinExtensions
 
 -dontwarn org.koin.**
+
+-dontwarn network.path.mobilenode.utils.**

@@ -102,15 +102,16 @@
         <item name="android:background">@color/dark_sky_blue</item>
     </style>
 
-    <style name="PillButton">
+    <style name="PillButton" parent="Text.Default.Bold">
+        <item name="android:textSize">16sp</item>
         <item name="android:layout_width">180dp</item>
         <item name="android:layout_height">50dp</item>
+        <item name="android:letterSpacing">0.19</item>
         <item name="android:background">@drawable/link_button_background</item>
-        <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="DisclaimerText">
-        <item name="android:textSize">12sp</item>
+    <style name="DisclaimerText" parent="Text.Default.Medium">
+        <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:textColor">@color/cloudy_blue</item>
