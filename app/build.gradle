@@ -14,11 +14,11 @@ final def commitsOnBranchCount = git.log(includes: ['HEAD']).size()
 final def ver = rootProject.ext.versions
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion ver.compileSdk
     defaultConfig {
         applicationId "network.path.mobilenode"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion ver.minSdk
+        targetSdkVersion ver.targetSdk
         versionCode ver.appVersionCode
         versionName ver.appVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -27,6 +27,7 @@ android {
         buildConfigField 'String', 'IPTOASN_BASE_URL', '"https://api.iptoasn.com/"'
         buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
         buildConfigField 'boolean', 'IS_HTTP', 'true'
+        manifestPlaceholders = [applicationLabel: "Path Mobile"]
     }
 
     applicationVariants.all { variant ->
@@ -66,6 +67,7 @@ android {
             ext.enableCrashlytics = false
             versionNameSuffix "$shortenedCommitHash.${commitsOnBranchCount}.debug"
             applicationIdSuffix = ".debug"
+            manifestPlaceholders = [applicationLabel: "Path Mobile Dev"]
         }
     }
 
@@ -73,6 +75,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+//    lintOptions {
+//        checkReleaseBuilds false
+//        // Or, if you prefer, you can continue to check for errors in release builds,
+//        // but continue the build even when errors are found:
+//        abortOnError false
+//    }
 }
 
 kotlin {
