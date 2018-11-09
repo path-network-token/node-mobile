@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <View
         android:id="@+id/latencyStartDivider"
@@ -12,20 +14,24 @@
         app:layout_constraintBottom_toBottomOf="@id/latencyLabelTextView"
         app:layout_constraintEnd_toStartOf="@id/latencyLabelTextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/latencyLabelTextView" />
+        app:layout_constraintTop_toTopOf="@id/latencyLabelTextView"
+        />
 
     <TextView
         android:id="@+id/latencyLabelTextView"
-        style="@style/JobReportSectionLabel"
+        style="@style/Text.Default.Bold.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:text="@string/average_latency"
+        android:letterSpacing="0.17"
+        android:textColor="@color/sky"
         app:layout_constraintEnd_toStartOf="@id/latencyEndDivider"
         app:layout_constraintStart_toEndOf="@id/latencyStartDivider"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <View
         android:id="@+id/latencyEndDivider"
@@ -35,7 +41,8 @@
         app:layout_constraintBottom_toBottomOf="@id/latencyLabelTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/latencyLabelTextView"
-        app:layout_constraintTop_toTopOf="@id/latencyLabelTextView" />
+        app:layout_constraintTop_toTopOf="@id/latencyLabelTextView"
+        />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
         android:id="@+id/httpLatencyChart"
@@ -46,7 +53,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/latencyLabelTextView"
-        app:max_millis="10000" />
+        app:max_millis="10000"
+        />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
         android:id="@+id/dnsLatencyChart"
@@ -56,7 +64,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/httpLatencyChart"
-        app:max_millis="10000" />
+        app:max_millis="10000"
+        />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
         android:id="@+id/customLatencyChart"
@@ -66,6 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dnsLatencyChart"
-        app:max_millis="10000" />
+        app:max_millis="10000"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

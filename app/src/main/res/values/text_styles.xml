@@ -15,6 +15,10 @@
         <item name="android:fontFamily">@font/exo_bold</item>
     </style>
 
+    <style name="Text.Default.Bold.Small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
     <style name="Text.Default.Medium">
         <item name="android:fontFamily">@font/exo_medium</item>
     </style>
