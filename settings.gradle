@@ -1,1 +1,1 @@
-include ':app', ':mock-websocket'
+include ':app'

@@ -5,133 +5,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/screen_root_layout_padding"
     >
 
-    <ImageView
-        android:id="@+id/imageGlobe"
+    <TextView
+        android:id="@+id/subnetAddressLabel"
+        style="@style/Text.Default.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@color/tealish"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.11"
+        android:lineSpacingExtra="7sp"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingTop="@dimen/padding_s"
+        android:paddingEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_s"
+        android:text="@string/subnet_address"
+        app:layout_constraintBottom_toTopOf="@+id/ipWithSubnetAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/ipWithSubnetAddress"
+        style="@style/Text.Default"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="60dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/globe"
-        android:alpha="0.8"
-        android:scaleX="1.2"
-        android:scaleY="1.2"
-        android:transitionName="image_globe"
+        android:layout_height="52dp"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:gravity="center"
+        android:letterSpacing="0.06"
+        android:lines="1"
+        android:text="@string/n_a"
+        app:autoSizeMaxTextSize="44sp"
+        app:autoSizeMinTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="255.255.255.255/32"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/tealish"
+        app:layout_constraintBottom_toTopOf="@+id/nodeIdTextView"
+        app:layout_constraintEnd_toEndOf="@+id/nodeIdTextView"
+        app:layout_constraintStart_toStartOf="@+id/nodeIdTextView"
+        />
+
+    <ImageView
+        android:id="@+id/connectionStatusDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_m"
+        android:src="@drawable/dot"
+        android:tint="@color/coral_pink"
+        app:layout_constraintBottom_toBottomOf="@+id/nodeIdTextView"
+        app:layout_constraintEnd_toStartOf="@+id/nodeIdTextView"
+        app:layout_constraintTop_toTopOf="@+id/nodeIdTextView"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/nodeIdTextView"
+        style="@style/Text.Default.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.14"
+        android:lineSpacingExtra="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintVertical_bias="0.37"
+        tools:text="NODE ID: 12345678"
         />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/screen_root_layout_padding"
-        >
+    <include
+        android:id="@+id/dashboardDetails"
+        layout="@layout/dashboard_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_m"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/padding_m"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nodeIdTextView"
+        />
 
-        <TextView
-            android:id="@+id/subnetAddressLabel"
-            style="@style/Text.Default.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:background="@color/tealish"
-            android:gravity="center_horizontal"
-            android:letterSpacing="0.11"
-            android:lineSpacingExtra="7sp"
-            android:paddingStart="@dimen/padding_l"
-            android:paddingTop="@dimen/padding_s"
-            android:paddingEnd="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_s"
-            android:text="@string/subnet_address"
-            app:layout_constraintBottom_toTopOf="@+id/ipWithSubnetAddress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/ipWithSubnetAddress"
-            style="@style/Text.Default"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginBottom="@dimen/padding_m"
-            android:gravity="center"
-            android:letterSpacing="0.06"
-            android:lines="1"
-            android:text="@string/n_a"
-            app:autoSizeMaxTextSize="44sp"
-            app:autoSizeMinTextSize="22sp"
-            app:autoSizeStepGranularity="2sp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toTopOf="@+id/separator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="255.255.255.255/32"
-            />
-
-        <View
-            android:id="@+id/separator"
-            android:layout_width="50dp"
-            android:layout_height="2dp"
-            android:layout_marginBottom="24dp"
-            android:background="@color/tealish"
-            app:layout_constraintBottom_toTopOf="@+id/nodeIdTextView"
-            app:layout_constraintEnd_toEndOf="@+id/nodeIdTextView"
-            app:layout_constraintStart_toStartOf="@+id/nodeIdTextView"
-            />
-
-        <ImageView
-            android:id="@+id/connectionStatusDot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/padding_m"
-            android:src="@drawable/dot"
-            android:tint="@color/coral_pink"
-            app:layout_constraintBottom_toBottomOf="@+id/nodeIdTextView"
-            app:layout_constraintEnd_toStartOf="@+id/nodeIdTextView"
-            app:layout_constraintTop_toTopOf="@+id/nodeIdTextView"
-            tools:ignore="ContentDescription"
-            />
-
-        <TextView
-            android:id="@+id/nodeIdTextView"
-            style="@style/Text.Default.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:letterSpacing="0.14"
-            android:lineSpacingExtra="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.37"
-            tools:text="NODE ID: 12345678"
-            />
-
-        <include
-            android:id="@+id/dashboardDetails"
-            layout="@layout/dashboard_details"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_m"
-            android:layout_marginTop="@dimen/padding_l"
-            android:layout_marginEnd="@dimen/padding_m"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nodeIdTextView"
-            />
-
-        <include
-            layout="@layout/job_report_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        layout="@layout/job_report_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
