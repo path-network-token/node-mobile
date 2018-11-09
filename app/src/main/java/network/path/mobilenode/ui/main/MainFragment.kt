@@ -2,15 +2,13 @@ package network.path.mobilenode.ui.main
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.transaction
-import androidx.transition.TransitionInflater
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
+import network.path.mobilenode.ui.opengl.MyGLRenderer
 
 class MainFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_main
@@ -26,21 +24,11 @@ class MainFragment : BaseFragment() {
             showDashboardFragment()
         }
         initBottomBar()
-        setupTransition()
-    }
-
-    private fun setupTransition() {
-        val transition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element_transition)
-        transition.duration = 500
-        sharedElementEnterTransition = transition
-
-        setEnterSharedElementCallback(object : SharedElementCallback() {
-            override fun onMapSharedElements(names: MutableList<String>, sharedElements: MutableMap<String, View>) {
-                super.onMapSharedElements(names, sharedElements)
-
-                sharedElements[names.first()] = dashboardFragment.imageGlobe
+        surface_view.renderer.listener = object : MyGLRenderer.Listener {
+            override fun onInitialised() {
+                view.setBackgroundResource(0)
             }
-        })
+        }
     }
 
     private fun initBottomBar() {

@@ -9,6 +9,12 @@
     android:fitsSystemWindows="true"
     >
 
+    <network.path.mobilenode.ui.opengl.MyGLSurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
