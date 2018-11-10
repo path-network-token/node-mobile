@@ -51,7 +51,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         private const val ROTATION_SPEED_GLOBE = 270f / 15_000_000_000f // One complete rotation per 15 secs
         private const val ROTATION_SPEED_SPHERE = 360f / 15_000_000_000f // One complete rotation per 15 secs
-        private const val ZOOM_SPEED = 1f / 1_000_000_000f // One unit per second
+        private const val ANIMATION_DURATION = 3_000_000_000f
+        private const val ZOOM_SPEED = (FINAL_CAMERA_Z - START_CAMERA_Z) / ANIMATION_DURATION
 
         private const val BLUR_SCALE = 0.5f
     }
@@ -66,6 +67,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private val sphereDataProvider by inject<SphereDataProvider>()
 
     private var lastTimeNanos = 0L
+    private var animationTimeLeft = 0f
 
     private lateinit var bg: Square
     private lateinit var globe: Globe
@@ -85,8 +87,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private var bgTexture: Int = 0
 
     override fun onSurfaceCreated(unused: GL10, p1: EGLConfig?) {
-        lastTimeNanos = System.nanoTime()
-
         // TEXTURES
         bgTexture = loadTexture(context, R.drawable.gradient_background)
 
@@ -126,7 +126,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         blurVertical.isVertical = true
 
         // Set initial positions
-        val position = Float3(0f, 0.2f, 0f)
+        val position = Float3(0f, 0f, 0f)
         sphere.position = position
         globe.position = position
 
@@ -141,7 +141,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         globe.setScale(1.1f)
 
         // Camera position
-        camera.translate(0.0f, 0.0f, START_CAMERA_Z)
+        camera.translate(0.0f, 0.2f, START_CAMERA_Z)
         setCamera(camera)
 
         globe.material = Material(5f, 5f, 5f)
@@ -151,6 +151,9 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         val direction = Float3(0.8f, 0.8f, 2f)
         globe.dirLight = DirLight(direction, ambient = 0.5f)
         sphere.dirLight = DirLight(direction, ambient = 0.2f)
+
+        lastTimeNanos = System.nanoTime()
+        animationTimeLeft = ANIMATION_DURATION
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -160,14 +163,21 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         val dt = currentTimeNanos - lastTimeNanos
         lastTimeNanos = currentTimeNanos
 
-        val clearColor = Float4(0f, 0f, 0f, 0f)
-        val z = camera.get(3, 2)
-        if (z < FINAL_CAMERA_Z) {
+        if (animationTimeLeft > 0f) {
             val dz = dt * ZOOM_SPEED
-            val newZ = Math.min(z + dz, FINAL_CAMERA_Z)
+            val newZ = Math.min(camera.get(3, 2) + dz, FINAL_CAMERA_Z)
             camera.set(3, 2, newZ)
             setCamera(camera)
+
+            val da = dt / ANIMATION_DURATION
+            val newAlpha = Math.min(sphere.alpha + da, 1f)
+            sphere.alpha = newAlpha
+            globe.alpha = newAlpha
+
+            animationTimeLeft -= dt
         }
+
+        val clearColor = Float4(0f, 0f, 0f, 0f)
         sphere.rotationY += dt * ROTATION_SPEED_SPHERE
         globe.rotationY += dt * ROTATION_SPEED_GLOBE
 

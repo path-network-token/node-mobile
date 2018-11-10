@@ -2,6 +2,7 @@ precision mediump float;        // Set the default precision to medium. We don't
                                 // precision in the fragment shader.
 uniform sampler2D u_Texture;    // The input texture.
 uniform vec3 u_CameraPosition;
+uniform float u_Alpha;
 
 varying vec3 v_Position;        // Interpolated position for this fragment.
 varying vec3 v_Normal;          // Interpolated normal for this fragment.
@@ -96,4 +97,5 @@ void main() {
     result += CalcPointLight(u_Light, norm, v_Position, viewDir);
 
     gl_FragColor = vec4(result, 1.0) * texture2D(u_Texture, v_TexCoordinate);
+    gl_FragColor.a *= u_Alpha;
 }

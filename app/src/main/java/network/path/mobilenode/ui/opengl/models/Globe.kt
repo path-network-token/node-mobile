@@ -5,10 +5,9 @@ import network.path.mobilenode.ui.opengl.glutils.ShaderProgram
 import network.path.mobilenode.ui.opengl.models.providers.ObjDataProvider
 
 class Globe(shader: ShaderProgram, provider: ObjDataProvider) :
-        Model(
-                "globe", shader, true, provider
-        ) {
+        Model("globe", shader, true, provider) {
 
+    var alpha = 0f
     var drawTop = false
 
     override fun doDraw() {
@@ -27,6 +26,7 @@ class Globe(shader: ShaderProgram, provider: ObjDataProvider) :
     override fun setValues() {
         super.setValues()
 
+        shader.setUniformf("u_Alpha", alpha)
         shader.setUniformf("u_Near", 1.0f)
         shader.setUniformf("u_Far", 100.0f)
         shader.setUniformf("u_CameraPosition", camera.get(1, 0), camera.get(2, 1), camera.get(3, 2))
