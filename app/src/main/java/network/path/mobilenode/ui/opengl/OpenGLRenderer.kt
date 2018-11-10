@@ -39,8 +39,10 @@ class FPSCounter {
     }
 }
 
-class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
+class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
     companion object {
+        val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
+
         private val FPS = FPSCounter()
 
         private const val FRAMEBUFFER_COUNT = 2
@@ -50,8 +52,6 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         private const val ROTATION_SPEED_GLOBE = 270f / 15_000_000_000f // One complete rotation per 15 secs
         private const val ROTATION_SPEED_SPHERE = 360f / 15_000_000_000f // One complete rotation per 15 secs
         private const val ZOOM_SPEED = 1f / 1_000_000_000f // One unit per second
-
-        private val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
 
         private const val BLUR_SCALE = 0.5f
     }
@@ -63,6 +63,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
     var listener: Listener? = null
 
     private val objDataProvider by inject<ObjDataProvider>()
+    private val sphereDataProvider by inject<SphereDataProvider>()
 
     private var lastTimeNanos = 0L
 
@@ -82,30 +83,12 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
     private val camera = Matrix4f()
 
     private var bgTexture: Int = 0
-    private var firstDraw = true
 
     override fun onSurfaceCreated(unused: GL10, p1: EGLConfig?) {
         lastTimeNanos = System.nanoTime()
 
         // TEXTURES
         bgTexture = loadTexture(context, R.drawable.gradient_background)
-
-        // Wireframe sphere
-        val sphereShader = ShaderProgram(
-                loadRawResource(context, R.raw.sphere_vertex),
-                loadRawResource(context, R.raw.sphere_fragment)
-        )
-        val sphereProvider = SphereDataProvider(2, 1.1f, WIREFRAME_COLOR)
-        sphere = Sphere(sphereShader, sphereProvider)
-
-        // Globe
-        val globeShader = ShaderProgram(
-                loadRawResource(context, R.raw.globe_vertex),
-                loadRawResource(context, R.raw.globe_fragment)
-        )
-        globe = Globe(globeShader, objDataProvider).also {
-            it.textureHandle = loadTexture(context, R.drawable.earth3)
-        }
 
         // Background
         val bgShader = ShaderProgram(
@@ -114,6 +97,22 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         )
         bg = Square(bgShader).also {
             it.textureHandle = bgTexture
+        }
+
+        // Wireframe sphere
+        val sphereShader = ShaderProgram(
+                loadRawResource(context, R.raw.sphere_vertex),
+                loadRawResource(context, R.raw.sphere_fragment)
+        )
+        sphere = Sphere(sphereShader, sphereDataProvider)
+
+        // Globe
+        val globeShader = ShaderProgram(
+                loadRawResource(context, R.raw.globe_vertex),
+                loadRawResource(context, R.raw.globe_fragment)
+        )
+        globe = Globe(globeShader, objDataProvider).also {
+            it.textureHandle = loadTexture(context, R.drawable.earth_texture)
         }
 
         val blurShader = ShaderProgram(
@@ -162,53 +161,43 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         lastTimeNanos = currentTimeNanos
 
         val clearColor = Float4(0f, 0f, 0f, 0f)
-        val blackColor = Float4(0f, 0f, 0f, 1f)
-        if (firstDraw) {
-            GLES20.glViewport(0, 0, size.x, size.y)
-            drawFrame(dt, blackColor, 0) {
-                bg.textureHandle = bgTexture
-                bg.draw(dt)
-            }
-            firstDraw = false
-        } else {
-            val z = camera.get(3, 2)
-            if (z < FINAL_CAMERA_Z) {
-                val dz = dt * ZOOM_SPEED
-                val newZ = Math.min(z + dz, FINAL_CAMERA_Z)
-                camera.set(3, 2, newZ)
-                setCamera(camera)
-            }
-            sphere.rotationY += dt * ROTATION_SPEED_SPHERE
-            globe.rotationY += dt * ROTATION_SPEED_GLOBE
+        val z = camera.get(3, 2)
+        if (z < FINAL_CAMERA_Z) {
+            val dz = dt * ZOOM_SPEED
+            val newZ = Math.min(z + dz, FINAL_CAMERA_Z)
+            camera.set(3, 2, newZ)
+            setCamera(camera)
+        }
+        sphere.rotationY += dt * ROTATION_SPEED_SPHERE
+        globe.rotationY += dt * ROTATION_SPEED_GLOBE
 
-            GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
-            drawFrame(dt, clearColor, frameBufferIds[0]) {
-                sphere.drawTop = false
-                sphere.draw(dt)
+        GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
+        drawFrame(dt, clearColor, frameBufferIds[0]) {
+            sphere.drawTop = false
+            sphere.draw(dt)
 
-                globe.drawTop = false
-                globe.draw(dt)
+            globe.drawTop = false
+            globe.draw(dt)
 
-                globe.drawTop = true
-                globe.draw(dt)
-            }
+            globe.drawTop = true
+            globe.draw(dt)
+        }
 
-            drawFrame(dt, clearColor, frameBufferIds[1]) {
-                blurHorizontal.textureHandle = frameTextureIds[0]
-                blurHorizontal.draw(dt)
-            }
+        drawFrame(dt, clearColor, frameBufferIds[1]) {
+            blurHorizontal.textureHandle = frameTextureIds[0]
+            blurHorizontal.draw(dt)
+        }
 
-            GLES20.glViewport(0, 0, size.x, size.y)
-            drawFrame(dt, blackColor, 0) {
-                bg.textureHandle = bgTexture
-                bg.draw(dt)
+        GLES20.glViewport(0, 0, size.x, size.y)
+        drawFrame(dt, clearColor, 0) {
+            bg.textureHandle = bgTexture
+            bg.draw(dt)
 
-                blurVertical.textureHandle = frameTextureIds[1]
-                blurVertical.draw(dt)
+            blurVertical.textureHandle = frameTextureIds[1]
+            blurVertical.draw(dt)
 
-                sphere.drawTop = true
-                sphere.draw(dt)
-            }
+            sphere.drawTop = true
+            sphere.draw(dt)
         }
     }
 

@@ -23,8 +23,10 @@ import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
+import network.path.mobilenode.ui.opengl.OpenGLRenderer
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
 import network.path.mobilenode.ui.opengl.models.providers.ObjDataProvider
+import network.path.mobilenode.ui.opengl.models.providers.SphereDataProvider
 import network.path.mobilenode.ui.splash.SplashViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,7 +41,9 @@ val appModule = module {
     single { NetworkMonitor(androidApplication()) }
     single { createOkHttpClient() }
     single { createLenientGson() }
+
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
+    single { SphereDataProvider(2, 1.1f, OpenGLRenderer.WIREFRAME_COLOR) }
 
     single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
     single<PathEngine> { if (BuildConfig.IS_HTTP) {

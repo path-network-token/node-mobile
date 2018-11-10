@@ -8,7 +8,6 @@ import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
-import network.path.mobilenode.ui.opengl.MyGLRenderer
 
 class MainFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_main
@@ -24,11 +23,16 @@ class MainFragment : BaseFragment() {
             showDashboardFragment()
         }
         initBottomBar()
-        surface_view.renderer.listener = object : MyGLRenderer.Listener {
-            override fun onInitialised() {
-                view.setBackgroundResource(0)
-            }
-        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        surfaceView.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        surfaceView.onResume()
     }
 
     private fun initBottomBar() {
