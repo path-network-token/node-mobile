@@ -29,4 +29,8 @@ class OpenGLSurfaceView
 
 //        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
+
+    fun destroy() {
+        renderer.destroy()
+    }
 }

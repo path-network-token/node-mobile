@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform sampler2D u_Texture;    // The input texture.
 uniform vec2 u_Dimensions;
 uniform bool u_Vertical;

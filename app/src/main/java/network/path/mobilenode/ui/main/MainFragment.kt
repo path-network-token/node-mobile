@@ -35,6 +35,11 @@ class MainFragment : BaseFragment() {
         surfaceView.onResume()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        surfaceView.destroy()
+    }
+
     private fun initBottomBar() {
         walletRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {

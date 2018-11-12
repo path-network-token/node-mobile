@@ -18,13 +18,13 @@ open class Square(shader: ShaderProgram, name: String = "square") : Model(
 
     private class SquareDataProvider : DataProvider {
         override val vertices = floatArrayOf(
-            1.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top left
-            1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom left
-            -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bottom right
-            -1.0f, -1.0f, 0.0f, 0.0f, 1.0f // top right
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top left
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom left
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f // top right
         )
 
-        override val indices = shortArrayOf(0, 1, 2, 2, 3, 0)
+        override val indices = shortArrayOf(0, 1, 2, 0, 2, 3)
 
         override val hasColor = false
         override val hasTexture = true

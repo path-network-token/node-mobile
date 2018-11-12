@@ -26,10 +26,9 @@ class Globe(shader: ShaderProgram, provider: ObjDataProvider) :
     override fun setValues() {
         super.setValues()
 
+        val array = camera.array
         shader.setUniformf("u_Alpha", alpha)
-        shader.setUniformf("u_Near", 1.0f)
-        shader.setUniformf("u_Far", 100.0f)
-        shader.setUniformf("u_CameraPosition", camera.get(1, 0), camera.get(2, 1), camera.get(3, 2))
+        shader.setUniformf("u_CameraPosition", array[12], array[13], array[14])
         shader.setUniformf("u_DrawTop", if (drawTop) 1.0f else 0.0f)
     }
 }

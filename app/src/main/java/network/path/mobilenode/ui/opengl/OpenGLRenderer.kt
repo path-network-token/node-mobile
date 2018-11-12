@@ -22,6 +22,7 @@ import network.path.mobilenode.ui.opengl.models.providers.SphereDataProvider
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
+import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -85,16 +86,42 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private val camera = Matrix4f()
 
     private var bgTexture: Int = 0
+    private var globeTexture: Int = 0
+    private val programs = mutableListOf<ShaderProgram>()
 
     override fun onSurfaceCreated(unused: GL10, p1: EGLConfig?) {
+        Timber.d("GL_VERSION: ${GLES20.glGetString(GLES20.GL_VERSION)}")
+        Timber.d("GL_SHADING_LANGUAGE_VERSION: ${GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION)}")
+
+        val values = IntBuffer.allocate(4)
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_ATTRIBS, values)
+        Timber.d("GL_MAX_VERTEX_ATTRIBS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_UNIFORM_VECTORS, values)
+        Timber.d("GL_MAX_VERTEX_UNIFORM_VECTORS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VARYING_VECTORS, values)
+        Timber.d("GL_MAX_VARYING_VECTORS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_RENDERBUFFER_SIZE, values)
+        Timber.d("GL_MAX_RENDERBUFFER_SIZE: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_ALIASED_POINT_SIZE_RANGE, values)
+        Timber.d("GL_ALIASED_POINT_SIZE_RANGE: ${values[0]}, ${values[1]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VIEWPORT_DIMS, values)
+        Timber.d("GL_MAX_VIEWPORT_DIMS: ${values[0]}, ${values[1]} - ${values[2]}, ${values[3]}")
+
         // TEXTURES
-        bgTexture = loadTexture(context, R.drawable.gradient_background)
+        bgTexture = loadTexture(context, R.drawable.gradient_background, true)
+        globeTexture = loadTexture(context, R.drawable.earth_texture)
 
         // Background
         val bgShader = ShaderProgram(
                 loadRawResource(context, R.raw.bg_vertex),
                 loadRawResource(context, R.raw.bg_fragment)
         )
+        programs.add(bgShader)
         bg = Square(bgShader).also {
             it.textureHandle = bgTexture
         }
@@ -104,6 +131,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
                 loadRawResource(context, R.raw.sphere_vertex),
                 loadRawResource(context, R.raw.sphere_fragment)
         )
+        programs.add(sphereShader)
         sphere = Sphere(sphereShader, sphereDataProvider)
 
         // Globe
@@ -111,14 +139,16 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
                 loadRawResource(context, R.raw.globe_vertex),
                 loadRawResource(context, R.raw.globe_fragment)
         )
+        programs.add(globeShader)
         globe = Globe(globeShader, objDataProvider).also {
-            it.textureHandle = loadTexture(context, R.drawable.earth_texture)
+            it.textureHandle = globeTexture
         }
 
         val blurShader = ShaderProgram(
                 loadRawResource(context, R.raw.blur_vertex),
                 loadRawResource(context, R.raw.blur_fragment)
         )
+        programs.add(blurShader)
         blurHorizontal = Blur(blurShader)
         blurHorizontal.isVertical = false
 
@@ -130,11 +160,11 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         sphere.position = position
         globe.position = position
 
-        val blurPosition = Float3(0f, 0f, 0.99f)
+        val blurPosition = Float3(0f, 0f, 0.9f)
         blurHorizontal.position = blurPosition
         blurVertical.position = blurPosition
 
-        bg.position = Float3(0f, 0f, 1f)
+        bg.position = Float3(0f, 0f, 0.99f)
 
         // Scale (otherwise sphere get cut but projection if positioned too close to the camera)
         sphere.setScale(1.1f)
@@ -165,8 +195,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         if (animationTimeLeft > 0f) {
             val dz = dt * ZOOM_SPEED
-            val newZ = Math.min(camera.get(3, 2) + dz, FINAL_CAMERA_Z)
-            camera.set(3, 2, newZ)
+            val array = camera.array
+            array[14] = Math.min(array[14] + dz, FINAL_CAMERA_Z)
             setCamera(camera)
 
             val da = dt / ANIMATION_DURATION
@@ -200,7 +230,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         GLES20.glViewport(0, 0, size.x, size.y)
         drawFrame(dt, clearColor, 0) {
-            bg.textureHandle = bgTexture
             bg.draw(dt)
 
             blurVertical.textureHandle = frameTextureIds[1]
@@ -218,7 +247,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         val ratio = width.toFloat() / height.toFloat()
         val perspective = Matrix4f().also {
-            it.loadPerspective(85.0f, ratio, 1.0f, 100.0f)
+            it.loadPerspective(85f, ratio, 1f, 100f)
         }
 
         sphere.setProjection(perspective)
@@ -329,5 +358,18 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         }
+    }
+
+    fun destroy() {
+        val textureHandle = IntArray(2)
+        textureHandle[0] = bgTexture
+        textureHandle[1] = globeTexture
+        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
+
+        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
+        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
+        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
+
+        programs.forEach { it.destroy() }
     }
 }
