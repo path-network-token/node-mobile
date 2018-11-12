@@ -40,8 +40,8 @@ uniform PointLight u_Light;
 uniform bool u_Point;
 uniform bool u_DrawTop;
 
-uniform float u_Near;
-uniform float u_Far;
+const float u_Near = 1.0;
+const float u_Far = 100.0;
 
 float EyePosition(float z, float n, float f) {
     float z_ndc = 2.0 * z - 1.0;
