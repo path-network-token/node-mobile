@@ -1,8 +1,8 @@
+precision mediump float;
+
 uniform sampler2D u_Texture;    // The input texture.
 uniform vec2 u_Dimensions;
 uniform bool u_Vertical;
-
-varying vec2 v_TexCoordinate;   // Interpolated texture coordinate per fragment.
 
 void main(void) {
     vec4 color = texture2D(u_Texture, vec2(gl_FragCoord) / u_Dimensions);

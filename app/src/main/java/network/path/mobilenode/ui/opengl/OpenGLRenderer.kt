@@ -22,6 +22,7 @@ import network.path.mobilenode.ui.opengl.models.providers.SphereDataProvider
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 import timber.log.Timber
+import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -39,8 +40,10 @@ class FPSCounter {
     }
 }
 
-class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
+class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
     companion object {
+        val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
+
         private val FPS = FPSCounter()
 
         private const val FRAMEBUFFER_COUNT = 2
@@ -49,9 +52,8 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
 
         private const val ROTATION_SPEED_GLOBE = 270f / 15_000_000_000f // One complete rotation per 15 secs
         private const val ROTATION_SPEED_SPHERE = 360f / 15_000_000_000f // One complete rotation per 15 secs
-        private const val ZOOM_SPEED = 1f / 1_000_000_000f // One unit per second
-
-        private val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
+        private const val ANIMATION_DURATION = 3_000_000_000f
+        private const val ZOOM_SPEED = (FINAL_CAMERA_Z - START_CAMERA_Z) / ANIMATION_DURATION
 
         private const val BLUR_SCALE = 0.5f
     }
@@ -63,8 +65,10 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
     var listener: Listener? = null
 
     private val objDataProvider by inject<ObjDataProvider>()
+    private val sphereDataProvider by inject<SphereDataProvider>()
 
     private var lastTimeNanos = 0L
+    private var animationTimeLeft = 0f
 
     private lateinit var bg: Square
     private lateinit var globe: Globe
@@ -82,44 +86,69 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
     private val camera = Matrix4f()
 
     private var bgTexture: Int = 0
-    private var firstDraw = true
+    private var globeTexture: Int = 0
+    private val programs = mutableListOf<ShaderProgram>()
 
     override fun onSurfaceCreated(unused: GL10, p1: EGLConfig?) {
-        lastTimeNanos = System.nanoTime()
+        Timber.d("GL_VERSION: ${GLES20.glGetString(GLES20.GL_VERSION)}")
+        Timber.d("GL_SHADING_LANGUAGE_VERSION: ${GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION)}")
+
+        val values = IntBuffer.allocate(4)
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_ATTRIBS, values)
+        Timber.d("GL_MAX_VERTEX_ATTRIBS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_UNIFORM_VECTORS, values)
+        Timber.d("GL_MAX_VERTEX_UNIFORM_VECTORS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VARYING_VECTORS, values)
+        Timber.d("GL_MAX_VARYING_VECTORS: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_RENDERBUFFER_SIZE, values)
+        Timber.d("GL_MAX_RENDERBUFFER_SIZE: ${values[0]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_ALIASED_POINT_SIZE_RANGE, values)
+        Timber.d("GL_ALIASED_POINT_SIZE_RANGE: ${values[0]}, ${values[1]}")
+
+        GLES20.glGetIntegerv(GLES20.GL_MAX_VIEWPORT_DIMS, values)
+        Timber.d("GL_MAX_VIEWPORT_DIMS: ${values[0]}, ${values[1]} - ${values[2]}, ${values[3]}")
 
         // TEXTURES
-        bgTexture = loadTexture(context, R.drawable.gradient_background)
-
-        // Wireframe sphere
-        val sphereShader = ShaderProgram(
-                loadRawResource(context, R.raw.sphere_vertex),
-                loadRawResource(context, R.raw.sphere_fragment)
-        )
-        val sphereProvider = SphereDataProvider(2, 1.1f, WIREFRAME_COLOR)
-        sphere = Sphere(sphereShader, sphereProvider)
-
-        // Globe
-        val globeShader = ShaderProgram(
-                loadRawResource(context, R.raw.globe_vertex),
-                loadRawResource(context, R.raw.globe_fragment)
-        )
-        globe = Globe(globeShader, objDataProvider).also {
-            it.textureHandle = loadTexture(context, R.drawable.earth3)
-        }
+        bgTexture = loadTexture(context, R.drawable.gradient_background, true)
+        globeTexture = loadTexture(context, R.drawable.earth_texture)
 
         // Background
         val bgShader = ShaderProgram(
                 loadRawResource(context, R.raw.bg_vertex),
                 loadRawResource(context, R.raw.bg_fragment)
         )
+        programs.add(bgShader)
         bg = Square(bgShader).also {
             it.textureHandle = bgTexture
+        }
+
+        // Wireframe sphere
+        val sphereShader = ShaderProgram(
+                loadRawResource(context, R.raw.sphere_vertex),
+                loadRawResource(context, R.raw.sphere_fragment)
+        )
+        programs.add(sphereShader)
+        sphere = Sphere(sphereShader, sphereDataProvider)
+
+        // Globe
+        val globeShader = ShaderProgram(
+                loadRawResource(context, R.raw.globe_vertex),
+                loadRawResource(context, R.raw.globe_fragment)
+        )
+        programs.add(globeShader)
+        globe = Globe(globeShader, objDataProvider).also {
+            it.textureHandle = globeTexture
         }
 
         val blurShader = ShaderProgram(
                 loadRawResource(context, R.raw.blur_vertex),
                 loadRawResource(context, R.raw.blur_fragment)
         )
+        programs.add(blurShader)
         blurHorizontal = Blur(blurShader)
         blurHorizontal.isVertical = false
 
@@ -127,22 +156,22 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         blurVertical.isVertical = true
 
         // Set initial positions
-        val position = Float3(0f, 0.2f, 0f)
+        val position = Float3(0f, 0f, 0f)
         sphere.position = position
         globe.position = position
 
-        val blurPosition = Float3(0f, 0f, 0.99f)
+        val blurPosition = Float3(0f, 0f, 0.9f)
         blurHorizontal.position = blurPosition
         blurVertical.position = blurPosition
 
-        bg.position = Float3(0f, 0f, 1f)
+        bg.position = Float3(0f, 0f, 0.99f)
 
         // Scale (otherwise sphere get cut but projection if positioned too close to the camera)
         sphere.setScale(1.1f)
         globe.setScale(1.1f)
 
         // Camera position
-        camera.translate(0.0f, 0.0f, START_CAMERA_Z)
+        camera.translate(0.0f, 0.2f, START_CAMERA_Z)
         setCamera(camera)
 
         globe.material = Material(5f, 5f, 5f)
@@ -152,6 +181,9 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         val direction = Float3(0.8f, 0.8f, 2f)
         globe.dirLight = DirLight(direction, ambient = 0.5f)
         sphere.dirLight = DirLight(direction, ambient = 0.2f)
+
+        lastTimeNanos = System.nanoTime()
+        animationTimeLeft = ANIMATION_DURATION
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -161,54 +193,50 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
         val dt = currentTimeNanos - lastTimeNanos
         lastTimeNanos = currentTimeNanos
 
+        if (animationTimeLeft > 0f) {
+            val dz = dt * ZOOM_SPEED
+            val array = camera.array
+            array[14] = Math.min(array[14] + dz, FINAL_CAMERA_Z)
+            setCamera(camera)
+
+            val da = dt / ANIMATION_DURATION
+            val newAlpha = Math.min(sphere.alpha + da, 1f)
+            sphere.alpha = newAlpha
+            globe.alpha = newAlpha
+
+            animationTimeLeft -= dt
+        }
+
         val clearColor = Float4(0f, 0f, 0f, 0f)
-        val blackColor = Float4(0f, 0f, 0f, 1f)
-        if (firstDraw) {
-            GLES20.glViewport(0, 0, size.x, size.y)
-            drawFrame(dt, blackColor, 0) {
-                bg.textureHandle = bgTexture
-                bg.draw(dt)
-            }
-            firstDraw = false
-        } else {
-            val z = camera.get(3, 2)
-            if (z < FINAL_CAMERA_Z) {
-                val dz = dt * ZOOM_SPEED
-                val newZ = Math.min(z + dz, FINAL_CAMERA_Z)
-                camera.set(3, 2, newZ)
-                setCamera(camera)
-            }
-            sphere.rotationY += dt * ROTATION_SPEED_SPHERE
-            globe.rotationY += dt * ROTATION_SPEED_GLOBE
+        sphere.rotationY += dt * ROTATION_SPEED_SPHERE
+        globe.rotationY += dt * ROTATION_SPEED_GLOBE
 
-            GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
-            drawFrame(dt, clearColor, frameBufferIds[0]) {
-                sphere.drawTop = false
-                sphere.draw(dt)
+        GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
+        drawFrame(dt, clearColor, frameBufferIds[0]) {
+            sphere.drawTop = false
+            sphere.draw(dt)
 
-                globe.drawTop = false
-                globe.draw(dt)
+            globe.drawTop = false
+            globe.draw(dt)
 
-                globe.drawTop = true
-                globe.draw(dt)
-            }
+            globe.drawTop = true
+            globe.draw(dt)
+        }
 
-            drawFrame(dt, clearColor, frameBufferIds[1]) {
-                blurHorizontal.textureHandle = frameTextureIds[0]
-                blurHorizontal.draw(dt)
-            }
+        drawFrame(dt, clearColor, frameBufferIds[1]) {
+            blurHorizontal.textureHandle = frameTextureIds[0]
+            blurHorizontal.draw(dt)
+        }
 
-            GLES20.glViewport(0, 0, size.x, size.y)
-            drawFrame(dt, blackColor, 0) {
-                bg.textureHandle = bgTexture
-                bg.draw(dt)
+        GLES20.glViewport(0, 0, size.x, size.y)
+        drawFrame(dt, clearColor, 0) {
+            bg.draw(dt)
 
-                blurVertical.textureHandle = frameTextureIds[1]
-                blurVertical.draw(dt)
+            blurVertical.textureHandle = frameTextureIds[1]
+            blurVertical.draw(dt)
 
-                sphere.drawTop = true
-                sphere.draw(dt)
-            }
+            sphere.drawTop = true
+            sphere.draw(dt)
         }
     }
 
@@ -219,7 +247,7 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
 
         val ratio = width.toFloat() / height.toFloat()
         val perspective = Matrix4f().also {
-            it.loadPerspective(85.0f, ratio, 1.0f, 100.0f)
+            it.loadPerspective(85f, ratio, 1f, 100f)
         }
 
         sphere.setProjection(perspective)
@@ -330,5 +358,18 @@ class MyGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinC
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         }
+    }
+
+    fun destroy() {
+        val textureHandle = IntArray(2)
+        textureHandle[0] = bgTexture
+        textureHandle[1] = globeTexture
+        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
+
+        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
+        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
+        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
+
+        programs.forEach { it.destroy() }
     }
 }

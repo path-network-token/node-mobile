@@ -2,6 +2,7 @@ precision mediump float;        // Set the default precision to medium. We don't
                                 // precision in the fragment shader.
 uniform sampler2D u_Texture;    // The input texture.
 uniform vec3 u_CameraPosition;
+uniform float u_Alpha;
 
 varying vec3 v_Position;        // Interpolated position for this fragment.
 varying vec3 v_Normal;          // Interpolated normal for this fragment.
@@ -39,8 +40,8 @@ uniform PointLight u_Light;
 uniform bool u_Point;
 uniform bool u_DrawTop;
 
-uniform float u_Near;
-uniform float u_Far;
+const float u_Near = 1.0;
+const float u_Far = 100.0;
 
 float EyePosition(float z, float n, float f) {
     float z_ndc = 2.0 * z - 1.0;
@@ -91,14 +92,12 @@ void main() {
         discard;
     }
 
-    float alpha = 1.0;
     if (u_Point) {
         vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
         float d = dot(circCoord, circCoord);
         if (d > 1.0) {
             discard;
         }
-//        alpha = 1.0 - d * d;
     }
 
     vec3 norm = normalize(v_Normal);
@@ -113,7 +112,5 @@ void main() {
 //    diffuse = diffuse * (1.0 / (1.0 + (u_Light.attenuationFactor * u_Light.attenuationFactor * distance * distance)));
 
     gl_FragColor = vec4(result, 1.0) * v_Color;
-    if (u_Point) {
-        gl_FragColor.a = alpha;
-    }
+    gl_FragColor.a *= u_Alpha;
 }
