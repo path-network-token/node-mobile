@@ -21,12 +21,12 @@ class PathSystem(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
-    val ip = externalServices.ip
-    val details = externalServices.details
-    val status = engine.status
-    val nodeId = engine.nodeId
-    val jobList = engine.jobList
-    val isRunning = engine.isRunning
+    val ip get() = externalServices.ip
+    val details get() = externalServices.details
+    val status get() = engine.status
+    val nodeId get() = engine.nodeId
+    val jobList get() = engine.jobList
+    val isRunning get() = engine.isRunning
 
     init {
         registerJobRequestHandler()

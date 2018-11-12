@@ -79,18 +79,17 @@ class ForegroundService : LifecycleService() {
         val label = getString(if (system.isRunning) R.string.notification_action_pause else R.string.notification_action_resume)
         val pendingAction = PendingIntent.getService(this, REQUEST_CODE_TOGGLE, action, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(if (system.isRunning) R.string.notification_content_running else R.string.notification_content_paused)
+        val title = getString(if (system.isRunning) R.string.notification_title_running else R.string.notification_title_paused)
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        startForeground(NOTIFICATION_ID,
-                NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
-                        .setVibrate(longArrayOf(0L))
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(title)
-                        .addAction(0, label, pendingAction)
-                        .build()
-        )
+        val builder = NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
+                .setVibrate(longArrayOf(0L))
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .addAction(0, label, pendingAction)
+
+        startForeground(NOTIFICATION_ID, builder.build())
     }
 
     override fun onDestroy() {
