@@ -50,6 +50,9 @@ class PathSocketEngine(
 
     override val jobList = ConflatedBroadcastChannel<JobList>()
 
+    override var isRunning: Boolean = true
+        private set
+
     init {
         resetWatchdog()
         registerJobRequestHandler()
@@ -65,6 +68,10 @@ class PathSocketEngine(
 
     override fun processResult(result: JobResult) {
         pathService.sendJobResult(SocketJobResult(result))
+    }
+
+    override fun toggle() {
+        isRunning = !isRunning
     }
 
     override fun stop() {

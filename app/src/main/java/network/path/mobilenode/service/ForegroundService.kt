@@ -19,12 +19,17 @@ import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 
-private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
-
-private const val NOTIFICATION_ID = 3127
-private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
-
 class ForegroundService : LifecycleService() {
+    companion object {
+        private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
+
+        private const val REQUEST_CODE_TOGGLE = 1
+
+        private const val NOTIFICATION_ID = 3127
+        private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
+        private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
+    }
+
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
@@ -41,6 +46,14 @@ class ForegroundService : LifecycleService() {
         setUpNotificationChannelId()
         startForegroundNotification()
         system.start()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == TOGGLE_ACTION) {
+            system.toggle()
+            startForegroundNotification()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -61,15 +74,22 @@ class ForegroundService : LifecycleService() {
     }
 
     private fun startForegroundNotification() {
+        val action = Intent(this, ForegroundService::class.java)
+        action.action = TOGGLE_ACTION
+        val label = getString(if (system.isRunning) R.string.notification_action_pause else R.string.notification_action_resume)
+        val pendingAction = PendingIntent.getService(this, REQUEST_CODE_TOGGLE, action, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val title = getString(if (system.isRunning) R.string.notification_content_running else R.string.notification_content_paused)
         val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-        startForeground(
-                NOTIFICATION_ID, NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
-                .setVibrate(longArrayOf(0L))
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.notification_content))
-                .build()
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        startForeground(NOTIFICATION_ID,
+                NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
+                        .setVibrate(longArrayOf(0L))
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .addAction(0, label, pendingAction)
+                        .build()
         )
     }
 

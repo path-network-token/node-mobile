@@ -20,4 +20,7 @@ interface PathEngine {
 
     // Stop any interaction with the server
     fun stop()
+
+    val isRunning: Boolean
+    fun toggle()
 }

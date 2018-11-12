@@ -26,6 +26,7 @@ class PathSystem(
     val status = engine.status
     val nodeId = engine.nodeId
     val jobList = engine.jobList
+    val isRunning = engine.isRunning
 
     init {
         registerJobRequestHandler()
@@ -35,6 +36,10 @@ class PathSystem(
     fun start() {
         engine.start()
         externalServices.start()
+    }
+
+    fun toggle() {
+        engine.toggle()
     }
 
     fun stop() {

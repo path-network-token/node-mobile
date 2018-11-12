@@ -3,7 +3,10 @@
 
     <string name="address_saved_toast">Path Wallet Address was saved</string>
 
-    <string name="notification_content">Path Node Running…</string>
+    <string name="notification_content_running">Path Node is running…</string>
+    <string name="notification_content_paused">Path Node is paused</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_resume">Resume</string>
 
     <string name="blank_path_wallet_address_error">Wallet address cannot be blank</string>
     <string name="invalid_path_wallet_address_error">Invalid wallet address</string>
