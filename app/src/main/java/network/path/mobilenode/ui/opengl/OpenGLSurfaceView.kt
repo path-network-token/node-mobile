@@ -4,9 +4,9 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 
-class MyGLSurfaceView
+class OpenGLSurfaceView
 @JvmOverloads constructor(context: Context, attrSet: AttributeSet? = null) : GLSurfaceView(context, attrSet) {
-    val renderer: MyGLRenderer
+    private val renderer: OpenGLRenderer
 
     init {
         // Create an OpenGL ES 2.0 context.
@@ -17,11 +17,20 @@ class MyGLSurfaceView
 
         preserveEGLContextOnPause = true
 
-        renderer = MyGLRenderer(context)
+        renderer = OpenGLRenderer(context)
+        renderer.listener = object : OpenGLRenderer.Listener {
+            override fun onInitialised() {
+                setBackgroundResource(0)
+            }
+        }
 
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(renderer)
 
 //        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+    }
+
+    fun destroy() {
+        renderer.destroy()
     }
 }

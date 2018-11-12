@@ -9,10 +9,11 @@
     android:fitsSystemWindows="true"
     >
 
-    <network.path.mobilenode.ui.opengl.MyGLSurfaceView
-        android:id="@+id/surface_view"
+    <network.path.mobilenode.ui.opengl.OpenGLSurfaceView
+        android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/gradient_background"
         />
 
     <FrameLayout
