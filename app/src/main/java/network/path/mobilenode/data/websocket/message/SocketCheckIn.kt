@@ -1,6 +1,7 @@
 package network.path.mobilenode.data.websocket.message
 
 import network.path.mobilenode.BuildConfig
+import network.path.mobilenode.Constants
 import network.path.mobilenode.data.json.MessageType
 
 data class SocketCheckIn(
@@ -11,6 +12,6 @@ data class SocketCheckIn(
         val lat: String?,
         val lon: String?,
         val deviceType: String? = "android",
-        val pathApiVersion: String = "1.0",
+        val pathApiVersion: String = Constants.PATH_API_VERSION,
         val nodeBuildVersion: String = BuildConfig.VERSION_NAME
 ) : PathMessage
