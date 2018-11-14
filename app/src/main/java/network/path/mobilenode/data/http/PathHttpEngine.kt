@@ -20,14 +20,16 @@ import network.path.mobilenode.service.LastLocationProvider
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
+import java.net.InetSocketAddress
+import java.net.Proxy
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.math.max
 
 class PathHttpEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
-        okHttpClient: OkHttpClient,
-        gson: Gson,
+        private val okHttpClient: OkHttpClient,
+        private val gson: Gson,
         private val storage: PathStorage
 ) : PathEngine, CoroutineScope {
     companion object {
@@ -38,7 +40,7 @@ class PathHttpEngine(
 
     private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
-    private val httpService = PathServiceImpl(okHttpClient, gson)
+    private var httpService = getHttpService(false)
     private var timeoutJob = Job()
     private var pollJob = Job()
 
@@ -174,7 +176,7 @@ class PathHttpEngine(
         requests.send(dummyRequest)
     }
 
-    private suspend fun <T>executeServiceCall(call: suspend () -> Deferred<T>): T? {
+    private suspend fun <T> executeServiceCall(call: suspend () -> Deferred<T>): T? {
         return try {
             call().await()
         } catch (e: Exception) {
@@ -183,10 +185,20 @@ class PathHttpEngine(
                     val body = e.response()?.body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
+                } else {
+                    httpService = getHttpService(true)
                 }
             }
             Timber.w("Service call exception: $e", e)
             null
         }
+    }
+
+    private fun getHttpService(useProxy: Boolean): PathService {
+        val client = if (!useProxy) okHttpClient else okHttpClient
+                .newBuilder()
+                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 1081)))
+                .build()
+        return PathServiceImpl(client, gson)
     }
 }

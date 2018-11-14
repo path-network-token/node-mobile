@@ -12,12 +12,16 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
 import network.path.mobilenode.R
+import network.path.mobilenode.data.http.shadowsocks.Executable
+import network.path.mobilenode.data.http.shadowsocks.GuardedProcessPool
+import network.path.mobilenode.data.http.shadowsocks.Profile
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
+import java.io.File
 
 private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
 
@@ -33,10 +37,17 @@ class ForegroundService : LifecycleService() {
     private val compositeJob by inject<Job>()
     private val system by inject<PathSystem>()
 
+    private val processes = GuardedProcessPool()
+
     override fun onCreate() {
         super.onCreate()
         bindScope(getOrCreateScope("service"))
         Timber.v("Foreground service onCreate")
+
+        // Native processes
+        Executable.killAll()
+        startNativeProcesses()
+
         setUpWakeLock()
         setUpNotificationChannelId()
         startForegroundNotification()
@@ -78,6 +89,25 @@ class ForegroundService : LifecycleService() {
         compositeJob.cancel()
         system.stop()
         wakeLock.release()
+        processes.killAll()
         super.onDestroy()
+    }
+
+    private fun startNativeProcesses() {
+        val profile = Profile()
+        val cmd = arrayListOf(
+                File((this as Context).applicationInfo.nativeLibraryDir, Executable.SS_LOCAL).absolutePath,
+                "-u",
+                "-v",
+                "-s", profile.host,
+                "-p", profile.remotePort.toString(),
+                "-k", profile.password,
+                "-m", profile.method,
+                "-b", "127.0.0.1",
+                "-l", "1081",
+                "-t", "600"
+        )
+
+        processes.start(cmd)
     }
 }
