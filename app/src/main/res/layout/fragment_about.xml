@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network.path.mobilenode.ui.base.SlidingConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:padding="@dimen/padding_m"
+    >
+
+    <ImageView
+        android:id="@+id/closeScreenImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_clear"
+        android:scaleType="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+    <FrameLayout
+        android:id="@+id/pathLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/imageGlobe"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            android:src="@drawable/globe"
+            android:transitionName="image_globe"
+            tools:ignore="ContentDescription"
+            />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_dashboard_blue"
+            android:tint="@color/dark_sky_blue"
+            tools:ignore="ContentDescription"
+            />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/pathTextLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/path_text_splash"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pathLogo"
+        tools:ignore="ContentDescription"
+        />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pathTextLogo"
+        />
+
+    <TextView
+        android:id="@+id/nodeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/exo_extra_light"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.38"
+        android:text="@string/node"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        tools:text="NODE"
+        />
+
+    <ImageView
+        android:id="@+id/footerLogo"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_dashboard_white"
+        app:layout_constraintBottom_toBottomOf="@+id/footerText"
+        app:layout_constraintEnd_toStartOf="@+id/footerText"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/footerText"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/footerText"
+        android:layout_width="wrap_content"
+        android:layout_height="14dp"
+        android:layout_marginBottom="52dp"
+        android:fontFamily="@font/exo_medium"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.08"
+        android:text="@string/by_path_network"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/footerLogo"
+        app:layout_constraintTop_toBottomOf="@+id/nodeText"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="BY PATH NETWORK"
+        />
+
+</network.path.mobilenode.ui.base.SlidingConstraintLayout>

@@ -3,6 +3,7 @@ package network.path.mobilenode.ui.main
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.transaction
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
@@ -23,6 +24,7 @@ class MainFragment : BaseFragment() {
             showDashboardFragment()
         }
         initBottomBar()
+        setupInfoButton()
     }
 
     override fun onPause() {
@@ -53,6 +55,12 @@ class MainFragment : BaseFragment() {
         }
     }
 
+    private fun setupInfoButton() {
+        infoButton.setOnClickListener {
+            showAboutScreen()
+        }
+    }
+
     private fun showWalletFragment() {
         childFragmentManager.transaction {
             replace(R.id.fragmentContainer, walletFragment)
@@ -63,5 +71,10 @@ class MainFragment : BaseFragment() {
         childFragmentManager.transaction {
             replace(R.id.fragmentContainer, dashboardFragment)
         }
+    }
+
+    private fun showAboutScreen() {
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_mainFragment_to_aboutFragment)
     }
 }
