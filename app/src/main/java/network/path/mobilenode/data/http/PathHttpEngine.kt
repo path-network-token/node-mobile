@@ -16,6 +16,7 @@ import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
+import network.path.mobilenode.service.ForegroundService
 import network.path.mobilenode.service.LastLocationProvider
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
@@ -132,13 +133,18 @@ class PathHttpEngine(
     }
 
     private suspend fun createCheckInMessage(): CheckIn {
-        val location = lastLocationProvider.getLastRealLocationOrNull()
+        val location = try {
+            lastLocationProvider.getLastRealLocationOrNull()
+        } catch (e: Exception) {
+            null
+        }
+
         val jobsToRequest = max(MAX_JOBS - currentExecutionUuids.size, 0)
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
-                lat = location?.latitude?.toString(),
-                lon = location?.longitude?.toString(),
+                lat = location?.latitude?.toString() ?: "0.0",
+                lon = location?.longitude?.toString() ?: "0.0",
                 returnJobsMax = jobsToRequest
         )
     }
@@ -180,16 +186,20 @@ class PathHttpEngine(
         return try {
             call().await()
         } catch (e: Exception) {
+            var fallback = true
             if (e is HttpException) {
                 if (e.code() == 422) {
                     val body = e.response()?.body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
-                } else {
-                    httpService = getHttpService(true)
+                    fallback = false
                 }
             }
-            Timber.w("Service call exception: $e", e)
+            if (fallback) {
+                Timber.w("Falling back to shadowsocks client")
+                httpService = getHttpService(true)
+            }
+            Timber.w("Service call exception: $e")
             null
         }
     }
@@ -197,7 +207,7 @@ class PathHttpEngine(
     private fun getHttpService(useProxy: Boolean): PathService {
         val client = if (!useProxy) okHttpClient else okHttpClient
                 .newBuilder()
-                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved("127.0.0.1", 1081)))
+                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(ForegroundService.LOCALHOST, ForegroundService.SS_LOCAL_PORT)))
                 .build()
         return PathServiceImpl(client, gson)
     }

@@ -40,7 +40,7 @@ object Executable : KoinComponent {
 
     private val app by inject<Application>()
 
-    private val EXECUTABLES = setOf(SS_LOCAL, SS_TUNNEL, REDSOCKS, TUN2SOCKS, OVERTURE)
+    private val EXECUTABLES = setOf(SS_LOCAL, SS_TUNNEL, REDSOCKS, TUN2SOCKS, OVERTURE, SIMPLE_OBFS)
 
     fun killAll() {
         for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }) {

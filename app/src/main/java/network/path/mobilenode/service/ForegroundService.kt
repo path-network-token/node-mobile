@@ -11,6 +11,7 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.Job
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.data.http.shadowsocks.Executable
 import network.path.mobilenode.data.http.shadowsocks.GuardedProcessPool
@@ -23,12 +24,20 @@ import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 import java.io.File
 
-private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
-
-private const val NOTIFICATION_ID = 3127
-private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
-
 class ForegroundService : LifecycleService() {
+    companion object {
+        private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
+
+        private const val NOTIFICATION_ID = 3127
+        private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
+
+        private const val TIMEOUT = 600
+
+        const val LOCALHOST = "127.0.0.1"
+        val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
+        private val SIMPLE_OBFS_PORT = if (BuildConfig.DEBUG) 1092 else 1082
+    }
+
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
@@ -37,7 +46,8 @@ class ForegroundService : LifecycleService() {
     private val compositeJob by inject<Job>()
     private val system by inject<PathSystem>()
 
-    private val processes = GuardedProcessPool()
+    private val ssLocal = GuardedProcessPool()
+    private val simpleObfs = GuardedProcessPool()
 
     override fun onCreate() {
         super.onCreate()
@@ -89,25 +99,40 @@ class ForegroundService : LifecycleService() {
         compositeJob.cancel()
         system.stop()
         wakeLock.release()
-        processes.killAll()
+
+        // Kill them all
+        Executable.killAll()
         super.onDestroy()
     }
 
     private fun startNativeProcesses() {
         val profile = Profile()
-        val cmd = arrayListOf(
-                File((this as Context).applicationInfo.nativeLibraryDir, Executable.SS_LOCAL).absolutePath,
-                "-u",
+        val libs = (this as Context).applicationInfo.nativeLibraryDir
+        val obfsCmd = arrayListOf(
+                File(libs, Executable.SIMPLE_OBFS).absolutePath,
                 "-v",
                 "-s", profile.host,
                 "-p", profile.remotePort.toString(),
+                "-l", SIMPLE_OBFS_PORT.toString(),
+                "-t", TIMEOUT.toString(),
+                "--obfs", "http"
+//                "--obfs-host", BuildConfig.HTTP_SERVER_URL
+        )
+        simpleObfs.start(obfsCmd)
+
+        val cmd = arrayListOf(
+                File(libs, Executable.SS_LOCAL).absolutePath,
+                "-u",
+                "-v",
+                "-s", LOCALHOST,
+                "-p", SIMPLE_OBFS_PORT.toString(),
                 "-k", profile.password,
                 "-m", profile.method,
-                "-b", "127.0.0.1",
-                "-l", "1081",
-                "-t", "600"
+                "-b", LOCALHOST,
+                "-l", SS_LOCAL_PORT.toString(),
+                "-t", TIMEOUT.toString()
         )
 
-        processes.start(cmd)
+        ssLocal.start(cmd)
     }
 }
