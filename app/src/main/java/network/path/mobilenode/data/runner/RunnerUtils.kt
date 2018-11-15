@@ -4,7 +4,7 @@ import android.os.SystemClock
 import com.crashlytics.android.Crashlytics
 import network.path.mobilenode.Constants.DEFAULT_CRITICAL_TIMEOUT_MILLIS
 import network.path.mobilenode.Constants.DEFAULT_DEGRADED_TIMEOUT_MILLIS
-import network.path.mobilenode.data.json.Status
+import network.path.mobilenode.domain.entity.Status
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult

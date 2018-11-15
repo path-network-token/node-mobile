@@ -1,6 +1,6 @@
 package network.path.mobilenode.data.runner
 
-import network.path.mobilenode.data.json.Status
+import network.path.mobilenode.domain.entity.Status
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult

@@ -29,7 +29,6 @@ ext.versions = [
         mockito             : '2.22.0',
         mockitoKotlin       : '1.6.0',
         okhttp              : '3.11.0',
-        scarlet             : '0.1.5',
         timber              : '4.7.1',
         tracepath           : '0.0.5-SNAPSHOT',
         retrofit            : '2.4.0',
