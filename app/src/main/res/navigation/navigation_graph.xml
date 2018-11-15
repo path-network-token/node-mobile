@@ -84,6 +84,17 @@
     <fragment
         android:id="@+id/aboutFragment"
         android:name="network.path.mobilenode.ui.main.AboutFragment"
-        android:label="AboutFragment"/>
+        android:label="AboutFragment">
+
+        <action
+            android:id="@+id/action_aboutFragment_to_disclaimerFragment"
+            app:destination="@id/disclaimerFragment"
+            app:enterAnim="@animator/slide_up"
+            app:exitAnim="@animator/slide_down"
+            app:popEnterAnim="@animator/slide_up"
+            app:popExitAnim="@animator/slide_down"
+            />
+
+    </fragment>
 
 </navigation>

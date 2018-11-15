@@ -1,11 +1,19 @@
 package network.path.mobilenode.ui.opengl.models.providers
 
+import android.graphics.Color
+import androidx.annotation.ColorInt
 import network.path.mobilenode.ui.opengl.addMultiple
+import network.path.mobilenode.ui.opengl.colorToFloatArray
 import network.path.mobilenode.ui.opengl.models.Model
 import java.util.*
-import kotlin.math.*
+import kotlin.math.acos
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 
-class SphereDataProvider(recursion: Int, radius: Float, color: FloatArray) :
+class SphereDataProvider(recursion: Int, radius: Float, @ColorInt color: Int = Color.WHITE) :
     Model.DataProvider {
     companion object {
         private val RNG = Random(12345678L)
@@ -33,7 +41,7 @@ class SphereDataProvider(recursion: Int, radius: Float, color: FloatArray) :
     private val cache = mutableMapOf<Long, Int>()
 
     init {
-        generate(recursion, radius, color)
+        generate(recursion, radius, colorToFloatArray(color))
     }
 
     private fun key(v1: Int, v2: Int, adjust: Boolean = false): Long {

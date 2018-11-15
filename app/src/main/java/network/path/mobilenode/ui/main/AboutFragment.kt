@@ -6,8 +6,9 @@ import android.opengl.GLES20
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
-import kotlinx.android.synthetic.main.fragment_job_report.*
+import kotlinx.android.synthetic.main.fragment_about.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
@@ -18,14 +19,16 @@ class AboutFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupCloseScreenButton()
-        populateData()
-    }
-
-    private fun setupCloseScreenButton() {
         closeScreenImageView.setOnClickListener {
             requireActivity().onBackPressed()
         }
+
+        disclaimerButton.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_aboutFragment_to_disclaimerFragment)
+        }
+
+        populateData()
     }
 
     private fun populateData() {

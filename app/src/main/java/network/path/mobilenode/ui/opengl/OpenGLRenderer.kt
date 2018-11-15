@@ -9,6 +9,7 @@ import android.renderscript.Float3
 import android.renderscript.Float4
 import android.renderscript.Int2
 import android.renderscript.Matrix4f
+import androidx.core.content.ContextCompat
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.opengl.glutils.ShaderProgram
 import network.path.mobilenode.ui.opengl.models.Blur
@@ -42,8 +43,6 @@ class FPSCounter {
 
 class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
     companion object {
-        val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
-
         private val FPS = FPSCounter()
 
         private const val FRAMEBUFFER_COUNT = 2
@@ -133,6 +132,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         )
         programs.add(sphereShader)
         sphere = Sphere(sphereShader, sphereDataProvider)
+        sphere.tint = ContextCompat.getColor(context, R.color.light_teal)
 
         // Globe
         val globeShader = ShaderProgram(

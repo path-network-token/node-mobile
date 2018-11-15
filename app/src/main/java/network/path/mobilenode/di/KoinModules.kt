@@ -21,7 +21,6 @@ import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
-import network.path.mobilenode.ui.opengl.OpenGLRenderer
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
 import network.path.mobilenode.ui.opengl.models.providers.ObjDataProvider
 import network.path.mobilenode.ui.opengl.models.providers.SphereDataProvider
@@ -41,7 +40,7 @@ val appModule = module {
     single { createLenientGson() }
 
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
-    single { SphereDataProvider(2, 1.1f, OpenGLRenderer.WIREFRAME_COLOR) }
+    single { SphereDataProvider(2, 1.1f) }
 
     single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
     single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get()) }

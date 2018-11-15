@@ -3,9 +3,11 @@ package network.path.mobilenode.ui.opengl
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Matrix
 import android.opengl.GLES20
 import android.opengl.GLUtils
+import androidx.annotation.ColorInt
 import androidx.annotation.RawRes
 
 fun CharArray.addMultiple(index: Int, vararg v: Int): Int {
@@ -32,6 +34,12 @@ fun loadRawResource(context: Context, @RawRes resId: Int): String =
         context.resources.openRawResource(resId).bufferedReader().use {
             it.readText()
         }
+
+fun colorToFloatArray(@ColorInt color: Int) =
+        floatArrayOf(Color.red(color).toFloat() / 255f,
+                Color.green(color).toFloat() / 255f,
+                Color.blue(color).toFloat() / 255f,
+                Color.alpha(color).toFloat() / 255f)
 
 private fun Bitmap.flip(isVertical: Boolean): Bitmap {
     val matrix = Matrix().apply {

@@ -4,6 +4,8 @@ uniform sampler2D u_Texture;    // The input texture.
 uniform vec3 u_CameraPosition;
 uniform float u_Alpha;
 
+uniform vec4 u_Tint;
+
 varying vec3 v_Position;        // Interpolated position for this fragment.
 varying vec3 v_Normal;          // Interpolated normal for this fragment.
 varying vec4 v_Color;
@@ -111,6 +113,6 @@ void main() {
 //    float diffuse = max(u_Light.diffuseFactor, dot(v_Normal, lightVector)) * u_Light.power;
 //    diffuse = diffuse * (1.0 / (1.0 + (u_Light.attenuationFactor * u_Light.attenuationFactor * distance * distance)));
 
-    gl_FragColor = vec4(result, 1.0) * v_Color;
+    gl_FragColor = vec4(result, 1.0) * v_Color * u_Tint;
     gl_FragColor.a *= u_Alpha;
 }
