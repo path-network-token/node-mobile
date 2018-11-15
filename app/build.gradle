@@ -107,8 +107,8 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 
     // Ktx
-    implementation "androidx.core:core-ktx:$versions.androidKtx"
-    implementation "androidx.fragment:fragment-ktx:$versions.androidKtx"
+    implementation "androidx.core:core-ktx:$versions.androidCoreKtx"
+    implementation "androidx.fragment:fragment-ktx:$versions.androidFragmentKtx"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
 
     // Kotlin
