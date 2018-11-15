@@ -5,6 +5,7 @@ import android.view.View
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_splash.*
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.observe
@@ -17,6 +18,8 @@ class SplashFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        version.text = getString(R.string.label_version, BuildConfig.VERSION_NAME)
         viewModel.let {
             it.onViewCreated()
             it.nextScreen.observe(this, ::showScreen)

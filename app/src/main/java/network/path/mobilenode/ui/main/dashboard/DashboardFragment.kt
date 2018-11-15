@@ -65,13 +65,13 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun setOperatorDetails(details: AutonomousSystem?) {
-        operatorAsn.text = details?.asNumber.orNoData()
-        autonomousSystemDescription.text = details?.asDescription.orNoData()
-        country.text = details?.asCountryCode.orNoData()
+        value1.text = details?.asNumber.orNoData()
+        value2.text = details?.asDescription.orNoData()
+        value3.text = details?.asCountryCode.orNoData()
     }
 
     private fun setJobList(jobList: JobList) {
-        operatorAsn.text = jobList.asn?.orNoData()
+        value1.text = jobList.asn?.orNoData()
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
     }
 

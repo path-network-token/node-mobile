@@ -54,6 +54,12 @@
     <string name="check_asn_complete">CHECKING ASN - COMPLETE</string>
     <string name="check_operator_asn_complete">CHECKING OPERATOR ASN - COMPLETE</string>
     <string name="location_country_origin">LOCATING COUNTRY ORIGIN</string>
-    <string name="locating_node">Locating node...</string>
+    <string name="locating_node">Locating node…</string>
+
+    <string name="label_app_version">App Version</string>
+    <string name="label_os_version">OS Version</string>
+    <string name="label_gl_version">GL Version</string>
+    <string name="label_glsl_version">GLSL Version</string>
+    <string name="label_version">Version: %1$s</string>
 
 </resources>

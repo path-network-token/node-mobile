@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="text_size_xsmall">10sp</dimen>
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_medium">14sp</dimen>
     <dimen name="text_size_large">20sp</dimen>
@@ -23,6 +24,10 @@
         <item name="android:fontFamily">@font/exo_medium</item>
     </style>
 
+    <style name="Text.Default.Medium.Small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
     <style name="Text.Default.Header">
         <item name="android:fontFamily">@font/exo_bold</item>
         <item name="android:gravity">center</item>
@@ -30,4 +35,21 @@
         <item name="android:lineSpacingExtra">10sp</item>
         <item name="android:textSize">@dimen/text_size_large</item>
     </style>
+
+    <!-- INDIVIDUAL STYLES -->
+    <style name="SplashNode" parent="Text.Default">
+        <item name="android:fontFamily">@font/exo_extra_light</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:letterSpacing">0.38</item>
+    </style>
+
+    <style name="DashboardDetails" parent="Text.Default">
+        <item name="android:letterSpacing">0.17</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:paddingTop">@dimen/padding_s</item>
+        <item name="android:paddingBottom">@dimen/padding_s</item>
+        <item name="android:fontFamily">@font/exo_regular</item>
+    </style>
+
 </resources>

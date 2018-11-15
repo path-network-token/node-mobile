@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient_background"
+    >
 
     <FrameLayout
         android:id="@+id/pathLogo"
@@ -13,7 +15,8 @@
         android:layout_marginTop="145dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <ImageView
             android:id="@+id/imageGlobe"
@@ -22,7 +25,8 @@
             android:layout_gravity="center"
             android:src="@drawable/globe"
             android:transitionName="image_globe"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            />
 
         <ImageView
             android:layout_width="55dp"
@@ -30,7 +34,8 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_dashboard_blue"
             android:tint="@color/dark_sky_blue"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            />
 
     </FrameLayout>
 
@@ -43,7 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pathLogo"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <View
         android:id="@+id/divider"
@@ -53,24 +59,22 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pathTextLogo" />
+        app:layout_constraintTop_toBottomOf="@id/pathTextLogo"
+        />
 
     <TextView
         android:id="@+id/nodeText"
+        style="@style/SplashNode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/exo_extra_light"
         android:gravity="center_horizontal"
-        android:letterSpacing="0.38"
         android:text="@string/node"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        tools:text="NODE" />
+        tools:text="NODE"
+        />
 
     <ImageView
         android:id="@+id/footerLogo"
@@ -83,26 +87,37 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/footerText"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/footerText"
+        style="@style/Text.Default.Medium.Small"
         android:layout_width="wrap_content"
-        android:layout_height="14dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="52dp"
-        android:fontFamily="@font/exo_medium"
-        android:gravity="center_horizontal"
         android:letterSpacing="0.08"
         android:text="@string/by_path_network"
         android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/footerLogo"
         app:layout_constraintTop_toBottomOf="@+id/nodeText"
         app:layout_constraintVertical_bias="1.0"
-        tools:text="BY PATH NETWORK" />
+        tools:text="BY PATH NETWORK"
+        />
 
+
+    <TextView
+        android:id="@+id/version"
+        style="@style/DashboardDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_m"
+        android:paddingEnd="@dimen/padding_m"
+        android:textSize="@dimen/text_size_xsmall"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Version: 1.1.1"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

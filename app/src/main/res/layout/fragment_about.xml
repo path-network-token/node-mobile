@@ -26,10 +26,11 @@
         android:id="@+id/pathLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/pathTextLogo"
+        app:layout_constraintVertical_chainStyle="packed"
         >
 
         <ImageView
@@ -62,6 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pathLogo"
+        app:layout_constraintBottom_toTopOf="@id/divider"
         tools:ignore="ContentDescription"
         />
 
@@ -74,24 +76,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pathTextLogo"
+        app:layout_constraintBottom_toTopOf="@id/nodeText"
         />
 
     <TextView
         android:id="@+id/nodeText"
+        style="@style/SplashNode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/exo_extra_light"
         android:gravity="center_horizontal"
-        android:letterSpacing="0.38"
         android:text="@string/node"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toTopOf="@id/details"
         tools:text="NODE"
+        />
+
+    <include
+        android:id="@+id/details"
+        layout="@layout/dashboard_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginBottom="@dimen/padding_m"
+        app:layout_constraintTop_toBottomOf="@id/nodeText"
+        app:layout_constraintBottom_toTopOf="@id/footerText"
         />
 
     <ImageView
@@ -110,21 +121,16 @@
 
     <TextView
         android:id="@+id/footerText"
+        style="@style/Text.Default.Medium.Small"
         android:layout_width="wrap_content"
-        android:layout_height="14dp"
-        android:layout_marginBottom="52dp"
-        android:fontFamily="@font/exo_medium"
-        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_m"
         android:letterSpacing="0.08"
         android:text="@string/by_path_network"
         android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/footerLogo"
-        app:layout_constraintTop_toBottomOf="@+id/nodeText"
         app:layout_constraintVertical_bias="1.0"
         tools:text="BY PATH NETWORK"
         />
