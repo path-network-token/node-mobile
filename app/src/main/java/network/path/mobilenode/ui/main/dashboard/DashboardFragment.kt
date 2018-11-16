@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
 import network.path.mobilenode.R
 import network.path.mobilenode.domain.entity.AutonomousSystem
+import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.observe
@@ -32,7 +33,7 @@ class DashboardFragment : BaseFragment() {
         dashboardViewModel.let {
             it.onViewCreated()
             it.nodeId.observe(this, ::setNodeId)
-            it.isConnected.observe(this, ::colorConnectionStatusDot)
+            it.status.observe(this, ::setStatus)
             it.operatorDetails.observe(this, ::setOperatorDetails)
             it.ipAddress.observe(this, ::setIpAddress)
             it.jobList.observe(this, ::setJobList)
@@ -60,13 +61,10 @@ class DashboardFragment : BaseFragment() {
         ipWithSubnetAddress.text = ipAddress ?: getString(R.string.n_a)
     }
 
-    private fun colorConnectionStatusDot(isConnected: Boolean) {
-        val colorRes = if (isConnected) R.color.apple_green else R.color.coral_pink
-        ImageViewCompat.setImageTintList(connectionStatusDot,
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorRes)))
+    private fun setStatus(status: ConnectionStatus) {
+        ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(status.color()))
 
-        val colorLabelRes = if (isConnected) R.color.tealish else R.color.coral_pink
-        subnetAddressLabel.setBackgroundColor(ContextCompat.getColor(requireContext(), colorLabelRes))
+        labelStatus.text = status.label()
     }
 
     private fun setOperatorDetails(details: AutonomousSystem?) {
@@ -85,4 +83,14 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun String?.orNoData() = this ?: getString(R.string.no_data)
+
+    private fun ConnectionStatus.label(): String = getString(when (this) {
+        ConnectionStatus.CONNECTED -> R.string.status_connected
+        ConnectionStatus.DISCONNECTED -> R.string.status_disconnected
+    })
+
+    private fun ConnectionStatus.color(): Int = ContextCompat.getColor(requireContext(), when (this) {
+        ConnectionStatus.CONNECTED -> R.color.apple_green
+        ConnectionStatus.DISCONNECTED -> R.color.coral_pink
+    })
 }

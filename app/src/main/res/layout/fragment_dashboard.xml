@@ -19,20 +19,45 @@
         />
 
     <TextView
+        android:id="@+id/labelStatus"
+        style="@style/Text.Default.Bold.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_l"
+        android:background="@drawable/round_rect"
+        android:gravity="center"
+        android:letterSpacing="0.11"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Disconnected"
+        />
+
+    <ImageView
+        android:id="@+id/statusDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/dot"
+        android:tint="@color/coral_pink"
+        app:layout_constraintBottom_toBottomOf="@+id/labelStatus"
+        app:layout_constraintStart_toStartOf="@+id/labelStatus"
+        app:layout_constraintTop_toTopOf="@+id/labelStatus"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
         android:id="@+id/subnetAddressLabel"
         style="@style/Text.Default.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:background="@color/tealish"
-        android:gravity="center_horizontal"
         android:letterSpacing="0.11"
-        android:lineSpacingExtra="7sp"
         android:paddingStart="@dimen/padding_l"
         android:paddingTop="@dimen/padding_s"
         android:paddingEnd="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_s"
         android:text="@string/subnet_address"
+        android:textColor="@color/sky"
         app:layout_constraintBottom_toTopOf="@+id/ipWithSubnetAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,19 +92,6 @@
         app:layout_constraintBottom_toTopOf="@+id/nodeIdTextView"
         app:layout_constraintEnd_toEndOf="@+id/nodeIdTextView"
         app:layout_constraintStart_toStartOf="@+id/nodeIdTextView"
-        />
-
-    <ImageView
-        android:id="@+id/connectionStatusDot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding_m"
-        android:src="@drawable/dot"
-        android:tint="@color/coral_pink"
-        app:layout_constraintBottom_toBottomOf="@+id/nodeIdTextView"
-        app:layout_constraintEnd_toStartOf="@+id/nodeIdTextView"
-        app:layout_constraintTop_toTopOf="@+id/nodeIdTextView"
-        tools:ignore="ContentDescription"
         />
 
     <TextView

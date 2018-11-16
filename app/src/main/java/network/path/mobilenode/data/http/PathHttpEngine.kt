@@ -49,7 +49,7 @@ class PathHttpEngine(
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
     override val jobList = ConflatedBroadcastChannel<JobList>()
-    override var isRunning = ConflatedBroadcastChannel<Boolean>()
+    override var isRunning = ConflatedBroadcastChannel(true)
 
     private var _isRunning = true
         set(value) {

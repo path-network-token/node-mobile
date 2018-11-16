@@ -11,7 +11,7 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
-import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
+import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import java.util.*
 import java.util.zip.Adler32
@@ -26,8 +26,8 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _nodeId = MutableLiveData<String?>()
     val nodeId: LiveData<String?> = _nodeId
 
-    private val _isConnected = MutableLiveData<Boolean>()
-    val isConnected: LiveData<Boolean> = _isConnected
+    private val _status = MutableLiveData<ConnectionStatus>()
+    val status: LiveData<ConnectionStatus> = _status
 
     private val _operatorDetails = MutableLiveData<AutonomousSystem?>()
     val operatorDetails: LiveData<AutonomousSystem?> = _operatorDetails
@@ -62,7 +62,7 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
 
     private fun registerStatusHandler() = launch {
         system.status.openSubscription().consumeEach {
-            _isConnected.postValue(it == CONNECTED)
+            _status.postValue(it)
         }
     }
 
