@@ -8,6 +8,16 @@
     android:padding="@dimen/screen_root_layout_padding"
     >
 
+    <ImageButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/ic_toggle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <TextView
         android:id="@+id/subnetAddressLabel"
         style="@style/Text.Default.Bold"

@@ -38,12 +38,20 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _jobList = MutableLiveData<JobList>()
     val jobList: LiveData<JobList> = _jobList
 
+    private val _isRunning = MutableLiveData<Boolean>()
+    val isRunning: LiveData<Boolean> = _isRunning
+
     fun onViewCreated() {
         registerNodeIdHandler()
         registerStatusHandler()
         registerIpHandler()
         registerDetailsHandler()
         registerJobListHandler()
+        registerRunningHandler()
+    }
+
+    fun toggle() {
+        system.toggle()
     }
 
     private fun registerNodeIdHandler() = launch {
@@ -73,6 +81,12 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private fun registerJobListHandler() = launch {
         system.jobList.openSubscription().consumeEach {
             _jobList.postValue(it)
+        }
+    }
+
+    private fun registerRunningHandler() = launch {
+        system.isRunning.openSubscription().consumeEach {
+            _isRunning.postValue(it)
         }
     }
 

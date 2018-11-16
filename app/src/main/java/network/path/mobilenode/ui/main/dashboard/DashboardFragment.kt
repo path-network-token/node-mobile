@@ -36,6 +36,7 @@ class DashboardFragment : BaseFragment() {
             it.operatorDetails.observe(this, ::setOperatorDetails)
             it.ipAddress.observe(this, ::setIpAddress)
             it.jobList.observe(this, ::setJobList)
+            it.isRunning.observe(this, ::setRunning)
         }
     }
 
@@ -43,6 +44,10 @@ class DashboardFragment : BaseFragment() {
         viewJobReportButton.setOnClickListener {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_mainFragment_to_jobReportFragment)
+        }
+
+        toggleButton.setOnClickListener {
+            dashboardViewModel.toggle()
         }
     }
 
@@ -73,6 +78,10 @@ class DashboardFragment : BaseFragment() {
     private fun setJobList(jobList: JobList) {
         value1.text = jobList.asn?.orNoData()
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
+    }
+
+    private fun setRunning(isRunning: Boolean) {
+        toggleButton.isSelected = !isRunning
     }
 
     private fun String?.orNoData() = this ?: getString(R.string.no_data)

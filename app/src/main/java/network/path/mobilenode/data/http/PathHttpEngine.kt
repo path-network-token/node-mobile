@@ -49,9 +49,15 @@ class PathHttpEngine(
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
     override val jobList = ConflatedBroadcastChannel<JobList>()
+    override var isRunning = ConflatedBroadcastChannel<Boolean>()
 
-    override var isRunning: Boolean = true
-        private set
+    private var _isRunning = true
+        set(value) {
+            field = value
+            launch {
+                isRunning.send(value)
+            }
+        }
 
     override fun start() {
         checkIn()
@@ -84,8 +90,8 @@ class PathHttpEngine(
     }
 
     override fun toggle() {
-        isRunning = !isRunning
-        Timber.d("HTTP: changed status to [$isRunning]")
+        _isRunning = !_isRunning
+        Timber.d("HTTP: changed status to [$_isRunning]")
     }
 
     private fun checkIn() = launch {
@@ -139,7 +145,7 @@ class PathHttpEngine(
 
     private suspend fun createCheckInMessage(): CheckIn {
         val location = lastLocationProvider.getLastRealLocationOrNull()
-        val jobsToRequest = if (isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
+        val jobsToRequest = if (_isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
