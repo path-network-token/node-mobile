@@ -29,7 +29,6 @@ class DashboardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupClicks()
         dashboardViewModel.let {
             it.onViewCreated()
             it.nodeId.observe(this, ::setNodeId)
@@ -39,6 +38,7 @@ class DashboardFragment : BaseFragment() {
             it.jobList.observe(this, ::setJobList)
             it.isRunning.observe(this, ::setRunning)
         }
+        setupClicks()
     }
 
     private fun setupClicks() {

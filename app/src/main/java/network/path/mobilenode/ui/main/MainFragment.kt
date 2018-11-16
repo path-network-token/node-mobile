@@ -6,10 +6,13 @@ import androidx.fragment.app.transaction
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import network.path.mobilenode.R
+import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
 import network.path.mobilenode.ui.main.wallet.WalletFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
+import network.path.mobilenode.utils.observe
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : BaseFragment() {
     companion object {
@@ -17,6 +20,8 @@ class MainFragment : BaseFragment() {
     }
 
     override val layoutResId = R.layout.fragment_main
+
+    private val mainViewModel by viewModel<MainViewModel>()
 
     private val walletFragment by lazy { WalletFragment.newInstance() }
     private val dashboardFragment by lazy { DashboardFragment.newInstance() }
@@ -35,6 +40,11 @@ class MainFragment : BaseFragment() {
         openGlSurfaceView = surfaceView
         restoreGlState(savedInstanceState)
 
+        mainViewModel.let {
+            it.onViewCreated()
+            it.status.observe(this, ::setStatus)
+            it.isRunning.observe(this, ::setRunning)
+        }
         initBottomBar()
         setupInfoButton()
     }
@@ -80,7 +90,9 @@ class MainFragment : BaseFragment() {
     private fun initBottomBar() {
         walletRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                showWalletFragment()
+                childFragmentManager.transaction {
+                    replace(R.id.fragmentContainer, walletFragment)
+                }
             }
         }
         dashboardRadioButton.setOnCheckedChangeListener { _, isChecked ->
@@ -92,13 +104,8 @@ class MainFragment : BaseFragment() {
 
     private fun setupInfoButton() {
         infoButton.setOnClickListener {
-            showAboutScreen()
-        }
-    }
-
-    private fun showWalletFragment() {
-        childFragmentManager.transaction {
-            replace(R.id.fragmentContainer, walletFragment)
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_mainFragment_to_aboutFragment)
         }
     }
 
@@ -108,8 +115,10 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private fun showAboutScreen() {
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_mainFragment_to_aboutFragment)
+    private fun setStatus(status: ConnectionStatus) {
+        openGlSurfaceView.setConnectionStatus(status)
+    }
+
+    private fun setRunning(isRunning: Boolean) {
     }
 }

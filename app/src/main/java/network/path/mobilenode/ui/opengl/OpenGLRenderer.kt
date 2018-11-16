@@ -1,5 +1,6 @@
 package network.path.mobilenode.ui.opengl
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
@@ -13,6 +14,7 @@ import android.renderscript.Int2
 import android.renderscript.Matrix4f
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
+import android.view.animation.BounceInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.annotation.ColorInt
 import androidx.core.animation.addListener
@@ -56,6 +58,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         private const val START_CAMERA_Z = -5f
         private const val FINAL_CAMERA_Z = -2.5f
 
+        private const val COLOR_ANIMATION_DURATION = 3_000L
         private const val FIRST_ANIMATION_DURATION = 3_000L
         private const val OTHER_ANIMATION_DURATION = 1_000L
         private const val ROTATION_DURATION_GLOBE = 20_000L // One complete rotation of globe
@@ -82,6 +85,9 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private lateinit var bg: Square
     private lateinit var globe: Globe
     private lateinit var sphere: Sphere
+
+    private var sphereColor = ContextCompat.getColor(context, R.color.light_teal)
+    private var sphereColorAnimator: Animator? = null
 
     private lateinit var blurHorizontal: Blur
     private lateinit var blurVertical: Blur
@@ -142,7 +148,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         )
         programs.add(sphereShader)
         sphere = Sphere(sphereShader, sphereDataProvider)
-        sphere.tint = ContextCompat.getColor(context, R.color.light_teal)
 
         // Globe
         val globeShader = ShaderProgram(
@@ -180,8 +185,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         sphere.setScale(1.1f)
         globe.setScale(1.1f)
 
-        globe.material = Material(5f, 5f, 5f)
-        sphere.material = Material(5f, 3f, 0.1f)
+        globe.material = Material(5f, 4f, 4f)
+        sphere.material = Material(5f, 2f, 0.1f)
 
         // Light source
         val direction = Float3(0.8f, 0.8f, 2f)
@@ -205,6 +210,111 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         // Rotation animation
         setupRotateAnimation()
+    }
+
+    override fun onDrawFrame(unused: GL10) {
+        FPS.logFrame()
+
+        val currentTimeNanos = System.nanoTime()
+        val dt = currentTimeNanos - lastTimeNanos
+        lastTimeNanos = currentTimeNanos
+
+        val clearColor = ContextCompat.getColor(context, android.R.color.transparent)
+
+        GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
+        drawFrame(dt, clearColor, frameBufferIds[0]) {
+            sphere.tint = sphereColor
+            sphere.drawTop = false
+            sphere.draw(dt)
+
+            globe.drawTop = false
+            globe.draw(dt)
+
+            globe.drawTop = true
+            globe.draw(dt)
+        }
+
+        drawFrame(dt, clearColor, frameBufferIds[1]) {
+            blurHorizontal.textureHandle = frameTextureIds[0]
+            blurHorizontal.draw(dt)
+        }
+
+        GLES20.glViewport(0, 0, size.x, size.y)
+        drawFrame(dt, clearColor, 0) {
+            bg.draw(dt)
+
+            blurVertical.textureHandle = frameTextureIds[1]
+            blurVertical.draw(dt)
+
+            sphere.drawTop = true
+            sphere.draw(dt)
+        }
+    }
+
+    override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
+        size = Int2(width, height)
+        GLES20.glViewport(0, 0, width, height)
+        prepareFrameBuffers(BLUR_SCALE)
+
+        val ratio = width.toFloat() / height.toFloat()
+        val perspective = Matrix4f().also {
+            it.loadPerspective(85f, ratio, 1f, 100f)
+        }
+
+        sphere.setProjection(perspective)
+        globe.setProjection(perspective)
+
+        blurHorizontal.dimensions = size
+        blurHorizontal.dimensionsScale = BLUR_SCALE
+
+        blurVertical.dimensions = size
+        blurVertical.dimensionsScale = 1f
+
+        sphere.pointScale = BLUR_SCALE
+
+        bg.dimensions = size
+
+        runOnUiThread {
+            listener?.onInitialised()
+        }
+    }
+
+    fun destroy() {
+        val textureHandle = IntArray(2)
+        textureHandle[0] = bgTexture
+        textureHandle[1] = globeTexture
+        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
+
+        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
+        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
+        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
+
+        programs.forEach { it.destroy() }
+    }
+
+    fun saveState(): Bundle {
+        val state = Bundle()
+        state.putBoolean(STATE_ZOOMED, zoomComplete)
+        return state
+    }
+
+    fun restoreState(savedState: Bundle) {
+        zoomComplete = savedState.getBoolean(STATE_ZOOMED, false)
+    }
+
+    fun setSphereColor(@ColorInt color: Int) {
+        val animator = ValueAnimator.ofArgb(sphereColor, color)
+        animator.duration = COLOR_ANIMATION_DURATION
+        animator.interpolator = BounceInterpolator()
+        animator.addUpdateListener {
+            val progress = it.animatedValue as Int
+            sphereColor = progress
+        }
+        runOnUiThread {
+            sphereColorAnimator?.cancel()
+            sphereColorAnimator = animator
+            animator.start()
+        }
     }
 
     private fun setupFirstAnimation(zoom: Boolean = true) {
@@ -260,72 +370,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         runOnUiThread {
             animatorGlobe.start()
             animatorSphere.start()
-        }
-    }
-
-    override fun onDrawFrame(unused: GL10) {
-        FPS.logFrame()
-
-        val currentTimeNanos = System.nanoTime()
-        val dt = currentTimeNanos - lastTimeNanos
-        lastTimeNanos = currentTimeNanos
-
-        val clearColor = ContextCompat.getColor(context, android.R.color.transparent)
-
-        GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
-        drawFrame(dt, clearColor, frameBufferIds[0]) {
-            sphere.drawTop = false
-            sphere.draw(dt)
-
-            globe.drawTop = false
-            globe.draw(dt)
-
-            globe.drawTop = true
-            globe.draw(dt)
-        }
-
-        drawFrame(dt, clearColor, frameBufferIds[1]) {
-            blurHorizontal.textureHandle = frameTextureIds[0]
-            blurHorizontal.draw(dt)
-        }
-
-        GLES20.glViewport(0, 0, size.x, size.y)
-        drawFrame(dt, clearColor, 0) {
-            bg.draw(dt)
-
-            blurVertical.textureHandle = frameTextureIds[1]
-            blurVertical.draw(dt)
-
-            sphere.drawTop = true
-            sphere.draw(dt)
-        }
-    }
-
-    override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-        size = Int2(width, height)
-        GLES20.glViewport(0, 0, width, height)
-        prepareFrameBuffers(BLUR_SCALE)
-
-        val ratio = width.toFloat() / height.toFloat()
-        val perspective = Matrix4f().also {
-            it.loadPerspective(85f, ratio, 1f, 100f)
-        }
-
-        sphere.setProjection(perspective)
-        globe.setProjection(perspective)
-
-        blurHorizontal.dimensions = size
-        blurHorizontal.dimensionsScale = BLUR_SCALE
-
-        blurVertical.dimensions = size
-        blurVertical.dimensionsScale = 1f
-
-        sphere.pointScale = BLUR_SCALE
-
-        bg.dimensions = size
-
-        runOnUiThread {
-            listener?.onInitialised()
         }
     }
 
@@ -421,29 +465,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         }
-    }
-
-    fun destroy() {
-        val textureHandle = IntArray(2)
-        textureHandle[0] = bgTexture
-        textureHandle[1] = globeTexture
-        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
-
-        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
-        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
-        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
-
-        programs.forEach { it.destroy() }
-    }
-
-    fun saveState(): Bundle {
-        val state = Bundle()
-        state.putBoolean(STATE_ZOOMED, zoomComplete)
-        return state
-    }
-
-    fun restoreState(savedState: Bundle) {
-        zoomComplete = savedState.getBoolean(STATE_ZOOMED, false)
     }
 
     private fun runOnUiThread(block: () -> Unit) {
