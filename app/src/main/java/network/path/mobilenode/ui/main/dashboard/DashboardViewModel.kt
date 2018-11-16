@@ -13,12 +13,13 @@ import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
+import timber.log.Timber
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.experimental.CoroutineContext
 
 class DashboardViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
-    private val job = Job()
+    private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -42,6 +43,7 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     val isRunning: LiveData<Boolean> = _isRunning
 
     fun onViewCreated() {
+        job = Job()
         registerNodeIdHandler()
         registerStatusHandler()
         registerIpHandler()
