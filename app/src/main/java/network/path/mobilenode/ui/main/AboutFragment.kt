@@ -40,10 +40,10 @@ class AboutFragment : BaseFragment() {
         value1.text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         value2.text = "${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT} ${Build.VERSION.CODENAME})"
 
-        setupGL()
+        retrieveGlInfo()
     }
 
-    private fun setupGL() {
+    private fun retrieveGlInfo() {
         // EGL config attributes
         val confAttr = intArrayOf(
                 EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,    // very important!

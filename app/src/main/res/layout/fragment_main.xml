@@ -30,13 +30,11 @@
         android:id="@+id/infoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_m"
-        android:layout_marginEnd="@dimen/padding_m"
-        android:padding="@dimen/padding_s"
+        android:padding="@dimen/padding_m"
         android:background="@null"
         android:src="@drawable/ic_info"
         android:tint="@color/light_teal"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
