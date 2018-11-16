@@ -2,6 +2,7 @@ package network.path.mobilenode.ui.opengl
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.os.Bundle
 import android.util.AttributeSet
 
 class OpenGLSurfaceView
@@ -28,6 +29,12 @@ class OpenGLSurfaceView
         setRenderer(renderer)
 
 //        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+    }
+
+    fun saveState() = renderer.saveState()
+
+    fun restoreState(savedState: Bundle) {
+        renderer.restoreState(savedState)
     }
 
     fun destroy() {
