@@ -8,72 +8,15 @@
     android:background="@drawable/gradient_background"
     >
 
-    <FrameLayout
-        android:id="@+id/pathLogo"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/logo"
+        layout="@layout/combined_logo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="145dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <ImageView
-            android:id="@+id/imageGlobe"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_gravity="center"
-            android:src="@drawable/globe"
-            android:transitionName="image_globe"
-            tools:ignore="ContentDescription"
-            />
-
-        <ImageView
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_dashboard_blue"
-            android:tint="@color/dark_sky_blue"
-            tools:ignore="ContentDescription"
-            />
-
-    </FrameLayout>
-
-    <ImageView
-        android:id="@+id/pathTextLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/path_text_splash"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pathLogo"
-        tools:ignore="ContentDescription"
-        />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="50dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pathTextLogo"
-        />
-
-    <TextView
-        android:id="@+id/nodeText"
-        style="@style/SplashNode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/node"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        tools:text="NODE"
         />
 
     <ImageView
@@ -102,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/footerLogo"
-        app:layout_constraintTop_toBottomOf="@+id/nodeText"
+        app:layout_constraintTop_toBottomOf="@+id/logo"
         app:layout_constraintVertical_bias="1.0"
         tools:text="BY PATH NETWORK"
         />
@@ -120,4 +63,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Version: 1.1.1"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

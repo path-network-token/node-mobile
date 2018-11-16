@@ -13,8 +13,8 @@
         android:id="@+id/closeScreenImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_clear"
         android:scaleType="center"
+        android:src="@drawable/ic_clear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,76 +22,14 @@
         tools:ignore="ContentDescription"
         />
 
-    <FrameLayout
-        android:id="@+id/pathLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <include
+        android:id="@+id/logo"
+        layout="@layout/combined_logo"
+        app:layout_constraintBottom_toTopOf="@id/footerText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/pathTextLogo"
         app:layout_constraintVertical_chainStyle="packed"
-        >
-
-        <ImageView
-            android:id="@+id/imageGlobe"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_gravity="center"
-            android:src="@drawable/globe"
-            android:transitionName="image_globe"
-            tools:ignore="ContentDescription"
-            />
-
-        <ImageView
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_dashboard_blue"
-            android:tint="@color/dark_sky_blue"
-            tools:ignore="ContentDescription"
-            />
-
-    </FrameLayout>
-
-    <ImageView
-        android:id="@+id/pathTextLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/path_text_splash"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pathLogo"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        tools:ignore="ContentDescription"
-        />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="50dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pathTextLogo"
-        app:layout_constraintBottom_toTopOf="@id/nodeText"
-        />
-
-    <TextView
-        android:id="@+id/nodeText"
-        style="@style/SplashNode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:text="@string/node"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toTopOf="@id/details"
-        tools:text="NODE"
         />
 
     <include
@@ -101,8 +39,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_m"
         android:layout_marginBottom="@dimen/padding_m"
-        app:layout_constraintTop_toBottomOf="@id/nodeText"
         app:layout_constraintBottom_toTopOf="@id/disclaimerButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo"
         />
 
     <TextView
@@ -115,9 +55,9 @@
         android:stateListAnimator="@animator/button_state_list"
         android:text="@string/disclaimer"
         android:textColor="@color/sky"
+        app:layout_constraintBottom_toTopOf="@id/footerText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/footerText"
         app:layout_constraintTop_toBottomOf="@id/details"
         />
 
