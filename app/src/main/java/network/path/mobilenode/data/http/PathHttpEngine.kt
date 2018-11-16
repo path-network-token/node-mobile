@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathEngine
@@ -17,6 +18,7 @@ import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.LastLocationProvider
+import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
@@ -26,6 +28,7 @@ import kotlin.math.max
 class PathHttpEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
+        private val networkMonitor: NetworkMonitor,
         okHttpClient: OkHttpClient,
         gson: Gson,
         private val storage: PathStorage
@@ -59,7 +62,12 @@ class PathHttpEngine(
             }
         }
 
+    init {
+        registerNetworkHandler()
+    }
+
     override fun start() {
+        networkMonitor.start()
         checkIn()
         pollJobs()
     }
@@ -87,6 +95,7 @@ class PathHttpEngine(
         job.cancel()
         pollJob.cancel()
         timeoutJob.cancel()
+        networkMonitor.stop()
     }
 
     override fun toggle() {
@@ -96,6 +105,15 @@ class PathHttpEngine(
 
     private fun checkIn() = launch {
         performCheckIn()
+    }
+
+    private fun registerNetworkHandler() = launch {
+        networkMonitor.connected.consumeEach {
+            if (!timeoutJob.isCancelled) {
+                timeoutJob.cancel()
+            }
+            performCheckIn()
+        }
     }
 
     private suspend fun performCheckIn() {
@@ -173,7 +191,9 @@ class PathHttpEngine(
 
     private fun scheduleCheckIn() {
         Timber.d("HTTP: Scheduling check in...")
-        timeoutJob.cancel()
+        if (!timeoutJob.isCancelled) {
+            timeoutJob.cancel()
+        }
         timeoutJob = launch {
             delay(HEARTBEAT_INTERVAL_MS)
             Timber.d("HTTP: Checking in...")

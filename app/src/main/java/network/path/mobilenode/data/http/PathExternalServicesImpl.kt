@@ -38,11 +38,9 @@ class PathExternalServicesImpl(
     }
 
     override fun start() {
-        networkMonitor.start()
     }
 
     override fun stop() {
-        networkMonitor.stop()
         job.cancel()
     }
 

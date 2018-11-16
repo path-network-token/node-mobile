@@ -67,12 +67,14 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         private const val BLUR_SCALE = 0.5f
 
         private const val STATE_ZOOMED = "STATE_ZOOMED"
+        private const val STATE_ROTATING = "STATE_ROTATING"
     }
 
     interface Listener {
         fun onInitialised()
     }
 
+    @Volatile
     private var zoomComplete: Boolean = false
 
     var listener: Listener? = null
@@ -300,11 +302,13 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     fun saveState(): Bundle {
         val state = Bundle()
         state.putBoolean(STATE_ZOOMED, zoomComplete)
+        state.putBoolean(STATE_ROTATING, isRotating)
         return state
     }
 
     fun restoreState(savedState: Bundle) {
         zoomComplete = savedState.getBoolean(STATE_ZOOMED, false)
+        isRotating = savedState.getBoolean(STATE_ROTATING, true)
     }
 
     fun toggleRotation(enable: Boolean) {
@@ -389,6 +393,9 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         runOnUiThread {
             rotationAnimatorSet = animatorSet
             animatorSet.start()
+            if (!isRotating) {
+                animatorSet.pause()
+            }
         }
     }
 

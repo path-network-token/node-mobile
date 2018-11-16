@@ -19,7 +19,6 @@ import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.IntroViewModel
-import network.path.mobilenode.ui.main.MainViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
@@ -44,7 +43,7 @@ val appModule = module {
     single { SphereDataProvider(2, 1.1f) }
 
     single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
-    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get()) }
+    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
 
     scope("service") { Job() }
     scope("service") { PathSystem(get(), get(), get(), get(), get()) }
@@ -57,7 +56,6 @@ val appModule = module {
     viewModel { SplashViewModel(get()) }
     viewModel { JobReportViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
-    viewModel { MainViewModel(get()) }
 }
 
 private fun createLenientGson(): Gson = GsonBuilder()
