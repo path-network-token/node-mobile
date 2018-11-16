@@ -86,8 +86,13 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private lateinit var globe: Globe
     private lateinit var sphere: Sphere
 
+    @Volatile
     private var sphereColor = ContextCompat.getColor(context, R.color.light_teal)
     private var sphereColorAnimator: Animator? = null
+
+    @Volatile
+    private var isRotating = true
+    private var rotationAnimatorSet: AnimatorSet? = null
 
     private lateinit var blurHorizontal: Blur
     private lateinit var blurVertical: Blur
@@ -302,6 +307,17 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         zoomComplete = savedState.getBoolean(STATE_ZOOMED, false)
     }
 
+    fun toggleRotation(enable: Boolean) {
+        isRotating = enable
+        runOnUiThread {
+            if (enable) {
+                rotationAnimatorSet?.resume()
+            } else {
+                rotationAnimatorSet?.pause()
+            }
+        }
+    }
+
     fun setSphereColor(@ColorInt color: Int) {
         val animator = ValueAnimator.ofArgb(sphereColor, color)
         animator.duration = COLOR_ANIMATION_DURATION
@@ -367,9 +383,12 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
             val progress = it.animatedValue as Float
             sphere.rotationY = progress * 360f
         }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(animatorGlobe, animatorSphere)
         runOnUiThread {
-            animatorGlobe.start()
-            animatorSphere.start()
+            rotationAnimatorSet = animatorSet
+            animatorSet.start()
         }
     }
 

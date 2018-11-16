@@ -120,5 +120,6 @@ class MainFragment : BaseFragment() {
     }
 
     private fun setRunning(isRunning: Boolean) {
+        openGlSurfaceView.setRunning(isRunning)
     }
 }

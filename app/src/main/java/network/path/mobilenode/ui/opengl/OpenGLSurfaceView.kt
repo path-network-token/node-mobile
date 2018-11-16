@@ -48,6 +48,10 @@ class OpenGLSurfaceView
         renderer.setSphereColor(status.color())
     }
 
+    fun setRunning(isRunning: Boolean) {
+        renderer.toggleRotation(isRunning)
+    }
+
     private fun ConnectionStatus.color(): Int = ContextCompat.getColor(context, when (this) {
         ConnectionStatus.CONNECTED -> R.color.light_teal
         ConnectionStatus.DISCONNECTED -> android.R.color.transparent
