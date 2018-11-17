@@ -13,7 +13,6 @@ import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
-import timber.log.Timber
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.experimental.CoroutineContext
@@ -96,10 +95,10 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
         job.cancel()
         super.onCleared()
     }
-}
 
-private fun String.toAdler32hex(): String {
-    val adler32 = Adler32()
-    adler32.update(toByteArray())
-    return "%08X".format(Locale.ROOT, adler32.value)
+    private fun String.toAdler32hex(): String {
+        val adler32 = Adler32()
+        adler32.update(toByteArray())
+        return "%08X".format(Locale.ROOT, adler32.value)
+    }
 }
