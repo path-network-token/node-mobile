@@ -10,7 +10,12 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.R
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
@@ -18,13 +23,21 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
+import kotlin.coroutines.experimental.CoroutineContext
 
-private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
+class ForegroundService : LifecycleService(), CoroutineScope {
+    companion object {
+        private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
 
-private const val NOTIFICATION_ID = 3127
-private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
+        private const val REQUEST_CODE_TOGGLE = 1
 
-class ForegroundService : LifecycleService() {
+        private const val NOTIFICATION_ID = 3127
+        private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
+        private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
+    }
+
+    private val job = Job()
+
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
@@ -33,14 +46,29 @@ class ForegroundService : LifecycleService() {
     private val compositeJob by inject<Job>()
     private val system by inject<PathSystem>()
 
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     override fun onCreate() {
         super.onCreate()
         bindScope(getOrCreateScope("service"))
-        Timber.v("Foreground service onCreate")
+        Timber.v("SERVICE: onCreate()")
         setUpWakeLock()
         setUpNotificationChannelId()
-        startForegroundNotification()
         system.start()
+
+        launch {
+            system.isRunning.openSubscription().consumeEach {
+                startForegroundNotification(it)
+            }
+        }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == TOGGLE_ACTION) {
+            system.toggle()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @SuppressLint("WakelockTimeout") //service should work until explicitly stopped
@@ -60,21 +88,27 @@ class ForegroundService : LifecycleService() {
         }
     }
 
-    private fun startForegroundNotification() {
+    private fun startForegroundNotification(isRunning: Boolean) {
+        val action = Intent(this, ForegroundService::class.java)
+        action.action = TOGGLE_ACTION
+        val label = getString(if (isRunning) R.string.notification_action_pause else R.string.notification_action_resume)
+        val pendingAction = PendingIntent.getService(this, REQUEST_CODE_TOGGLE, action, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val title = getString(if (isRunning) R.string.notification_title_running else R.string.notification_title_paused)
         val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-        startForeground(
-                NOTIFICATION_ID, NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder = NotificationCompat.Builder(this, CHANNEL_NOTIFICATION_ID)
                 .setVibrate(longArrayOf(0L))
+                .setContentTitle(title)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.notification_content))
-                .build()
-        )
+                .addAction(0, label, pendingAction)
+
+        startForeground(NOTIFICATION_ID, builder.build())
     }
 
     override fun onDestroy() {
-        Timber.v("Foreground service onDestroy")
+        Timber.v("SERVICE: onDestroy()")
         compositeJob.cancel()
         system.stop()
         wakeLock.release()

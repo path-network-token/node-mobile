@@ -18,21 +18,13 @@ class IntroFragment : BaseFragment() {
 
         activateButton.setOnClickListener {
             viewModel.onActivateClick()
-            showLoadingScreen()
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_introFragment_to_loadingFragment)
         }
 
         disclaimerButton.setOnClickListener {
-            showDisclaimerScreen()
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_introFragment_to_disclaimerFragment)
         }
-    }
-
-    private fun showLoadingScreen() {
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_introFragment_to_loadingFragment)
-    }
-
-    private fun showDisclaimerScreen() {
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_introFragment_to_disclaimerFragment)
     }
 }

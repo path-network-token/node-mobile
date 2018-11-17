@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathEngine
@@ -17,6 +18,7 @@ import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.LastLocationProvider
+import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
@@ -26,6 +28,7 @@ import kotlin.math.max
 class PathHttpEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
+        private val networkMonitor: NetworkMonitor,
         okHttpClient: OkHttpClient,
         gson: Gson,
         private val storage: PathStorage
@@ -49,8 +52,22 @@ class PathHttpEngine(
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
     override val jobList = ConflatedBroadcastChannel<JobList>()
+    override var isRunning = ConflatedBroadcastChannel(true)
+
+    private var _isRunning = true
+        set(value) {
+            field = value
+            launch {
+                isRunning.send(value)
+            }
+        }
+
+    init {
+        registerNetworkHandler()
+    }
 
     override fun start() {
+        networkMonitor.start()
         checkIn()
         pollJobs()
     }
@@ -78,10 +95,25 @@ class PathHttpEngine(
         job.cancel()
         pollJob.cancel()
         timeoutJob.cancel()
+        networkMonitor.stop()
+    }
+
+    override fun toggle() {
+        _isRunning = !_isRunning
+        Timber.d("HTTP: changed status to [$_isRunning]")
     }
 
     private fun checkIn() = launch {
         performCheckIn()
+    }
+
+    private fun registerNetworkHandler() = launch {
+        networkMonitor.connected.consumeEach {
+            if (!timeoutJob.isCancelled) {
+                timeoutJob.cancel()
+            }
+            performCheckIn()
+        }
     }
 
     private suspend fun performCheckIn() {
@@ -131,7 +163,7 @@ class PathHttpEngine(
 
     private suspend fun createCheckInMessage(): CheckIn {
         val location = lastLocationProvider.getLastRealLocationOrNull()
-        val jobsToRequest = max(MAX_JOBS - currentExecutionUuids.size, 0)
+        val jobsToRequest = if (_isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
@@ -159,7 +191,9 @@ class PathHttpEngine(
 
     private fun scheduleCheckIn() {
         Timber.d("HTTP: Scheduling check in...")
-        timeoutJob.cancel()
+        if (!timeoutJob.isCancelled) {
+            timeoutJob.cancel()
+        }
         timeoutJob = launch {
             delay(HEARTBEAT_INTERVAL_MS)
             Timber.d("HTTP: Checking in...")
@@ -174,7 +208,7 @@ class PathHttpEngine(
         requests.send(dummyRequest)
     }
 
-    private suspend fun <T>executeServiceCall(call: suspend () -> Deferred<T>): T? {
+    private suspend fun <T> executeServiceCall(call: suspend () -> Deferred<T>): T? {
         return try {
             call().await()
         } catch (e: Exception) {

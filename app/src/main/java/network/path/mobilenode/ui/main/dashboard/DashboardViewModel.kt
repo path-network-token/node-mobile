@@ -11,14 +11,14 @@ import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.AutonomousSystem
-import network.path.mobilenode.domain.entity.ConnectionStatus.CONNECTED
+import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.experimental.CoroutineContext
 
 class DashboardViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
-    private val job = Job()
+    private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -26,8 +26,8 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _nodeId = MutableLiveData<String?>()
     val nodeId: LiveData<String?> = _nodeId
 
-    private val _isConnected = MutableLiveData<Boolean>()
-    val isConnected: LiveData<Boolean> = _isConnected
+    private val _status = MutableLiveData<ConnectionStatus>()
+    val status: LiveData<ConnectionStatus> = _status
 
     private val _operatorDetails = MutableLiveData<AutonomousSystem?>()
     val operatorDetails: LiveData<AutonomousSystem?> = _operatorDetails
@@ -38,12 +38,21 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _jobList = MutableLiveData<JobList>()
     val jobList: LiveData<JobList> = _jobList
 
+    private val _isRunning = MutableLiveData<Boolean>()
+    val isRunning: LiveData<Boolean> = _isRunning
+
     fun onViewCreated() {
+        job = Job()
         registerNodeIdHandler()
         registerStatusHandler()
         registerIpHandler()
         registerDetailsHandler()
         registerJobListHandler()
+        registerRunningHandler()
+    }
+
+    fun toggle() {
+        system.toggle()
     }
 
     private fun registerNodeIdHandler() = launch {
@@ -54,7 +63,7 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
 
     private fun registerStatusHandler() = launch {
         system.status.openSubscription().consumeEach {
-            _isConnected.postValue(it == CONNECTED)
+            _status.postValue(it)
         }
     }
 
@@ -76,14 +85,20 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
         }
     }
 
+    private fun registerRunningHandler() = launch {
+        system.isRunning.openSubscription().consumeEach {
+            _isRunning.postValue(it)
+        }
+    }
+
     override fun onCleared() {
         job.cancel()
         super.onCleared()
     }
-}
 
-private fun String.toAdler32hex(): String {
-    val adler32 = Adler32()
-    adler32.update(toByteArray())
-    return "%08X".format(Locale.ROOT, adler32.value)
+    private fun String.toAdler32hex(): String {
+        val adler32 = Adler32()
+        adler32.update(toByteArray())
+        return "%08X".format(Locale.ROOT, adler32.value)
+    }
 }

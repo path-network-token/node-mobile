@@ -11,6 +11,7 @@ interface PathEngine {
     val requests: BroadcastChannel<JobRequest>
     val nodeId: BroadcastChannel<String?>
     val jobList: BroadcastChannel<JobList>
+    val isRunning: BroadcastChannel<Boolean>
 
     // Initializes connection and starts retrieving (by either listening or polling) jobs
     fun start()
@@ -20,4 +21,6 @@ interface PathEngine {
 
     // Stop any interaction with the server
     fun stop()
+
+    fun toggle()
 }

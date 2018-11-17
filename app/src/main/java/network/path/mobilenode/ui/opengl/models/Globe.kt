@@ -27,8 +27,8 @@ class Globe(shader: ShaderProgram, provider: ObjDataProvider) :
         super.setValues()
 
         val array = camera.array
+        shader.setUniform3fv("u_CameraPosition", array, 12, 3)
         shader.setUniformf("u_Alpha", alpha)
-        shader.setUniformf("u_CameraPosition", array[12], array[13], array[14])
         shader.setUniformf("u_DrawTop", if (drawTop) 1.0f else 0.0f)
     }
 }

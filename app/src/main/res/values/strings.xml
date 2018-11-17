@@ -3,7 +3,10 @@
 
     <string name="address_saved_toast">Path Wallet Address was saved</string>
 
-    <string name="notification_content">Path Node Running…</string>
+    <string name="notification_title_running">Path Node is running…</string>
+    <string name="notification_title_paused">Path Node is paused</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_resume">Resume</string>
 
     <string name="blank_path_wallet_address_error">Wallet address cannot be blank</string>
     <string name="invalid_path_wallet_address_error">Invalid wallet address</string>
@@ -49,11 +52,20 @@
 
     <!-- Disclaimer -->
     <string name="disclaimer_header">Path Network, Inc.</string>
-    <string name="disclaimer_body">Last updated: September 18, 2018\n\nThe information contained on Path Node App mobile app (the "Service") is for general information purposes only.\n\nassumes no responsibility for errors or omissions in the contents on the Service.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius, augue a condimentum ullamcorper, lacus nulla posuere nibh, et mattis velit sapien non massa. Nunc quis ligula eleifend, euismod tellus vitae, mattis diam. Curabitur pharetra tortor tristique, suscipit diam id, luctus sapien. Pellentesque sed egestas leo.</string>
+    <string name="disclaimer_body"><![CDATA[THIS DISCLAIMER MAY BE OUT OF DATE: PLEASE VISIT <a href="https://path.net/mobile-node-disclaimer">https://path.net/mobile-node-disclaimer</a> FOR MORE INFORMATION.<br/><br/>PATH NETWORK DOES NOT WARRANT: (1) THAT THE APPLICATION’S FUNCTIONS OR ANY SERVICES OR CONTENT WILL BE UNINTERRUPTED OR FREE OF ERRORS OR OMISSIONS; (2) THAT DEFECTS WILL BE CORRECTED; (3) THAT THE APPLICATION OR THE SERVERS HOSTING CONTENT ARE FREE OF VIRUSES OR OTHER HARMFUL CODE; OR (4) THAT THE APPLICATION OR SERVICES OR CONTENT AVAILABLE THROUGH THE APPLICATION WILL CONTINUE TO BE AVAILABLE. PATH NETWORK SHALL HAVE NO LIABILITY FOR ANY SUCH ISSUES. PATH NETWORK AND THE DISTRIBUTION CHANNEL DISCLAIM ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, NONINFRINGEMENT, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, QUALITY, AVAILABILITY AND AS TO SUBJECT MATTER OF CONTENT. THE APPLICATION, SERVICES AND CONTENT ARE PROVIDED "AS IS," "AS AVAILABLE," AND "WITH ALL FAULTS."<br/><br/>YOUR ACCESS TO AND USE OF THE APPLICATION IS AT YOUR RISK. IF YOU ARE DISSATISFIED WITH THE APPLICATION OR ANY OF THE SERVICES OR CONTENT AVAILABLE THROUGH THE APPLICATION, YOUR SOLE AND EXCLUSIVE REMEDY IS TO DISCONTINUE ACCESSING AND USING THE APPLICATION.]]></string>
     <string name="android">android</string>
     <string name="check_asn_complete">CHECKING ASN - COMPLETE</string>
     <string name="check_operator_asn_complete">CHECKING OPERATOR ASN - COMPLETE</string>
     <string name="location_country_origin">LOCATING COUNTRY ORIGIN</string>
-    <string name="locating_node">Locating node...</string>
+    <string name="locating_node">Locating node…</string>
+
+    <string name="label_app_version">App Version</string>
+    <string name="label_os_version">OS Version</string>
+    <string name="label_gl_version">GL Version</string>
+    <string name="label_glsl_version">GLSL Version</string>
+    <string name="label_version">Version: %1$s</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="label_paused">Paused</string>
 
 </resources>
