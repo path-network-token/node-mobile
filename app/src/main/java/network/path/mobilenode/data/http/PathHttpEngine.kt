@@ -44,6 +44,7 @@ class PathHttpEngine(
 
     private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
+    private var useProxy = false
     private var httpService = getHttpService(false)
     private var timeoutJob = Job()
     private var pollJob = Job()
@@ -136,7 +137,7 @@ class PathHttpEngine(
         }
         jobList.send(list)
 
-        status.send(ConnectionStatus.CONNECTED)
+        status.send(if (useProxy) ConnectionStatus.PROXY else ConnectionStatus.CONNECTED)
 
         if (list.jobs.isNotEmpty()) {
             val ids = list.jobs.map { it.executionUuid to false }
@@ -236,6 +237,7 @@ class PathHttpEngine(
     }
 
     private fun getHttpService(useProxy: Boolean): PathService {
+        this.useProxy = useProxy
         val client = if (!useProxy) okHttpClient else okHttpClient
                 .newBuilder()
                 .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(ForegroundService.LOCALHOST, ForegroundService.SS_LOCAL_PORT)))
