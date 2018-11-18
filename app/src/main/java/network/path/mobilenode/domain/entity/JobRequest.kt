@@ -1,7 +1,6 @@
 package network.path.mobilenode.domain.entity
 
 import network.path.mobilenode.Constants
-import java.io.IOException
 
 data class JobRequest(
         val type: String = "job-request",
@@ -25,7 +24,7 @@ data class JobCriticalResponse(val headerStatus: String, val bodyContains: Strin
 
 val JobRequest.endpointHost: String
     get() {
-        endpointAddress ?: throw IOException("Missing endpoint address in $this")
+        endpointAddress ?: throw java.io.IOException("Missing endpoint address in $this")
         val regex = "^\\w+://".toRegex(RegexOption.IGNORE_CASE)
         return endpointAddress.replaceFirst(regex, "").replaceAfter('/', "")
     }

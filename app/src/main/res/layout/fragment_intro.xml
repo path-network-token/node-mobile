@@ -68,7 +68,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="52dp"
-        android:gravity="center_horizontal"
         android:stateListAnimator="@animator/button_state_list"
         android:text="@string/disclaimer"
         android:textColor="@color/sky"

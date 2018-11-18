@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network.path.mobilenode.ui.base.SlidingConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:padding="@dimen/padding_m"
+    >
+
+    <ImageView
+        android:id="@+id/closeScreenImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+    <include
+        android:id="@+id/logo"
+        layout="@layout/combined_logo"
+        app:layout_constraintBottom_toTopOf="@id/footerText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        />
+
+    <include
+        android:id="@+id/details"
+        layout="@layout/dashboard_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginBottom="@dimen/padding_m"
+        app:layout_constraintBottom_toTopOf="@id/disclaimerButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        />
+
+    <TextView
+        android:id="@+id/disclaimerButton"
+        style="@style/Text.Default.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:gravity="center"
+        android:stateListAnimator="@animator/button_state_list"
+        android:text="@string/disclaimer"
+        android:textColor="@color/sky"
+        app:layout_constraintBottom_toTopOf="@id/footerText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details"
+        />
+
+    <ImageView
+        android:id="@+id/footerLogo"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_dashboard_white"
+        app:layout_constraintBottom_toBottomOf="@+id/footerText"
+        app:layout_constraintEnd_toStartOf="@+id/footerText"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/footerText"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/footerText"
+        style="@style/Text.Default.Medium.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:letterSpacing="0.08"
+        android:text="@string/by_path_network"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/footerLogo"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="BY PATH NETWORK"
+        />
+
+</network.path.mobilenode.ui.base.SlidingConstraintLayout>

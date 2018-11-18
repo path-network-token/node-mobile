@@ -25,37 +25,18 @@ class MainFragment : BaseFragment() {
         initBottomBar()
     }
 
-    override fun onPause() {
-        super.onPause()
-        surfaceView.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        surfaceView.onResume()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        surfaceView.destroy()
-    }
-
     private fun initBottomBar() {
         walletRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                showWalletFragment()
+                childFragmentManager.transaction {
+                    replace(R.id.fragmentContainer, walletFragment)
+                }
             }
         }
         dashboardRadioButton.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 showDashboardFragment()
             }
-        }
-    }
-
-    private fun showWalletFragment() {
-        childFragmentManager.transaction {
-            replace(R.id.fragmentContainer, walletFragment)
         }
     }
 

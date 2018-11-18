@@ -11,8 +11,6 @@ import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
-import network.path.mobilenode.data.websocket.PathSocketEngine
-import network.path.mobilenode.data.websocket.WebSocketClient
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathExternalServices
 import network.path.mobilenode.domain.PathJobExecutor
@@ -23,7 +21,6 @@ import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
-import network.path.mobilenode.ui.opengl.OpenGLRenderer
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
 import network.path.mobilenode.ui.opengl.models.providers.ObjDataProvider
 import network.path.mobilenode.ui.opengl.models.providers.SphereDataProvider
@@ -43,20 +40,15 @@ val appModule = module {
     single { createLenientGson() }
 
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
-    single { SphereDataProvider(2, 1.1f, OpenGLRenderer.WIREFRAME_COLOR) }
+    single { SphereDataProvider(2, 1.1f) }
 
     single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
-    single<PathEngine> { if (BuildConfig.IS_HTTP) {
-        PathHttpEngine(get(), get(), get(), get(), get())
-    } else {
-        PathSocketEngine(get(), get(), get(), get())
-    }}
+    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
 
     scope("service") { Job() }
-    scope("service") { PathSystem(get(), get(), get(), get(), get()) }
+    scope("service") { PathSystem(get(), get(), get(), get(), get(), get()) }
 
     factory { Runners(get()) }
-    factory { WebSocketClient(get(), get(), get()) }
 
     factory<PathJobExecutor> { PathJobExecutorImpl(get()) }
 
