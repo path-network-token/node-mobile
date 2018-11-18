@@ -67,7 +67,6 @@ class PathHttpEngine(
     }
 
     override fun start() {
-        networkMonitor.start()
         checkIn()
         pollJobs()
     }
@@ -95,7 +94,6 @@ class PathHttpEngine(
         job.cancel()
         pollJob.cancel()
         timeoutJob.cancel()
-        networkMonitor.stop()
     }
 
     override fun toggle() {

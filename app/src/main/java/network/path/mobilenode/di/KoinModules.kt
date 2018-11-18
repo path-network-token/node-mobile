@@ -46,7 +46,7 @@ val appModule = module {
     single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
 
     scope("service") { Job() }
-    scope("service") { PathSystem(get(), get(), get(), get(), get()) }
+    scope("service") { PathSystem(get(), get(), get(), get(), get(), get()) }
 
     factory { Runners(get()) }
 

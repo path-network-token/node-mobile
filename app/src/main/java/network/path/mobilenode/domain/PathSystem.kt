@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.domain.entity.JobRequest
+import network.path.mobilenode.service.NetworkMonitor
 import timber.log.Timber
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -15,7 +16,8 @@ class PathSystem(
         private val engine: PathEngine,
         private val storage: PathStorage,
         private val externalServices: PathExternalServices,
-        private val jobExecutor: PathJobExecutor
+        private val jobExecutor: PathJobExecutor,
+        private val networkMonitor: NetworkMonitor
 ) : CoroutineScope {
 
     override val coroutineContext: CoroutineContext
@@ -34,6 +36,7 @@ class PathSystem(
     }
 
     fun start() {
+        networkMonitor.start()
         engine.start()
         externalServices.start()
     }
@@ -45,6 +48,7 @@ class PathSystem(
     fun stop() {
         engine.stop()
         externalServices.stop()
+        networkMonitor.stop()
     }
 
     private fun registerJobRequestHandler() = launch {
