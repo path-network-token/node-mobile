@@ -34,5 +34,6 @@ ext.versions = [
         tracepath           : '0.0.5-SNAPSHOT',
         retrofit            : '2.4.0',
         retrofitCoroutines  : '1.0.0',
-        trueTime            : '3.4'
+        trueTime            : '3.4',
+        jsoup               : '1.10.3',
 ]

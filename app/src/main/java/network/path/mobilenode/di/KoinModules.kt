@@ -18,6 +18,7 @@ import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
+import network.path.mobilenode.ui.intro.DisclaimerViewModel
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
@@ -56,6 +57,7 @@ val appModule = module {
     viewModel { SplashViewModel(get()) }
     viewModel { JobReportViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
+    viewModel { DisclaimerViewModel() }
 }
 
 private fun createLenientGson(): Gson = GsonBuilder()
