@@ -131,6 +131,8 @@ dependencies {
 
     // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation "com.github.instacart.truetime-android:library-extension-rx:$versions.trueTime"
+    implementation "org.jsoup:jsoup:$versions.jsoup"
 
     //Crash reporting
     implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics") {
