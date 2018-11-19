@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import com.instacart.library.truetime.TrueTimeRx
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
@@ -20,7 +21,6 @@ import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.data.http.shadowsocks.Executable
 import network.path.mobilenode.data.http.shadowsocks.GuardedProcessPool
-import network.path.mobilenode.data.http.shadowsocks.Profile
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
@@ -28,6 +28,7 @@ import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
 
 class ForegroundService : LifecycleService(), CoroutineScope {
@@ -38,6 +39,11 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
         private val SIMPLE_OBFS_PORT = if (BuildConfig.DEBUG) 1092 else 1082
 
+        private const val PROXY_HOST = "afiasvoiuasd.net"
+        private const val PROXY_PORT = 443
+        private const val PROXY_PASSWORD = "PathNetwork"
+        private const val PROXY_ENCRYPTION_METHOD = "aes-256-cfb"
+
         private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
 
         private const val REQUEST_CODE_TOGGLE = 1
@@ -45,6 +51,33 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         private const val NOTIFICATION_ID = 3127
         private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
         private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
+
+        private fun generateDomain(): String {
+//            for i in range(16):
+//            year = ((year ^ 8 * year) >> 11) ^ ((year & 0xFFFFFFF0) << 17)
+//            month = ((month ^ 4 * month) >> 25) ^ 16 * (month & 0xFFFFFFF8)
+//            day = ((day ^ (day << 13)) >> 19) ^ ((day & 0xFFFFFFFE) << 12)
+//            domain += chr(((year ^ month ^ day) % 25) + 97)
+            val domain = StringBuffer("http://")
+            val date = TrueTimeRx.now()
+            val cal = Calendar.getInstance()
+            cal.timeZone = TimeZone.getTimeZone("UTC")
+            cal.time = date
+            cal.add(Calendar.HOUR, 10)
+
+            var year = cal.get(Calendar.YEAR).toLong()
+            var month = cal.get(Calendar.MONTH).toLong()
+            var day = cal.get(Calendar.DAY_OF_MONTH).toLong()
+            for (i in 1 .. 16) {
+                year = ((year xor 8 * year) shr 11) xor ((year and 0xFFFFFFF0) shl 17)
+                month = ((month xor 4 * month) shr 25) xor 16 * (month and 0xFFFFFFF8)
+                day = ((day xor (day shl 13)) shr 19) xor ((day and 0xFFFFFFFE) shl 12)
+                val char = (((year xor month xor day) % 25) + 97).toChar()
+                domain.append(char)
+            }
+            domain.append(".net")
+            return domain.toString()
+        }
     }
 
     private val job = Job()
@@ -138,32 +171,37 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private fun startNativeProcesses() {
-        val profile = Profile()
+        val host = generateDomain()
+        Timber.d("SERVICE: generated domain [$host]")
+
         val libs = (this as Context).applicationInfo.nativeLibraryDir
-        val obfsCmd = arrayListOf(
+        val obfsCmd = mutableListOf(
                 File(libs, Executable.SIMPLE_OBFS).absolutePath,
-                "-v",
-                "-s", profile.host,
-                "-p", profile.remotePort.toString(),
+                "-s", PROXY_HOST,
+                "-p", PROXY_PORT.toString(),
                 "-l", SIMPLE_OBFS_PORT.toString(),
                 "-t", TIMEOUT.toString(),
                 "--obfs", "http"
-//                "--obfs-host", BuildConfig.HTTP_SERVER_URL
         )
+        if (BuildConfig.DEBUG) {
+            obfsCmd.add("-v")
+        }
         simpleObfs.start(obfsCmd)
 
-        val cmd = arrayListOf(
+        val cmd = mutableListOf(
                 File(libs, Executable.SS_LOCAL).absolutePath,
                 "-u",
-                "-v",
                 "-s", LOCALHOST,
                 "-p", SIMPLE_OBFS_PORT.toString(),
-                "-k", profile.password,
-                "-m", profile.method,
+                "-k", PROXY_PASSWORD,
+                "-m", PROXY_ENCRYPTION_METHOD,
                 "-b", LOCALHOST,
                 "-l", SS_LOCAL_PORT.toString(),
                 "-t", TIMEOUT.toString()
         )
+        if (BuildConfig.DEBUG) {
+            cmd.add("-v")
+        }
 
         ssLocal.start(cmd)
     }
