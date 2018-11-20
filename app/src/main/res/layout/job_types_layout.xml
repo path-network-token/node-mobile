@@ -1,45 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <View
         android:id="@+id/jobTypesStartDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@color/dark_slate_blue"
+        style="@style/JobReportHeaderDivider"
         app:layout_constraintBottom_toBottomOf="@id/jobTypesLabel"
         app:layout_constraintEnd_toStartOf="@id/jobTypesLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/jobTypesLabel" />
+        app:layout_constraintTop_toTopOf="@id/jobTypesLabel"
+        />
 
     <TextView
         android:id="@+id/jobTypesLabel"
-        style="@style/Text.Default.Bold.Small"
+        style="@style/JobReportHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:gravity="center"
         android:text="@string/job_types"
-        android:letterSpacing="0.17"
-        android:textColor="@color/sky"
         app:layout_constraintEnd_toStartOf="@id/jobTypesEndDivider"
         app:layout_constraintStart_toEndOf="@id/jobTypesStartDivider"
         app:layout_constraintTop_toBottomOf="@id/headerDivider"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <View
         android:id="@+id/jobTypesEndDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@color/dark_slate_blue"
+        style="@style/JobReportHeaderDivider"
         app:layout_constraintBottom_toBottomOf="@id/jobTypesLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/jobTypesLabel"
-        app:layout_constraintTop_toTopOf="@id/jobTypesLabel" />
+        app:layout_constraintTop_toTopOf="@id/jobTypesLabel"
+        />
 
     <ProgressBar
         android:id="@+id/jobPercentageProgressBar"
@@ -54,48 +50,51 @@
         app:layout_constraintBottom_toBottomOf="@+id/jobTypesButtonsPanel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/jobTypesButtonsPanel"
-        tools:progress="33" />
+        tools:progress="33"
+        />
 
     <TextView
         android:id="@+id/jobPercentageTextView"
+        style="@style/PieChartValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/exo_semi_bold"
-        android:letterSpacing="0.08"
-        android:textColor="@color/white"
-        android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="@id/jobPercentageProgressBar"
         app:layout_constraintEnd_toEndOf="@id/jobPercentageProgressBar"
         app:layout_constraintStart_toStartOf="@id/jobPercentageProgressBar"
         app:layout_constraintTop_toTopOf="@id/jobPercentageProgressBar"
-        tools:text="20%" />
+        tools:text="20%"
+        />
 
     <RadioGroup
         android:id="@+id/jobTypesButtonsPanel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="@dimen/padding_l"
         app:layout_constraintEnd_toStartOf="@+id/centerGuideline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/jobTypesLabel">
+        app:layout_constraintTop_toBottomOf="@+id/jobTypesLabel"
+        >
 
         <RadioButton
-            android:id="@+id/httpChecksButton"
+            android:id="@+id/checksButton1"
             style="@style/JobTypeRadioButton"
             android:checked="true"
-            android:text="@string/http_checks" />
+            tools:text="@string/http_checks"
+            />
 
         <RadioButton
-            android:id="@+id/dnsChecksButton"
+            android:id="@+id/checksButton2"
             style="@style/JobTypeRadioButton"
             android:layout_marginTop="8dp"
-            android:text="@string/dns_checks" />
+            tools:text="@string/dns_checks"
+            />
 
         <RadioButton
-            android:id="@+id/customChecksButton"
+            android:id="@+id/checksButtonOther"
             style="@style/JobTypeRadioButton"
             android:layout_marginTop="8dp"
-            android:text="@string/custom_checks" />
+            tools:text="@string/other_checks"
+            />
 
     </RadioGroup>
 
@@ -104,6 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.5"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

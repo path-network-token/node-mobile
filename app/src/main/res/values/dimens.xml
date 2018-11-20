@@ -3,6 +3,7 @@
     <dimen name="padding_s">8dp</dimen>
     <dimen name="padding_m">16dp</dimen>
     <dimen name="padding_l">24dp</dimen>
+    <dimen name="padding_xl">36dp</dimen>
 
     <dimen name="padding_header">50dp</dimen>
 
