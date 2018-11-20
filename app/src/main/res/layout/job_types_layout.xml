@@ -10,6 +10,7 @@
     <View
         android:id="@+id/jobTypesStartDivider"
         style="@style/JobReportHeaderDivider"
+        android:layout_marginStart="@dimen/screen_root_layout_padding"
         app:layout_constraintBottom_toBottomOf="@id/jobTypesLabel"
         app:layout_constraintEnd_toStartOf="@id/jobTypesLabel"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +32,7 @@
     <View
         android:id="@+id/jobTypesEndDivider"
         style="@style/JobReportHeaderDivider"
+        android:layout_marginEnd="@dimen/screen_root_layout_padding"
         app:layout_constraintBottom_toBottomOf="@id/jobTypesLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/jobTypesLabel"
@@ -69,7 +71,9 @@
         android:id="@+id/jobTypesButtonsPanel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_l"
+        android:padding="@dimen/screen_root_layout_padding"
+        android:clipToPadding="false"
+        android:clipChildren="false"
         app:layout_constraintEnd_toStartOf="@+id/centerGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/jobTypesLabel"
@@ -103,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5"
+        app:layout_constraintGuide_percent="0.6"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package network.path.mobilenode.ui.main.jobreport
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
@@ -19,6 +20,8 @@ constructor(
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
+    private var animator: ValueAnimator? = null
+
     init {
         inflate(context, R.layout.latency_chart, this)
 
@@ -26,10 +29,9 @@ constructor(
             val titleText = it.getString(R.styleable.LatencyChart_label)
             val progressMillis = it.getInt(R.styleable.LatencyChart_progress_millis, 0)
             val maxMillis = it.getInt(R.styleable.LatencyChart_max_millis, 0)
-            val progressSeconds = progressMillis / 1000
 
             latencyChartLabelTextView.text = titleText
-            latencyValueTextView.text = context.getString(R.string.latency_chart_value, progressSeconds.toString())
+            latencyValueTextView.text = context.getString(R.string.latency_chart_value, progressMillis.toString())
 
             latencyProgressBar.progress = progressMillis
             latencyProgressBar.max = maxMillis
@@ -38,7 +40,15 @@ constructor(
 
     fun setLatencyMillis(latency: Long, firstLatency: Long?, maxMillis: Long) {
         latencyProgressBar.max = maxMillis.toInt()
-        latencyProgressBar.progress = latency.toInt()
+
+        val animator = ValueAnimator.ofInt(latencyProgressBar.progress, latency.toInt())
+        animator.duration = 250L
+        animator.addUpdateListener {
+            latencyProgressBar.progress = it.animatedValue as Int
+        }
+        animator.start()
+        this.animator?.cancel()
+        this.animator = animator
 
         val formattedValue = context.formatDifference(latency,
                 firstLatency,

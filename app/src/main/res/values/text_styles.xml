@@ -103,9 +103,14 @@
         <item name="android:fontFamily">@font/exo_regular</item>
     </style>
 
+    <style name="JobReportRadioButtonLabel" parent="Text.Default.Bold.Small">
+        <item name="android:letterSpacing">0.11</item>
+        <item name="android:textColor">@color/job_type_button_text_color</item>
+    </style>
+
     <style name="PieChartValue" parent="Text.Default">
         <item name="android:fontFamily">@font/exo_semi_bold</item>
         <item name="android:letterSpacing">0.08</item>
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 </resources>

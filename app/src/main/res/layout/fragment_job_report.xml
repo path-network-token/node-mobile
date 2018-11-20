@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/blurred_background"
-    android:padding="@dimen/screen_root_layout_padding"
     >
 
     <ImageView
@@ -67,7 +66,7 @@
         layout="@layout/average_latency_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_xl"
+        android:layout_marginTop="@dimen/padding_s"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/jobTypesLayout"
