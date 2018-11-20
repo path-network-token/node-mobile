@@ -11,6 +11,8 @@
     <ImageView
         android:id="@+id/closeScreenImageView"
         style="@style/CloseButton"
+        android:layout_marginTop="@dimen/screen_root_layout_padding"
+        android:layout_marginEnd="@dimen/screen_root_layout_padding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
