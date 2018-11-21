@@ -30,6 +30,7 @@ import timber.log.Timber
 import java.io.File
 import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.math.abs
 
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
@@ -52,31 +53,34 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
         private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
 
-        private fun generateDomain(): String {
-//            for i in range(16):
-//            year = ((year ^ 8 * year) >> 11) ^ ((year & 0xFFFFFFF0) << 17)
-//            month = ((month ^ 4 * month) >> 25) ^ 16 * (month & 0xFFFFFFF8)
-//            day = ((day ^ (day << 13)) >> 19) ^ ((day & 0xFFFFFFFE) << 12)
-//            domain += chr(((year ^ month ^ day) % 25) + 97)
-            val domain = StringBuffer("http://")
+        private val SEED = listOf(
+                intArrayOf(8, 11, 17, 4, 25, 16, 13, 19, 12, 7, 14, 47)
+        )
+
+        private fun generateDomains(): List<String> {
             val date = TrueTimeRx.now()
             val cal = Calendar.getInstance()
             cal.timeZone = TimeZone.getTimeZone("UTC")
             cal.time = date
-            cal.add(Calendar.HOUR, 10)
 
-            var year = cal.get(Calendar.YEAR).toLong()
-            var month = cal.get(Calendar.MONTH).toLong()
-            var day = cal.get(Calendar.DAY_OF_MONTH).toLong()
-            for (i in 1 .. 16) {
-                year = ((year xor 8 * year) shr 11) xor ((year and 0xFFFFFFF0) shl 17)
-                month = ((month xor 4 * month) shr 25) xor 16 * (month and 0xFFFFFFF8)
-                day = ((day xor (day shl 13)) shr 19) xor ((day and 0xFFFFFFFE) shl 12)
-                val char = (((year xor month xor day) % 25) + 97).toChar()
-                domain.append(char)
+            val seed = SEED[0]
+            return (1..24).map {
+                var year = cal.get(Calendar.YEAR).toLong()
+                var month = cal.get(Calendar.MONTH).toLong()
+                var day = cal.get(Calendar.DAY_OF_MONTH).toLong()
+                var hour = it.toLong()
+                val domain = StringBuffer("http://")
+                for (i in 1..16) {
+                    year = ((year xor seed[0] * year) shr seed[1]) xor ((year and 0xFFFFFFF0) shl seed[2])
+                    month = ((month xor seed[3] * month) shr seed[4]) xor seed[5] * (month and 0xFFFFFFF8)
+                    day = ((day xor (day shl seed[6])) shr seed[7]) xor ((day and 0xFFFFFFFE) shl seed[8])
+                    hour = ((hour xor seed[9] * hour) shr seed[10]) xor (hour shl seed[11])
+                    val char = ((abs(year xor month xor day xor hour) % 25) + 97).toChar()
+                    domain.append(char)
+                }
+                domain.append(".net")
+                domain.toString()
             }
-            domain.append(".net")
-            return domain.toString()
         }
     }
 
@@ -171,8 +175,8 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private fun startNativeProcesses() {
-        val host = generateDomain()
-        Timber.d("SERVICE: generated domain [$host]")
+        val hosts = generateDomains()
+        Timber.d("SERVICE: generated domains [${hosts.toSet()}]")
 
         val libs = (this as Context).applicationInfo.nativeLibraryDir
         val obfsCmd = mutableListOf(
