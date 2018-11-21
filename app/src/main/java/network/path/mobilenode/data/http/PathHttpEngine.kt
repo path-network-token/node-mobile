@@ -23,8 +23,10 @@ import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
+import java.net.ServerSocket
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.math.max
 
@@ -228,20 +230,37 @@ class PathHttpEngine(
                 }
             }
             if (fallback) {
-                Timber.w("Falling back to shadowsocks client")
+                Timber.w("HTTP: Falling back to shadowsocks client")
                 httpService = getHttpService(true)
             }
-            Timber.w("Service call exception: $e")
+            Timber.w("HTTP: Service call exception: $e")
             null
         }
     }
 
     private fun getHttpService(useProxy: Boolean): PathService {
-        this.useProxy = useProxy
-        val client = if (!useProxy) okHttpClient else okHttpClient
-                .newBuilder()
-                .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(ForegroundService.LOCALHOST, ForegroundService.SS_LOCAL_PORT)))
-                .build()
+        val host = ForegroundService.LOCALHOST
+        val port = ForegroundService.SS_LOCAL_PORT
+
+        // Verify that ss-local is actually running before using it as a proxy
+        val client = if (useProxy && isPortInUse(port)) {
+            Timber.d("HTTP: proxy port [$port] is in use, connecting")
+            this.useProxy = true
+            okHttpClient.newBuilder()
+                    .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .build()
+        } else {
+            Timber.d("HTTP: proxy port [$port] is not in use, proxy is not running")
+            this.useProxy = false
+            okHttpClient
+        }
         return PathServiceImpl(client, gson)
+    }
+
+    private fun isPortInUse(port: Int) = try {
+        ServerSocket(port).close()
+        false
+    } catch (e: IOException) {
+        true
     }
 }

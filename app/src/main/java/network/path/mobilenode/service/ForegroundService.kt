@@ -10,9 +10,9 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import com.instacart.library.truetime.TrueTimeRx
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -28,9 +28,7 @@ import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 import java.io.File
-import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.math.abs
 
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
@@ -40,7 +38,6 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
         private val SIMPLE_OBFS_PORT = if (BuildConfig.DEBUG) 1092 else 1082
 
-        private const val PROXY_HOST = "afiasvoiuasd.net"
         private const val PROXY_PORT = 443
         private const val PROXY_PASSWORD = "PathNetwork"
         private const val PROXY_ENCRYPTION_METHOD = "aes-256-cfb"
@@ -52,36 +49,6 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         private const val NOTIFICATION_ID = 3127
         private const val CHANNEL_NOTIFICATION_ID = "PathNotificationId"
         private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
-
-        private val SEED = listOf(
-                intArrayOf(8, 11, 17, 4, 25, 16, 13, 19, 12, 7, 14, 47)
-        )
-
-        private fun generateDomains(): List<String> {
-            val date = TrueTimeRx.now()
-            val cal = Calendar.getInstance()
-            cal.timeZone = TimeZone.getTimeZone("UTC")
-            cal.time = date
-
-            val seed = SEED[0]
-            return (1..24).map {
-                var year = cal.get(Calendar.YEAR).toLong()
-                var month = cal.get(Calendar.MONTH).toLong()
-                var day = cal.get(Calendar.DAY_OF_MONTH).toLong()
-                var hour = it.toLong()
-                val domain = StringBuffer("http://")
-                for (i in 1..16) {
-                    year = ((year xor seed[0] * year) shr seed[1]) xor ((year and 0xFFFFFFF0) shl seed[2])
-                    month = ((month xor seed[3] * month) shr seed[4]) xor seed[5] * (month and 0xFFFFFFF8)
-                    day = ((day xor (day shl seed[6])) shr seed[7]) xor ((day and 0xFFFFFFFE) shl seed[8])
-                    hour = ((hour xor seed[9] * hour) shr seed[10]) xor (hour shl seed[11])
-                    val char = ((abs(year xor month xor day xor hour) % 25) + 97).toChar()
-                    domain.append(char)
-                }
-                domain.append(".net")
-                domain.toString()
-            }
-        }
     }
 
     private val job = Job()
@@ -103,11 +70,13 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     override fun onCreate() {
         super.onCreate()
         bindScope(getOrCreateScope("service"))
-        Timber.v("SERVICE: onCreate()")
+        Timber.d("PATH SERVICE: onCreate()")
 
         // Native processes
-        Executable.killAll()
-        startNativeProcesses()
+        GlobalScope.launch {
+            Executable.killAll()
+            startNativeProcesses()
+        }
 
         setUpWakeLock()
         setUpNotificationChannelId()
@@ -164,7 +133,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     override fun onDestroy() {
-        Timber.v("SERVICE: onDestroy()")
+        Timber.d("PATH SERVICE: onDestroy()")
         compositeJob.cancel()
         system.stop()
         wakeLock.release()
@@ -175,38 +144,43 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private fun startNativeProcesses() {
-        val hosts = generateDomains()
-        Timber.d("SERVICE: generated domains [${hosts.toSet()}]")
+        val host = DomainGenerator.findDomain()
 
-        val libs = (this as Context).applicationInfo.nativeLibraryDir
-        val obfsCmd = mutableListOf(
-                File(libs, Executable.SIMPLE_OBFS).absolutePath,
-                "-s", PROXY_HOST,
-                "-p", PROXY_PORT.toString(),
-                "-l", SIMPLE_OBFS_PORT.toString(),
-                "-t", TIMEOUT.toString(),
-                "--obfs", "http"
-        )
-        if (BuildConfig.DEBUG) {
-            obfsCmd.add("-v")
+        if (host != null) {
+            Timber.d("PATH SERVICE: found proxy domain [$host]")
+
+            val libs = (this as Context).applicationInfo.nativeLibraryDir
+            val obfsCmd = mutableListOf(
+                    File(libs, Executable.SIMPLE_OBFS).absolutePath,
+                    "-s", host,
+                    "-p", PROXY_PORT.toString(),
+                    "-l", SIMPLE_OBFS_PORT.toString(),
+                    "-t", TIMEOUT.toString(),
+                    "--obfs", "http"
+            )
+            if (BuildConfig.DEBUG) {
+                obfsCmd.add("-v")
+            }
+            simpleObfs.start(obfsCmd)
+
+            val cmd = mutableListOf(
+                    File(libs, Executable.SS_LOCAL).absolutePath,
+                    "-u",
+                    "-s", LOCALHOST,
+                    "-p", SIMPLE_OBFS_PORT.toString(),
+                    "-k", PROXY_PASSWORD,
+                    "-m", PROXY_ENCRYPTION_METHOD,
+                    "-b", LOCALHOST,
+                    "-l", SS_LOCAL_PORT.toString(),
+                    "-t", TIMEOUT.toString()
+            )
+            if (BuildConfig.DEBUG) {
+                cmd.add("-v")
+            }
+
+            ssLocal.start(cmd)
+        } else {
+            Timber.w("PATH SERVICE: proxy domain not found")
         }
-        simpleObfs.start(obfsCmd)
-
-        val cmd = mutableListOf(
-                File(libs, Executable.SS_LOCAL).absolutePath,
-                "-u",
-                "-s", LOCALHOST,
-                "-p", SIMPLE_OBFS_PORT.toString(),
-                "-k", PROXY_PASSWORD,
-                "-m", PROXY_ENCRYPTION_METHOD,
-                "-b", LOCALHOST,
-                "-l", SS_LOCAL_PORT.toString(),
-                "-t", TIMEOUT.toString()
-        )
-        if (BuildConfig.DEBUG) {
-            cmd.add("-v")
-        }
-
-        ssLocal.start(cmd)
     }
 }
