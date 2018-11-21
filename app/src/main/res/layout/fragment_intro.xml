@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
+    android:clipChildren="false"
     android:orientation="vertical"
     android:padding="@dimen/screen_root_layout_padding"
     >
@@ -46,7 +47,7 @@
         app:layout_constraintVertical_bias="0.4"
         />
 
-    <Button
+    <network.path.mobilenode.ui.base.PillButton
         android:id="@+id/activateButton"
         style="@style/PillButton"
         android:layout_marginTop="@dimen/padding_xl"
