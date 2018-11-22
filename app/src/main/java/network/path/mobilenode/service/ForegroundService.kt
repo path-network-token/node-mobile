@@ -40,6 +40,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
         private val SIMPLE_OBFS_PORT = if (BuildConfig.DEBUG) 1092 else 1082
 
+        private const val PROXY_HOST = "afiasvoiuasd.net"
         private const val PROXY_PORT = 443
         private const val PROXY_PASSWORD = "PathNetwork"
         private const val PROXY_ENCRYPTION_METHOD = "aes-256-cfb"
@@ -157,7 +158,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private fun startNativeProcesses() {
-        val host = DomainGenerator.findDomain()
+        val host = DomainGenerator.findDomain() ?: PROXY_HOST
         if (host != null) {
             Timber.d("PATH SERVICE: found proxy domain [$host]")
             Executable.killAll()
