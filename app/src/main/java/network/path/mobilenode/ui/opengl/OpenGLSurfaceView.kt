@@ -54,6 +54,7 @@ class OpenGLSurfaceView
 
     private fun ConnectionStatus.color(): Int = ContextCompat.getColor(context, when (this) {
         ConnectionStatus.CONNECTED -> R.color.light_teal
+        ConnectionStatus.PROXY -> R.color.amber
         ConnectionStatus.DISCONNECTED -> android.R.color.transparent
     })
 }

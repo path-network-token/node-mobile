@@ -5,7 +5,9 @@
         <shape
             android:innerRadius="47dp"
             android:shape="ring"
-            android:thickness="4dp">
+            android:thickness="4dp"
+            android:useLevel="true"
+            >
 
             <solid android:color="@color/dark_slate_blue"/>
 
@@ -22,7 +24,9 @@
             <shape
                 android:innerRadius="47dp"
                 android:shape="ring"
-                android:thickness="4dp">
+                android:thickness="4dp"
+                android:useLevel="true"
+                >
 
                 <solid android:color="@color/neon_blue"/>
 

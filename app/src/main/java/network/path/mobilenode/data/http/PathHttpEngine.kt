@@ -17,11 +17,16 @@ import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
+import network.path.mobilenode.service.ForegroundService
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.ServerSocket
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.math.max
 
@@ -29,8 +34,8 @@ class PathHttpEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
         private val networkMonitor: NetworkMonitor,
-        okHttpClient: OkHttpClient,
-        gson: Gson,
+        private val okHttpClient: OkHttpClient,
+        private val gson: Gson,
         private val storage: PathStorage
 ) : PathEngine, CoroutineScope {
     companion object {
@@ -41,7 +46,8 @@ class PathHttpEngine(
 
     private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
-    private val httpService = PathServiceImpl(okHttpClient, gson)
+    private var useProxy = false
+    private var httpService = getHttpService(false)
     private var timeoutJob = Job()
     private var pollJob = Job()
 
@@ -133,7 +139,7 @@ class PathHttpEngine(
         }
         jobList.send(list)
 
-        status.send(ConnectionStatus.CONNECTED)
+        status.send(if (useProxy) ConnectionStatus.PROXY else ConnectionStatus.CONNECTED)
 
         if (list.jobs.isNotEmpty()) {
             val ids = list.jobs.map { it.executionUuid to false }
@@ -160,13 +166,17 @@ class PathHttpEngine(
     }
 
     private suspend fun createCheckInMessage(): CheckIn {
-        val location = lastLocationProvider.getLastRealLocationOrNull()
+        val location = try {
+            lastLocationProvider.getLastRealLocationOrNull()
+        } catch (e: Exception) {
+            null
+        }
         val jobsToRequest = if (_isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
-                lat = location?.latitude?.toString(),
-                lon = location?.longitude?.toString(),
+                lat = location?.latitude?.toString() ?: "0.0",
+                lon = location?.longitude?.toString() ?: "0.0",
                 returnJobsMax = jobsToRequest
         )
     }
@@ -210,15 +220,47 @@ class PathHttpEngine(
         return try {
             call().await()
         } catch (e: Exception) {
+            var fallback = true
             if (e is HttpException) {
                 if (e.code() == 422) {
                     val body = e.response()?.body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
+                    fallback = false
                 }
             }
-            Timber.w("Service call exception: $e", e)
+            if (fallback) {
+                Timber.w("HTTP: Falling back to shadowsocks client")
+                httpService = getHttpService(true)
+            }
+            Timber.w("HTTP: Service call exception: $e")
             null
         }
+    }
+
+    private fun getHttpService(useProxy: Boolean): PathService {
+        val host = ForegroundService.LOCALHOST
+        val port = ForegroundService.SS_LOCAL_PORT
+
+        // Verify that ss-local is actually running before using it as a proxy
+        val client = if (useProxy && isPortInUse(port)) {
+            Timber.d("HTTP: proxy port [$port] is in use, connecting")
+            this.useProxy = true
+            okHttpClient.newBuilder()
+                    .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .build()
+        } else {
+            Timber.d("HTTP: proxy port [$port] is not in use, proxy is not running")
+            this.useProxy = false
+            okHttpClient
+        }
+        return PathServiceImpl(client, gson)
+    }
+
+    private fun isPortInUse(port: Int) = try {
+        ServerSocket(port).close()
+        false
+    } catch (e: IOException) {
+        true
     }
 }

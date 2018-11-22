@@ -4,8 +4,11 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
+import network.path.mobilenode.domain.entity.CheckType
+import network.path.mobilenode.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.service.NetworkMonitor
 import timber.log.Timber
@@ -29,6 +32,7 @@ class PathSystem(
     val nodeId get() = engine.nodeId
     val jobList get() = engine.jobList
     val isRunning get() = engine.isRunning
+    val statistics = ConflatedBroadcastChannel<List<CheckTypeStatistics>>()
 
     init {
         registerJobRequestHandler()
@@ -39,6 +43,11 @@ class PathSystem(
         networkMonitor.start()
         engine.start()
         externalServices.start()
+
+        // Initial statistics value
+        launch {
+            sendStatistics()
+        }
     }
 
     fun toggle() {
@@ -71,6 +80,21 @@ class PathSystem(
         val result = jobExecutor.execute(request).await()
         storage.recordStatistics(result.checkType, result.responseTime)
         engine.processResult(result)
+        sendStatistics()
         Timber.d("SYSTEM: request result [$result]")
+    }
+
+    private suspend fun sendStatistics() {
+        val allStats = CheckType.values()
+                .map { storage.statisticsForType(it) }
+                .sortedWith(compareByDescending(CheckTypeStatistics::count)
+                        .then(compareByDescending(CheckTypeStatistics::averageLatency)))
+
+        val otherStats = allStats.subList(2, allStats.size - 1)
+                .fold(CheckTypeStatistics(null, 0, 0)) { total, stats ->
+                    total.addOther(stats)
+                }
+
+        statistics.send(listOf(allStats[0], allStats[1], otherStats))
     }
 }

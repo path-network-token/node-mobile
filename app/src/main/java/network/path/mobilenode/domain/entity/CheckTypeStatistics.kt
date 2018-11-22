@@ -1,9 +1,11 @@
 package network.path.mobilenode.domain.entity
 
-data class CheckTypeStatistics(val count: Long, val averageLatencyMillis: Long) {
-    fun add(latency: Long): CheckTypeStatistics {
-        val latencySum = count * averageLatencyMillis
-        val newCount = count + 1
-        return CheckTypeStatistics(newCount, (latencySum + latency) / newCount)
-    }
+data class CheckTypeStatistics(val type: CheckType?, val count: Long, val totalLatencyMillis: Long) {
+    val averageLatency get() = if (count > 0) totalLatencyMillis / count else 0L
+
+    fun add(latency: Long): CheckTypeStatistics =
+            CheckTypeStatistics(type, count + 1, totalLatencyMillis + latency)
+
+    fun addOther(other: CheckTypeStatistics) =
+            CheckTypeStatistics(type, count + other.count, totalLatencyMillis + other.totalLatencyMillis)
 }

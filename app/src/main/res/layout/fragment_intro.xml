@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
+    android:clipChildren="false"
     android:orientation="vertical"
     android:padding="@dimen/screen_root_layout_padding"
     >
@@ -35,9 +36,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/padding_l"
-        android:paddingTop="36dp"
+        android:paddingTop="@dimen/padding_xl"
         android:paddingEnd="@dimen/padding_l"
-        android:paddingBottom="40dp"
+        android:paddingBottom="@dimen/padding_xl"
         android:text="@string/about_info_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,10 +47,10 @@
         app:layout_constraintVertical_bias="0.4"
         />
 
-    <Button
+    <network.path.mobilenode.ui.base.PillButton
         android:id="@+id/activateButton"
         style="@style/PillButton"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/padding_xl"
         android:text="@string/activate"
         app:layout_constraintEnd_toEndOf="@id/pathDescriptionTextView"
         app:layout_constraintStart_toStartOf="@id/pathDescriptionTextView"

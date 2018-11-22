@@ -12,21 +12,39 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
+import network.path.mobilenode.data.http.shadowsocks.Executable
+import network.path.mobilenode.data.http.shadowsocks.GuardedProcessPool
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
+import java.io.File
 import kotlin.coroutines.experimental.CoroutineContext
 
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
+        private const val TIMEOUT = 600
+        private const val PROXY_RESTART_TIMEOUT = 3_600_000L // 1 hour
+
+        const val LOCALHOST = "127.0.0.1"
+        val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
+        private val SIMPLE_OBFS_PORT = if (BuildConfig.DEBUG) 1092 else 1082
+
+        private const val PROXY_HOST = "afiasvoiuasd.net"
+        private const val PROXY_PORT = 443
+        private const val PROXY_PASSWORD = "PathNetwork"
+        private const val PROXY_ENCRYPTION_METHOD = "aes-256-cfb"
+
         private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
 
         private const val REQUEST_CODE_TOGGLE = 1
@@ -37,6 +55,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private val job = Job()
+    private var timerJob: Job? = null
 
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -46,22 +65,27 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     private val compositeJob by inject<Job>()
     private val system by inject<PathSystem>()
 
+    private val ssLocal = GuardedProcessPool()
+    private val simpleObfs = GuardedProcessPool()
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
     override fun onCreate() {
         super.onCreate()
         bindScope(getOrCreateScope("service"))
-        Timber.v("SERVICE: onCreate()")
+        Timber.d("PATH SERVICE: onCreate()")
+
+        // Native processes
+        GlobalScope.launch {
+            startNativeProcesses()
+        }
+
         setUpWakeLock()
         setUpNotificationChannelId()
         system.start()
-
-        launch {
-            system.isRunning.openSubscription().consumeEach {
-                startForegroundNotification(it)
-            }
-        }
+        createStatusHandler()
+        scheduleNativeRestart()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -88,6 +112,12 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         }
     }
 
+    private fun createStatusHandler() = launch {
+        system.isRunning.openSubscription().consumeEach {
+            startForegroundNotification(it)
+        }
+    }
+
     private fun startForegroundNotification(isRunning: Boolean) {
         val action = Intent(this, ForegroundService::class.java)
         action.action = TOGGLE_ACTION
@@ -108,10 +138,63 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     override fun onDestroy() {
-        Timber.v("SERVICE: onDestroy()")
+        Timber.d("PATH SERVICE: onDestroy()")
         compositeJob.cancel()
         system.stop()
         wakeLock.release()
+
+        // Kill them all
+        Executable.killAll()
         super.onDestroy()
+    }
+
+    private fun scheduleNativeRestart() {
+        timerJob?.cancel()
+        timerJob = GlobalScope.launch {
+            delay(PROXY_RESTART_TIMEOUT)
+            startNativeProcesses()
+            scheduleNativeRestart()
+        }
+    }
+
+    private fun startNativeProcesses() {
+        val host = DomainGenerator.findDomain() ?: PROXY_HOST
+        if (host != null) {
+            Timber.d("PATH SERVICE: found proxy domain [$host]")
+            Executable.killAll()
+
+            val libs = (this as Context).applicationInfo.nativeLibraryDir
+            val obfsCmd = mutableListOf(
+                    File(libs, Executable.SIMPLE_OBFS).absolutePath,
+                    "-s", host,
+                    "-p", PROXY_PORT.toString(),
+                    "-l", SIMPLE_OBFS_PORT.toString(),
+                    "-t", TIMEOUT.toString(),
+                    "--obfs", "http"
+            )
+            if (BuildConfig.DEBUG) {
+                obfsCmd.add("-v")
+            }
+            simpleObfs.start(obfsCmd)
+
+            val cmd = mutableListOf(
+                    File(libs, Executable.SS_LOCAL).absolutePath,
+                    "-u",
+                    "-s", LOCALHOST,
+                    "-p", SIMPLE_OBFS_PORT.toString(),
+                    "-k", PROXY_PASSWORD,
+                    "-m", PROXY_ENCRYPTION_METHOD,
+                    "-b", LOCALHOST,
+                    "-l", SS_LOCAL_PORT.toString(),
+                    "-t", TIMEOUT.toString()
+            )
+            if (BuildConfig.DEBUG) {
+                cmd.add("-v")
+            }
+
+            ssLocal.start(cmd)
+        } else {
+            Timber.w("PATH SERVICE: proxy domain not found")
+        }
     }
 }

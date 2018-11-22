@@ -12,8 +12,13 @@
 
     <color name="apple_green">#7ed321</color>
     <color name="coral_pink">#ff576b</color>
+    <color name="amber">#f5a623</color>
 
     <color name="five_percent_opacity_black">#0D000000</color>
     <color name="cloudy_blue">#c1c3c4</color>
 
+    <color name="colorPrimary">@color/sky</color>
+    <color name="colorPrimaryDark">@color/dark_slate_blue</color>
+    <color name="colorPrimaryLight">@color/tealish</color>
+    <color name="colorAccent">@color/neon_blue</color>
 </resources>
