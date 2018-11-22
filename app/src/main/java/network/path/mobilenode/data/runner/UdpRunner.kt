@@ -1,6 +1,6 @@
 package network.path.mobilenode.data.runner
 
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.withTimeout
 import network.path.mobilenode.Constants.DEFAULT_UDP_PORT
 import network.path.mobilenode.Constants.JOB_TIMEOUT_MILLIS
 import network.path.mobilenode.domain.entity.CheckType

@@ -3,7 +3,9 @@ package network.path.mobilenode.di
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
 import network.path.mobilenode.data.http.PathExternalServicesImpl
@@ -33,6 +35,8 @@ import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 import java.util.concurrent.TimeUnit
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 val appModule = module {
     single<PathStorage> { PathStorageImpl(androidApplication()) }
     single { LastLocationProvider(androidApplication()) }

@@ -1,7 +1,7 @@
 package network.path.mobilenode.data.http
 
 import com.google.gson.Gson
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import network.path.mobilenode.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

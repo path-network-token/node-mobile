@@ -1,6 +1,6 @@
 package network.path.mobilenode.data.http
 
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import network.path.mobilenode.domain.entity.CheckIn
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest

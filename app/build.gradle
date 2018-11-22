@@ -94,12 +94,6 @@ android {
 //    }
 }
 
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
-
 dependencies {
 
     // Communication
@@ -109,7 +103,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-scalars:$versions.retrofit"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:$versions.retrofitCoroutines"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$versions.retrofitCoroutines"
 
     // AndroidX
     implementation "androidx.appcompat:appcompat:$versions.androidX"

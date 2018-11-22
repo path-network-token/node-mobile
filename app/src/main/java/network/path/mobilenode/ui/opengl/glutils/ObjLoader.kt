@@ -5,13 +5,13 @@ import network.path.mobilenode.ui.opengl.addMultiple
 import network.path.mobilenode.ui.opengl.models.Model
 
 class ObjLoader(
-    context: Context,
-    file: String,
-    generateLines: Boolean = false,
-    radius: Float = 1.0f,
-    val color: FloatArray? = null,
-    val useTexCoords: Boolean = true,
-    val useNormals: Boolean = true
+        context: Context,
+        file: String,
+        generateLines: Boolean = false,
+        radius: Float = 1.0f,
+        val color: FloatArray? = null,
+        val useTexCoords: Boolean = true,
+        val useNormals: Boolean = true
 ) {
     val numFaces: Int
     val combined: FloatArray
@@ -29,31 +29,31 @@ class ObjLoader(
                 val parts = line.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 when (parts[0]) {
                     "v" -> loadedVertices.add(
-                        Vertex(
-                            parts[1].toFloat() * radius,
-                            parts[2].toFloat() * radius,
-                            parts[3].toFloat() * radius
-                        )
+                            Vertex(
+                                    parts[1].toFloat() * radius,
+                                    parts[2].toFloat() * radius,
+                                    parts[3].toFloat() * radius
+                            )
                     )
                     "vt" -> loadedTextures.add(
-                        TextureCoord(
-                            parts[1].toFloat(),
-                            1.0f - parts[2].toFloat()
-                        )
+                            TextureCoord(
+                                    parts[1].toFloat(),
+                                    1.0f - parts[2].toFloat()
+                            )
                     )
                     "vn" -> loadedNormals.add(
-                        Normal(
-                            parts[1].toFloat() * radius,
-                            parts[2].toFloat() * radius,
-                            parts[3].toFloat() * radius
-                        )
+                            Normal(
+                                    parts[1].toFloat() * radius,
+                                    parts[2].toFloat() * radius,
+                                    parts[3].toFloat() * radius
+                            )
                     )
                     "f" -> faces.add(
-                        Face(
-                            FaceVertex.create(parts[1]),
-                            FaceVertex.create(parts[2]),
-                            FaceVertex.create(parts[3])
-                        )
+                            Face(
+                                    FaceVertex.create(parts[1]),
+                                    FaceVertex.create(parts[2]),
+                                    FaceVertex.create(parts[3])
+                            )
                     )
                 }
             }
@@ -86,31 +86,31 @@ class ObjLoader(
 
                 // Coords
                 combinedIndex = combined.addMultiple(
-                    combinedIndex,
-                    vertex.x, vertex.y, vertex.z
+                        combinedIndex,
+                        vertex.x, vertex.y, vertex.z
                 )
 
                 // Color
                 if (color != null) {
                     combinedIndex = combined.addMultiple(
-                        combinedIndex,
-                        color.component1(),
-                        color.component2(),
-                        color.component3(),
-                        color.component4()
+                            combinedIndex,
+                            color.component1(),
+                            color.component2(),
+                            color.component3(),
+                            color.component4()
                     )
                 }
 
                 if (useTexCoords) {
                     combinedIndex = combined.addMultiple(
-                        combinedIndex,
-                        textureCoord.u, textureCoord.v
+                            combinedIndex,
+                            textureCoord.u, textureCoord.v
                     )
                 }
                 if (useNormals) {
                     combinedIndex = combined.addMultiple(
-                        combinedIndex,
-                        normal.x, normal.y, normal.z
+                            combinedIndex,
+                            normal.x, normal.y, normal.z
                     )
                 }
 
@@ -140,9 +140,9 @@ class ObjLoader(
             fun create(s: String): FaceVertex {
                 val indices = s.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 return FaceVertex(
-                    indices[0].toInt() - 1,
-                    indices[1].toInt() - 1,
-                    indices[2].toInt() - 1
+                        indices[0].toInt() - 1,
+                        indices[1].toInt() - 1,
+                        indices[2].toInt() - 1
                 )
             }
         }

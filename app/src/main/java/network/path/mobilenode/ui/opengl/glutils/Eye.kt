@@ -65,9 +65,9 @@ fun Float3.normalize() {
 }
 
 fun Float3.cross(other: Float3) = Float3(
-    y * other.z - other.y * z,
-    z * other.x - other.z * x,
-    x * other.y - other.x * y
+        y * other.z - other.y * z,
+        z * other.x - other.z * x,
+        x * other.y - other.x * y
 )
 
 fun Float3.add(other: Float3) = Float3(x + other.x, y + other.y, z + other.z)
