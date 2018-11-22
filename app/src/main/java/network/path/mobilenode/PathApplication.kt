@@ -26,7 +26,9 @@ class PathApplication : Application() {
         initLogging()
         initTrueTime()
         startKoin(this, listOf(appModule))
-        startJobProcessingIfActivated()
+        if (storage.isActivated) {
+            startPathService()
+        }
     }
 
     private fun initLogging() {
@@ -38,20 +40,14 @@ class PathApplication : Application() {
         }
     }
 
-    private fun startJobProcessingIfActivated() {
-        if (storage.isActivated) {
-            startPathService()
-        }
-    }
-
     @SuppressLint("CheckResult")
     private fun initTrueTime() {
         TrueTimeRx.build()
                 .initializeRx("time.google.com")
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                        { date -> Timber.d("TrueTime initialised: [$date]") },
-                        { throwable -> Timber.w("TrueTime initialisation failed: $throwable") }
+                        { date -> Timber.d("TRUE TIME: initialised [$date]") },
+                        { throwable -> Timber.w("TRUE TIME: initialisation failed: $throwable") }
                 )
     }
 }

@@ -40,3 +40,6 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+# Jsoup
+-keeppackagenames org.jsoup.nodes
