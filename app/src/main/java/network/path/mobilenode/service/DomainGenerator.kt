@@ -30,7 +30,12 @@ object DomainGenerator : KoinComponent, CoroutineScope {
     )
 
     private fun generateDomains(): Set<String> {
-        val date = TrueTimeRx.now()
+        val date = try {
+            TrueTimeRx.now()
+        } catch (e: Exception) {
+            Timber.w("TRUE TIME: now() failed: $e")
+            Date()
+        }
         val cal = Calendar.getInstance()
         cal.timeZone = TimeZone.getTimeZone("UTC")
         cal.time = date
