@@ -233,8 +233,8 @@ class PathHttpEngine(
                 }
             }
             if (fallback) {
-                Timber.w("HTTP: Falling back to shadowsocks client")
-                httpService = getHttpService(true)
+                Timber.w("HTTP: switching proxy mode to [${!useProxy}]")
+                httpService = getHttpService(!useProxy)
             }
             Timber.w("HTTP: Service call exception: $e")
             null
