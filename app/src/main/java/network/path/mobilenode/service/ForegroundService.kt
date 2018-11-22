@@ -16,6 +16,7 @@ import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
@@ -33,6 +34,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
         private const val TIMEOUT = 600
+        private const val PROXY_RESTART_TIMEOUT = 3_600_000L // 1 hour
 
         const val LOCALHOST = "127.0.0.1"
         val SS_LOCAL_PORT = if (BuildConfig.DEBUG) 1091 else 1081
@@ -52,6 +54,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 
     private val job = Job()
+    private var timerJob: Job? = null
 
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -74,19 +77,14 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
         // Native processes
         GlobalScope.launch {
-            Executable.killAll()
             startNativeProcesses()
         }
 
         setUpWakeLock()
         setUpNotificationChannelId()
         system.start()
-
-        launch {
-            system.isRunning.openSubscription().consumeEach {
-                startForegroundNotification(it)
-            }
-        }
+        createStatusHandler()
+        scheduleNativeRestart()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -110,6 +108,12 @@ class ForegroundService : LifecycleService(), CoroutineScope {
                     NotificationManager.IMPORTANCE_MIN
             )
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createStatusHandler() = launch {
+        system.isRunning.openSubscription().consumeEach {
+            startForegroundNotification(it)
         }
     }
 
@@ -143,11 +147,20 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         super.onDestroy()
     }
 
+    private fun scheduleNativeRestart() {
+        timerJob?.cancel()
+        timerJob = GlobalScope.launch {
+            delay(PROXY_RESTART_TIMEOUT)
+            startNativeProcesses()
+            scheduleNativeRestart()
+        }
+    }
+
     private fun startNativeProcesses() {
         val host = DomainGenerator.findDomain()
-
         if (host != null) {
             Timber.d("PATH SERVICE: found proxy domain [$host]")
+            Executable.killAll()
 
             val libs = (this as Context).applicationInfo.nativeLibraryDir
             val obfsCmd = mutableListOf(

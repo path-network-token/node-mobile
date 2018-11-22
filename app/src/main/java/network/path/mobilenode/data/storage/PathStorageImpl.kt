@@ -19,6 +19,8 @@ class PathStorageImpl(context: Context) : PathStorage {
 
         private const val CHECKS_COUNT_KEY_SUFFIX = "_CHECKS_COUNT_KEY"
         private const val CHECKS_LATENCY_KEY_SUFFIX = "_LATENCY_MILLIS_KEY"
+
+        private const val PROXY_DOMAIN_KEY = "PROXY_DOMAIN_KEY"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -28,6 +30,8 @@ class PathStorageImpl(context: Context) : PathStorage {
     override var nodeId: String? by prefsOptional(sharedPreferences, NODE_ID_KEY, String::class.java)
 
     override var isActivated: Boolean by prefs(sharedPreferences, IS_SERVICE_RUNNING_KEY, false)
+
+    override var proxyDomain: String? by prefsOptional(sharedPreferences, PROXY_DOMAIN_KEY, String::class.java, 3_600_000L) // 1 hour
 
     private fun createPrefKey(type: CheckType, key: String) = "$type$key"
 

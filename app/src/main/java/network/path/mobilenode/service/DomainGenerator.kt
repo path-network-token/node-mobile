@@ -8,14 +8,19 @@ import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
+import network.path.mobilenode.domain.PathStorage
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
 import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.math.abs
 
-object DomainGenerator : CoroutineScope {
+object DomainGenerator : KoinComponent, CoroutineScope {
     private lateinit var job: Job
+
+    private val storage by inject<PathStorage>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
@@ -35,7 +40,6 @@ object DomainGenerator : CoroutineScope {
             (0 until CHECK_MAX_DAYS).fold(set) { innerSet, _ ->
                 val newSet = generate(seed, cal)
                 cal.add(Calendar.DAY_OF_YEAR, -1)
-                Timber.d("DOMAIN: ${cal.time} => ${newSet.size}")
                 innerSet.addAll(newSet)
                 innerSet
             }
@@ -62,6 +66,11 @@ object DomainGenerator : CoroutineScope {
     }.toSet()
 
     fun findDomain(): String? {
+        val saved = storage.proxyDomain
+        if (saved != null) {
+            return saved
+        }
+
         job = Job()
         val domains = generateDomains()
         // Timber.d("DOMAIN: potential domains [${domains.joinToString(separator = "\n")}]")
@@ -73,7 +82,12 @@ object DomainGenerator : CoroutineScope {
         }
         job.cancel()
         Timber.d("DOMAIN: resolved domains [$resolved]")
-        return resolved.firstOrNull()
+
+        val newHost = resolved.firstOrNull()
+        if (newHost != null) {
+            storage.proxyDomain = newHost
+        }
+        return newHost
     }
 
     private fun resolve(domain: String): Deferred<String?> = async {
@@ -81,7 +95,7 @@ object DomainGenerator : CoroutineScope {
             InetAddress.getByName(domain)
             domain
         } catch (e: Exception) {
-            Timber.d("DOMAIN: cannot resolve host [$domain]: $e")
+            Timber.v("DOMAIN: cannot resolve host [$domain]: $e")
             null
         }
     }

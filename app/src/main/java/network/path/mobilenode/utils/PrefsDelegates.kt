@@ -12,8 +12,8 @@ fun <reified T : Any> Set<*>.isSetOf(): Boolean =
 fun <T : Any> prefs(prefs: SharedPreferences, name: String, defaultValue: T): SharedPreferencesDelegate<T> =
         SharedPreferencesDelegate(prefs, name, defaultValue)
 
-fun <T : Any> prefsOptional(prefs: SharedPreferences, name: String, clazz: Class<T>): SharedPreferencesOptionalDelegate<T> =
-        SharedPreferencesOptionalDelegate(prefs, name, clazz)
+fun <T : Any> prefsOptional(prefs: SharedPreferences, name: String, clazz: Class<T>, ttl: Long = -1L): SharedPreferencesOptionalDelegate<T> =
+        SharedPreferencesOptionalDelegate(prefs, name, clazz, ttl)
 
 class SharedPreferencesDelegate<T : Any>(private val prefs: SharedPreferences,
                                          private val name: String,
@@ -63,24 +63,32 @@ class SharedPreferencesDelegate<T : Any>(private val prefs: SharedPreferences,
 
 class SharedPreferencesOptionalDelegate<T : Any>(private val prefs: SharedPreferences,
                                                  private val name: String,
-                                                 private val clazz: Class<T>)
+                                                 private val clazz: Class<T>,
+                                                 private val ttl: Long = -1L)
     : ReadWriteProperty<Any, T?> {
 
     @Suppress("UNCHECKED_CAST")
     override operator fun getValue(thisRef: Any, property: KProperty<*>): T? = if (!prefs.contains(name)) {
-        Timber.v("Shared preference [$name] is missing. Returning null")
+        Timber.v("Shared preference [$name] is missing.")
         null
     } else {
-        val value = when (clazz) {
-            Boolean::class.java -> prefs.getBoolean(name, false) as T
-            Int::class.java -> prefs.getInt(name, 0) as T
-            Long::class.java -> prefs.getLong(name, 0L) as T
-            Float::class.java -> prefs.getFloat(name, 0.0f) as T
-            String::class.java -> prefs.getString(name, "") as T
-            else -> throw RuntimeException("Class $clazz is not supported")
+        val saveTime = prefs.getLong(name + "_TIME", -1L)
+        val curTime = System.currentTimeMillis()
+        if (ttl != -1L && (saveTime < 0 || (curTime - saveTime > ttl))) {
+            Timber.v("Shared preference [$name] is too old ($curTime, $saveTime, $ttl)")
+            null
+        } else {
+            val value = when (clazz) {
+                Boolean::class.java -> prefs.getBoolean(name, false) as T
+                Int::class.java -> prefs.getInt(name, 0) as T
+                Long::class.java -> prefs.getLong(name, 0L) as T
+                Float::class.java -> prefs.getFloat(name, 0.0f) as T
+                String::class.java -> prefs.getString(name, "") as T
+                else -> throw RuntimeException("Class $clazz is not supported")
+            }
+            Timber.v("Found shared preference [$name] = [$value]")
+            value
         }
-        Timber.v("Found shared preference [$name] = [$value]")
-        value
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -99,6 +107,9 @@ class SharedPreferencesOptionalDelegate<T : Any>(private val prefs: SharedPrefer
                 else -> throw RuntimeException("Bundle value $value has wrong type")
             }
             else -> throw RuntimeException("Bundle value $value has wrong type")
+        }
+        if (ttl != -1L) {
+            editor.putLong(name + "_TIME", System.currentTimeMillis())
         }
         editor.apply()
     }
