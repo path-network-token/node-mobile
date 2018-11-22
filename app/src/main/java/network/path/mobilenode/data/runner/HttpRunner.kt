@@ -42,7 +42,8 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
                 else -> "http://"
             }
 
-            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress") ?: throw IOException("Unparsable url: $endpointAddress")
+            val urlPrefix = HttpUrl.parse("$prependedProtocol$endpointAddress")
+                    ?: throw IOException("Unparsable url: $endpointAddress")
             val urlPrefixWithPortBuilder = urlPrefix.newBuilder()
             if (endpointPort != null && TCP_UDP_PORT_RANGE.contains(endpointPort)) {
                 urlPrefixWithPortBuilder.port(endpointPort)
@@ -53,8 +54,8 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
 
         val method = jobRequest.method ?: "GET"
         val requestBuilder = Request.Builder()
-            .method(method, null)
-            .url(completeUrl)
+                .method(method, null)
+                .url(completeUrl)
 
         jobRequest.headers?.flatMap { it.entries }?.forEach { entry ->
             requestBuilder.addHeader(entry.key, entry.value)

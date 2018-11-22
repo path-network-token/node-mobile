@@ -3,17 +3,20 @@ package network.path.mobilenode.ui.main.jobreport
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.CheckTypeStatistics
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 class JobReportViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
     private lateinit var job: Job
 

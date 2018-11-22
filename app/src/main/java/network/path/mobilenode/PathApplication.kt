@@ -6,6 +6,8 @@ import com.crashlytics.android.Crashlytics
 import com.instacart.library.truetime.TrueTimeRx
 import io.fabric.sdk.android.Fabric
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.di.appModule
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.service.startPathService
@@ -14,6 +16,8 @@ import org.koin.android.ext.android.startKoin
 import timber.log.Timber
 
 
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 class PathApplication : Application() {
     private val storage by inject<PathStorage>()
 

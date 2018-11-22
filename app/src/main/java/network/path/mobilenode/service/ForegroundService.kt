@@ -10,14 +10,15 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.data.http.shadowsocks.Executable
@@ -29,8 +30,10 @@ import org.koin.androidx.scope.ext.android.bindScope
 import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 import java.io.File
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
         private const val TIMEOUT = 600
@@ -150,7 +153,7 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
     private fun scheduleNativeRestart() {
         timerJob?.cancel()
-        timerJob = GlobalScope.launch {
+        timerJob = GlobalScope.launch(Dispatchers.IO) {
             delay(PROXY_RESTART_TIMEOUT)
             startNativeProcesses()
             scheduleNativeRestart()

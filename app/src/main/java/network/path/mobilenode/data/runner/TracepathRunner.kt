@@ -1,6 +1,6 @@
 package network.path.mobilenode.data.runner
 
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.withTimeout
 import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.DEFAULT_TRACEPATH_PORT
 import network.path.mobilenode.domain.entity.CheckType

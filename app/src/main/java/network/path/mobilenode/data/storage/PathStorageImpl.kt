@@ -36,8 +36,8 @@ class PathStorageImpl(context: Context) : PathStorage {
     private fun createPrefKey(type: CheckType, key: String) = "$type$key"
 
     override fun statisticsForType(type: CheckType): CheckTypeStatistics {
-        val count = sharedPreferences.getLong(createPrefKey(type, CHECKS_COUNT_KEY_SUFFIX), 0L)
-        val averageLatency= sharedPreferences.getLong(createPrefKey(type, CHECKS_LATENCY_KEY_SUFFIX), 0L)
+        val averageLatency = sharedPreferences.getLong(createPrefKey(type, CHECKS_LATENCY_KEY_SUFFIX), 0L)
+        val count = if (averageLatency < 1) 0L else sharedPreferences.getLong(createPrefKey(type, CHECKS_COUNT_KEY_SUFFIX), 0L)
         return CheckTypeStatistics(type, count, averageLatency)
     }
 

@@ -9,12 +9,14 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.channels.BroadcastChannel
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.launch
 import org.koin.standalone.KoinComponent
 
+@ExperimentalCoroutinesApi
 class NetworkMonitor(private val context: Context) : KoinComponent {
     private val _connected = ConflatedBroadcastChannel(false)
     val connected: BroadcastChannel<Boolean> = _connected

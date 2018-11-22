@@ -3,7 +3,7 @@ package network.path.mobilenode.service
 import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.experimental.tasks.await
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 class LastLocationProvider(context: Context) {

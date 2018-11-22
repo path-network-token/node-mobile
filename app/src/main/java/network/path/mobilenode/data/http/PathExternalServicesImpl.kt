@@ -1,20 +1,23 @@
 package network.path.mobilenode.data.http
 
 import com.google.gson.Gson
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import network.path.mobilenode.domain.PathExternalServices
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import java.io.IOException
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class PathExternalServicesImpl(
         private val networkMonitor: NetworkMonitor,
         okHttpClient: OkHttpClient,

@@ -1,19 +1,22 @@
 package network.path.mobilenode.domain
 
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.service.NetworkMonitor
 import timber.log.Timber
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class PathSystem(
         private val job: Job,
         private val engine: PathEngine,

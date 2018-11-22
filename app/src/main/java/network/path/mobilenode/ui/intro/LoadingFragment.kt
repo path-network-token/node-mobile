@@ -7,8 +7,8 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_loading.*
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 

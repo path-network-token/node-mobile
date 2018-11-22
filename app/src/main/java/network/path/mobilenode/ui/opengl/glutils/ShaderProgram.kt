@@ -514,21 +514,21 @@ class ShaderProgram(vertexShaderSource: String, fragmentShaderSource: String) {
      */
     fun setUniformColor(name: String, color: Int) {
         setUniformf(
-            name,
-            Color.red(color) / 255.0f,
-            Color.green(color) / 255.0f,
-            Color.blue(color) / 255.0f,
-            Color.alpha(color) / 255.0f
+                name,
+                Color.red(color) / 255.0f,
+                Color.green(color) / 255.0f,
+                Color.blue(color) / 255.0f,
+                Color.alpha(color) / 255.0f
         )
     }
 
     fun setUniformf(location: Int, color: Int) {
         setUniformf(
-            location,
-            Color.red(color) / 255.0f,
-            Color.green(color) / 255.0f,
-            Color.blue(color) / 255.0f,
-            Color.alpha(color) / 255.0f
+                location,
+                Color.red(color) / 255.0f,
+                Color.green(color) / 255.0f,
+                Color.blue(color) / 255.0f,
+                Color.alpha(color) / 255.0f
         )
     }
 
