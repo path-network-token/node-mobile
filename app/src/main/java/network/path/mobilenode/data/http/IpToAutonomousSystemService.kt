@@ -1,6 +1,6 @@
 package network.path.mobilenode.data.http
 
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import network.path.mobilenode.domain.entity.AutonomousSystem
 import retrofit2.http.GET
 import retrofit2.http.Path

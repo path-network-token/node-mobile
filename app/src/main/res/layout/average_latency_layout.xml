@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="@dimen/screen_root_layout_padding"
+    android:paddingEnd="@dimen/screen_root_layout_padding"
     >
 
     <View
         android:id="@+id/latencyStartDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@color/dark_slate_blue"
+        style="@style/JobReportHeaderDivider"
         app:layout_constraintBottom_toBottomOf="@id/latencyLabelTextView"
         app:layout_constraintEnd_toStartOf="@id/latencyLabelTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,14 +19,10 @@
 
     <TextView
         android:id="@+id/latencyLabelTextView"
-        style="@style/Text.Default.Bold.Small"
+        style="@style/JobReportHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:text="@string/average_latency"
-        android:letterSpacing="0.17"
-        android:textColor="@color/sky"
         app:layout_constraintEnd_toStartOf="@id/latencyEndDivider"
         app:layout_constraintStart_toEndOf="@id/latencyStartDivider"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,9 +31,7 @@
 
     <View
         android:id="@+id/latencyEndDivider"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@color/dark_slate_blue"
+        style="@style/JobReportHeaderDivider"
         app:layout_constraintBottom_toBottomOf="@id/latencyLabelTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/latencyLabelTextView"
@@ -45,10 +39,9 @@
         />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
-        android:id="@+id/httpLatencyChart"
+        android:id="@+id/latencyChart1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         app:label="@string/http_checks"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,24 +50,24 @@
         />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
-        android:id="@+id/dnsLatencyChart"
+        android:id="@+id/latencyChart2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:label="@string/dns_checks"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/httpLatencyChart"
+        app:layout_constraintTop_toBottomOf="@+id/latencyChart1"
         app:max_millis="10000"
         />
 
     <network.path.mobilenode.ui.main.jobreport.LatencyChart
-        android:id="@+id/customLatencyChart"
+        android:id="@+id/latencyChartOther"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:label="@string/custom_checks"
+        app:label="@string/other_checks"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dnsLatencyChart"
+        app:layout_constraintTop_toBottomOf="@+id/latencyChart2"
         app:max_millis="10000"
         />
 

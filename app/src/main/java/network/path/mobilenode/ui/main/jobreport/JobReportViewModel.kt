@@ -3,82 +3,58 @@ package network.path.mobilenode.ui.main.jobreport
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import network.path.mobilenode.domain.PathStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+import network.path.mobilenode.domain.PathSystem
 import network.path.mobilenode.domain.entity.CheckType
+import network.path.mobilenode.domain.entity.CheckTypeStatistics
+import kotlin.coroutines.CoroutineContext
 
-class JobReportViewModel(private val storage: PathStorage) : ViewModel() {
-    enum class ChartType { HTTP, DNS, CUSTOM }
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
+class JobReportViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
+    private lateinit var job: Job
 
-    private val _httpLatencyMillis = MutableLiveData<Int>()
-    val httpLatencyMillis: LiveData<Int> = _httpLatencyMillis
+    var firstStats: List<CheckTypeStatistics>? = null
+        private set
 
-    private val _dnsLatencyMillis = MutableLiveData<Int>()
-    val dnsLatencyMillis: LiveData<Int> = _dnsLatencyMillis
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
-    private val _customLatencyMillis = MutableLiveData<Int>()
-    val customLatencyMillis: LiveData<Int> = _customLatencyMillis
+    private val _statistics = MutableLiveData<List<CheckTypeStatistics>>()
+    val statistics: LiveData<List<CheckTypeStatistics>> = _statistics
 
-    private val _httpCheckPercentage = MutableLiveData<Int>()
-    val httpChecksPercentage: LiveData<Int> = _httpCheckPercentage
-
-    private val _dnsCheckPercentage = MutableLiveData<Int>()
-    val dnsChecksPercentage: LiveData<Int> = _dnsCheckPercentage
-
-    private val _customCheckPercentage = MutableLiveData<Int>()
-    val customChecksPercentage: LiveData<Int> = _customCheckPercentage
-
-    var chartType = MutableLiveData<ChartType>()
-
-    fun valueForType(chartType: ChartType) =
-            when (chartType) {
-                ChartType.HTTP -> _httpCheckPercentage.value
-                ChartType.DNS -> _dnsCheckPercentage.value
-                ChartType.CUSTOM -> _customCheckPercentage.value
-            }
-
+    private val _selectedType = MutableLiveData<CheckType?>()
+    val selectedType: LiveData<CheckType?> = _selectedType
 
     fun onViewCreated() {
-        var customCheckCount = 0L
-        var customCheckAverageLatencyMillis = 0
-        val allChecksCount = CheckType
-                .values()
-                .map { storage.statisticsForType(it).count }
-                .sum()
-
-
-        CheckType.values().forEach {
-            val checkStatistics = storage.statisticsForType(it)
-            val averageLatencyMillis = checkStatistics.averageLatencyMillis.toInt()
-
-            when (it) {
-                CheckType.HTTP -> _httpLatencyMillis.postValue(averageLatencyMillis)
-                CheckType.DNS -> _dnsLatencyMillis.postValue(averageLatencyMillis)
-                else -> {
-                    customCheckCount += checkStatistics.count
-                    customCheckAverageLatencyMillis += (averageLatencyMillis * checkStatistics.count / allChecksCount.toFloat()).toInt()
-                }
-            }
-        }
-
-        _customLatencyMillis.postValue(customCheckAverageLatencyMillis)
-
-        fun calculatePercentage(value: Long): Int {
-            val fraction = value / allChecksCount.toFloat()
-            return (fraction * 100).toInt()
-        }
-
-        fun getChecksPercentage(checkType: CheckType): Int {
-            val checkCount = storage.statisticsForType(checkType).count
-            return calculatePercentage(checkCount)
-        }
-
-
-        if (allChecksCount > 0) {
-            _httpCheckPercentage.postValue(getChecksPercentage(CheckType.HTTP))
-            _dnsCheckPercentage.postValue(getChecksPercentage(CheckType.DNS))
-            _customCheckPercentage.postValue(calculatePercentage(customCheckCount))
-        }
-        chartType.postValue(ChartType.HTTP)
+        job = Job()
+        registerHandler()
     }
 
+    fun select(type: CheckType?) {
+        launch { _selectedType.postValue(type) }
+    }
+
+    override fun onCleared() {
+        job.cancel()
+        super.onCleared()
+    }
+
+    private fun registerHandler() = launch {
+        system.statistics.openSubscription().consumeEach {
+            _statistics.postValue(it)
+            if (firstStats == null) {
+                firstStats = it
+                _selectedType.postValue(it.maxBy { stat -> stat.count }?.type)
+            } else {
+                _selectedType.postValue(_selectedType.value)
+            }
+        }
+    }
 }

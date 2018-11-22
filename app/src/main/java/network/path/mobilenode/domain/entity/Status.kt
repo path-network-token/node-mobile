@@ -1,4 +1,4 @@
-package network.path.mobilenode.data.json
+package network.path.mobilenode.domain.entity
 
 object Status {
     const val CRITICAL = "critical"

@@ -1,7 +1,7 @@
 package network.path.mobilenode.data.runner
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withTimeout
 import network.path.mobilenode.Constants.DEFAULT_TCP_PORT
 import network.path.mobilenode.Constants.JOB_TIMEOUT_MILLIS
 import network.path.mobilenode.Constants.RESPONSE_LENGTH_BYTES_MAX

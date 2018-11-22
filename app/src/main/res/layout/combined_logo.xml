@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    >
+
+    <FrameLayout
+        android:id="@+id/pathLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        >
+
+        <ImageView
+            android:id="@+id/imageGlobe"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            android:src="@drawable/globe"
+            android:transitionName="image_globe"
+            tools:ignore="ContentDescription"
+            />
+
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_dashboard_blue"
+            android:tint="@color/dark_sky_blue"
+            tools:ignore="ContentDescription"
+            />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/pathTextLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/padding_l"
+        android:src="@drawable/path_text_splash"
+        tools:ignore="ContentDescription"
+        />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/padding_m"
+        android:background="@color/white"
+        />
+
+    <TextView
+        android:id="@+id/nodeText"
+        style="@style/SplashNode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/padding_s"
+        android:text="@string/node"
+        tools:text="NODE"
+        />
+
+</LinearLayout>

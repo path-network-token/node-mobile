@@ -2,9 +2,9 @@ package network.path.mobilenode.ui.splash
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_splash.*
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.observe
@@ -17,6 +17,8 @@ class SplashFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        version.text = getString(R.string.label_version, BuildConfig.VERSION_NAME)
         viewModel.let {
             it.onViewCreated()
             it.nextScreen.observe(this, ::showScreen)
@@ -29,15 +31,10 @@ class SplashFragment : BaseFragment() {
     }
 
     private fun showScreen(nextScreen: SplashViewModel.NextScreen) {
-        val builder = FragmentNavigator.Extras.Builder()
         val actionId = when (nextScreen) {
             SplashViewModel.NextScreen.INTRO -> R.id.action_splashFragment_to_introFragment
-            SplashViewModel.NextScreen.MAIN -> {
-                builder.addSharedElement(imageGlobe, imageGlobe.transitionName)
-                R.id.action_splashFragment_to_mainFragment
-            }
+            SplashViewModel.NextScreen.MAIN -> R.id.action_splashFragment_to_mainFragment
         }
-        NavHostFragment.findNavController(this)
-                .navigate(actionId, null, null, builder.build())
+        NavHostFragment.findNavController(this).navigate(actionId)
     }
 }

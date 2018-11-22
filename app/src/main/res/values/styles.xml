@@ -1,9 +1,9 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/sky</item>
-        <item name="colorPrimaryDark">@color/dark_slate_blue</item>
-        <item name="colorAccent">@color/neon_blue</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:background">@null</item>
     </style>
 
@@ -23,28 +23,18 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="JobReportLinearChartLabel">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:letterSpacing">0.15</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/exo_regular</item>
+    <style name="BottomBarRadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/bottom_bar_text_selector</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
     </style>
 
-    <style name="JobReportSectionLabel">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.17</item>
-        <item name="android:lineSpacingExtra">18sp</item>
-        <item name="android:textColor">@color/sky</item>
-    </style>
-
-    <style name="JobReportLinearChartValue">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:letterSpacing">0.06</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">@font/exo_regular</item>
+    <style name="JobReportHeaderDivider">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:background">@color/dark_slate_blue</item>
     </style>
 
     <style name="ProgressLogs">
@@ -55,67 +45,33 @@
         <item name="android:textSize">6sp</item>
     </style>
 
-    <style name="DashboardDetails">
-        <item name="android:maxLines">1</item>
-        <item name="android:letterSpacing">0.17</item>
-        <item name="android:lineSpacingExtra">2sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:fontFamily">@font/exo_regular</item>
-    </style>
-
-    <style name="JobTypeRadioButton">
+    <style name="JobTypeRadioButton" parent="JobReportRadioButtonLabel">
         <item name="android:button">@null</item>
         <item name="android:layout_width">160dp</item>
         <item name="android:layout_height">36dp</item>
         <item name="android:clickable">true</item>
-        <item name="android:fontFamily">@font/exo_bold</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:letterSpacing">0.11</item>
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
+        <item name="android:paddingStart">@dimen/padding_m</item>
+        <item name="android:paddingEnd">@dimen/padding_m</item>
         <item name="android:backgroundTint">@color/job_type_button_background_tint</item>
         <item name="android:backgroundTintMode">multiply</item>
         <item name="android:background">@drawable/job_type_button_background_selector</item>
-        <item name="android:textColor">@color/job_type_button_text_color</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="ScreenHeader">
-        <item name="android:layout_marginTop">64dp</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/exo_bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:letterSpacing">0.13</item>
-        <item name="android:lineSpacingExtra">10sp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:stateListAnimator">@animator/button_state_list</item>
     </style>
 
     <style name="ScreenHeaderDivider">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">2dp</item>
-        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginTop">@dimen/padding_m</item>
         <item name="android:background">@color/dark_sky_blue</item>
     </style>
 
-    <style name="PillButton" parent="Text.Default.Bold">
-        <item name="android:textSize">16sp</item>
-        <item name="android:layout_width">180dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:letterSpacing">0.19</item>
-        <item name="android:background">@drawable/link_button_background</item>
+    <style name="CloseButton">
+        <item name="android:layout_width">@dimen/button_size</item>
+        <item name="android:layout_height">@dimen/button_size</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:src">@drawable/ic_clear</item>
+        <item name="android:stateListAnimator">@animator/button_state_list</item>
     </style>
 
-    <style name="DisclaimerText" parent="Text.Default.Medium">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:letterSpacing">0.06</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:textColor">@color/cloudy_blue</item>
-    </style>
 </resources>

@@ -1,14 +1,16 @@
 package network.path.mobilenode.data.http
 
 import com.google.gson.Gson
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.entity.CheckIn
@@ -16,18 +18,27 @@ import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.JobResult
+import network.path.mobilenode.service.ForegroundService
 import network.path.mobilenode.service.LastLocationProvider
+import network.path.mobilenode.service.NetworkMonitor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
-import kotlin.coroutines.experimental.CoroutineContext
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.ServerSocket
+import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class PathHttpEngine(
         private val job: Job,
         private val lastLocationProvider: LastLocationProvider,
-        okHttpClient: OkHttpClient,
-        gson: Gson,
+        private val networkMonitor: NetworkMonitor,
+        private val okHttpClient: OkHttpClient,
+        private val gson: Gson,
         private val storage: PathStorage
 ) : PathEngine, CoroutineScope {
     companion object {
@@ -38,7 +49,8 @@ class PathHttpEngine(
 
     private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
-    private val httpService = PathServiceImpl(okHttpClient, gson)
+    private var useProxy = false
+    private var httpService = getHttpService(false)
     private var timeoutJob = Job()
     private var pollJob = Job()
 
@@ -49,6 +61,19 @@ class PathHttpEngine(
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
     override val jobList = ConflatedBroadcastChannel<JobList>()
+    override var isRunning = ConflatedBroadcastChannel(true)
+
+    private var _isRunning = true
+        set(value) {
+            field = value
+            launch {
+                isRunning.send(value)
+            }
+        }
+
+    init {
+        registerNetworkHandler()
+    }
 
     override fun start() {
         checkIn()
@@ -80,8 +105,22 @@ class PathHttpEngine(
         timeoutJob.cancel()
     }
 
+    override fun toggle() {
+        _isRunning = !_isRunning
+        Timber.d("HTTP: changed status to [$_isRunning]")
+    }
+
     private fun checkIn() = launch {
         performCheckIn()
+    }
+
+    private fun registerNetworkHandler() = launch {
+        networkMonitor.connected.consumeEach {
+            if (!timeoutJob.isCancelled) {
+                timeoutJob.cancel()
+            }
+            performCheckIn()
+        }
     }
 
     private suspend fun performCheckIn() {
@@ -103,7 +142,7 @@ class PathHttpEngine(
         }
         jobList.send(list)
 
-        status.send(ConnectionStatus.CONNECTED)
+        status.send(if (useProxy) ConnectionStatus.PROXY else ConnectionStatus.CONNECTED)
 
         if (list.jobs.isNotEmpty()) {
             val ids = list.jobs.map { it.executionUuid to false }
@@ -130,13 +169,17 @@ class PathHttpEngine(
     }
 
     private suspend fun createCheckInMessage(): CheckIn {
-        val location = lastLocationProvider.getLastRealLocationOrNull()
-        val jobsToRequest = max(MAX_JOBS - currentExecutionUuids.size, 0)
+        val location = try {
+            lastLocationProvider.getLastRealLocationOrNull()
+        } catch (e: Exception) {
+            null
+        }
+        val jobsToRequest = if (_isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,
-                lat = location?.latitude?.toString(),
-                lon = location?.longitude?.toString(),
+                lat = location?.latitude?.toString() ?: "0.0",
+                lon = location?.longitude?.toString() ?: "0.0",
                 returnJobsMax = jobsToRequest
         )
     }
@@ -159,7 +202,9 @@ class PathHttpEngine(
 
     private fun scheduleCheckIn() {
         Timber.d("HTTP: Scheduling check in...")
-        timeoutJob.cancel()
+        if (!timeoutJob.isCancelled) {
+            timeoutJob.cancel()
+        }
         timeoutJob = launch {
             delay(HEARTBEAT_INTERVAL_MS)
             Timber.d("HTTP: Checking in...")
@@ -174,19 +219,51 @@ class PathHttpEngine(
         requests.send(dummyRequest)
     }
 
-    private suspend fun <T>executeServiceCall(call: suspend () -> Deferred<T>): T? {
+    private suspend fun <T> executeServiceCall(call: suspend () -> Deferred<T>): T? {
         return try {
             call().await()
         } catch (e: Exception) {
+            var fallback = true
             if (e is HttpException) {
                 if (e.code() == 422) {
                     val body = e.response()?.body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
+                    fallback = false
                 }
             }
-            Timber.w("Service call exception: $e", e)
+            if (fallback) {
+                Timber.w("HTTP: Falling back to shadowsocks client")
+                httpService = getHttpService(true)
+            }
+            Timber.w("HTTP: Service call exception: $e")
             null
         }
+    }
+
+    private fun getHttpService(useProxy: Boolean): PathService {
+        val host = ForegroundService.LOCALHOST
+        val port = ForegroundService.SS_LOCAL_PORT
+
+        // Verify that ss-local is actually running before using it as a proxy
+        val client = if (useProxy && isPortInUse(port)) {
+            Timber.d("HTTP: proxy port [$port] is in use, connecting")
+            this.useProxy = true
+            okHttpClient.newBuilder()
+                    .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .build()
+        } else {
+            Timber.d("HTTP: proxy port [$port] is not in use, proxy is not running")
+            this.useProxy = false
+            okHttpClient
+        }
+        return PathServiceImpl(client, gson)
+    }
+
+    private fun isPortInUse(port: Int) = try {
+        ServerSocket(port).close()
+        false
+    } catch (e: IOException) {
+        true
     }
 }

@@ -1,14 +1,24 @@
 package network.path.mobilenode.ui.opengl
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.renderscript.Float3
-import android.renderscript.Float4
 import android.renderscript.Int2
 import android.renderscript.Matrix4f
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.BounceInterpolator
+import android.view.animation.LinearInterpolator
+import androidx.annotation.ColorInt
+import androidx.core.animation.addListener
+import androidx.core.content.ContextCompat
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.opengl.glutils.ShaderProgram
 import network.path.mobilenode.ui.opengl.models.Blur
@@ -42,25 +52,30 @@ class FPSCounter {
 
 class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, KoinComponent {
     companion object {
-        val WIREFRAME_COLOR = floatArrayOf(0.47058824f, 0.8f, 0.87843137f, 1.0f)
-
         private val FPS = FPSCounter()
 
         private const val FRAMEBUFFER_COUNT = 2
         private const val START_CAMERA_Z = -5f
         private const val FINAL_CAMERA_Z = -2.5f
 
-        private const val ROTATION_SPEED_GLOBE = 270f / 15_000_000_000f // One complete rotation per 15 secs
-        private const val ROTATION_SPEED_SPHERE = 360f / 15_000_000_000f // One complete rotation per 15 secs
-        private const val ANIMATION_DURATION = 3_000_000_000f
-        private const val ZOOM_SPEED = (FINAL_CAMERA_Z - START_CAMERA_Z) / ANIMATION_DURATION
+        private const val COLOR_ANIMATION_DURATION = 3_000L
+        private const val FIRST_ANIMATION_DURATION = 3_000L
+        private const val OTHER_ANIMATION_DURATION = 1_000L
+        private const val ROTATION_DURATION_GLOBE = 20_000L // One complete rotation of globe
+        private const val ROTATION_DURATION_SPHERE = 15_000L // One complete rotation of globe
 
         private const val BLUR_SCALE = 0.5f
+
+        private const val STATE_ZOOMED = "STATE_ZOOMED"
+        private const val STATE_ROTATING = "STATE_ROTATING"
     }
 
     interface Listener {
         fun onInitialised()
     }
+
+    @Volatile
+    private var zoomComplete: Boolean = false
 
     var listener: Listener? = null
 
@@ -68,11 +83,18 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
     private val sphereDataProvider by inject<SphereDataProvider>()
 
     private var lastTimeNanos = 0L
-    private var animationTimeLeft = 0f
 
     private lateinit var bg: Square
     private lateinit var globe: Globe
     private lateinit var sphere: Sphere
+
+    @Volatile
+    private var sphereColor = ContextCompat.getColor(context, R.color.light_teal)
+    private var sphereColorAnimator: Animator? = null
+
+    @Volatile
+    private var isRotating = true
+    private var rotationAnimatorSet: AnimatorSet? = null
 
     private lateinit var blurHorizontal: Blur
     private lateinit var blurVertical: Blur
@@ -170,12 +192,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         sphere.setScale(1.1f)
         globe.setScale(1.1f)
 
-        // Camera position
-        camera.translate(0.0f, 0.2f, START_CAMERA_Z)
-        setCamera(camera)
-
-        globe.material = Material(5f, 5f, 5f)
-        sphere.material = Material(5f, 3f, 0.1f)
+        globe.material = Material(5f, 4f, 4f)
+        sphere.material = Material(5f, 2f, 0.1f)
 
         // Light source
         val direction = Float3(0.8f, 0.8f, 2f)
@@ -183,7 +201,22 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         sphere.dirLight = DirLight(direction, ambient = 0.2f)
 
         lastTimeNanos = System.nanoTime()
-        animationTimeLeft = ANIMATION_DURATION
+
+        // Camera position (and zoom animation)
+        if (zoomComplete) {
+            camera.translate(0.0f, 0.2f, FINAL_CAMERA_Z)
+            globe.alpha = 1f
+            sphere.alpha = 1f
+        } else {
+            camera.translate(0.0f, 0.2f, START_CAMERA_Z)
+            globe.alpha = 0f
+            sphere.alpha = 0f
+        }
+        setCamera(camera)
+        setupFirstAnimation(!zoomComplete)
+
+        // Rotation animation
+        setupRotateAnimation()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -193,26 +226,11 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         val dt = currentTimeNanos - lastTimeNanos
         lastTimeNanos = currentTimeNanos
 
-        if (animationTimeLeft > 0f) {
-            val dz = dt * ZOOM_SPEED
-            val array = camera.array
-            array[14] = Math.min(array[14] + dz, FINAL_CAMERA_Z)
-            setCamera(camera)
-
-            val da = dt / ANIMATION_DURATION
-            val newAlpha = Math.min(sphere.alpha + da, 1f)
-            sphere.alpha = newAlpha
-            globe.alpha = newAlpha
-
-            animationTimeLeft -= dt
-        }
-
-        val clearColor = Float4(0f, 0f, 0f, 0f)
-        sphere.rotationY += dt * ROTATION_SPEED_SPHERE
-        globe.rotationY += dt * ROTATION_SPEED_GLOBE
+        val clearColor = ContextCompat.getColor(context, android.R.color.transparent)
 
         GLES20.glViewport(0, 0, size.x / 2, size.y / 2)
         drawFrame(dt, clearColor, frameBufferIds[0]) {
+            sphere.tint = sphereColor
             sphere.drawTop = false
             sphere.draw(dt)
 
@@ -263,8 +281,121 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
 
         bg.dimensions = size
 
-        Handler(Looper.getMainLooper()).post {
+        runOnUiThread {
             listener?.onInitialised()
+        }
+    }
+
+    fun destroy() {
+        val textureHandle = IntArray(2)
+        textureHandle[0] = bgTexture
+        textureHandle[1] = globeTexture
+        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
+
+        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
+        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
+        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
+
+        programs.forEach { it.destroy() }
+    }
+
+    fun saveState(): Bundle {
+        val state = Bundle()
+        state.putBoolean(STATE_ZOOMED, zoomComplete)
+        state.putBoolean(STATE_ROTATING, isRotating)
+        return state
+    }
+
+    fun restoreState(savedState: Bundle) {
+        zoomComplete = savedState.getBoolean(STATE_ZOOMED, false)
+        isRotating = savedState.getBoolean(STATE_ROTATING, true)
+    }
+
+    fun toggleRotation(enable: Boolean) {
+        isRotating = enable
+        runOnUiThread {
+            if (enable) {
+                rotationAnimatorSet?.resume()
+            } else {
+                rotationAnimatorSet?.pause()
+            }
+        }
+    }
+
+    fun setSphereColor(@ColorInt color: Int) {
+        val animator = ValueAnimator.ofArgb(sphereColor, color)
+        animator.duration = COLOR_ANIMATION_DURATION
+        animator.interpolator = BounceInterpolator()
+        animator.addUpdateListener {
+            val progress = it.animatedValue as Int
+            sphereColor = progress
+        }
+        runOnUiThread {
+            sphereColorAnimator?.cancel()
+            sphereColorAnimator = animator
+            animator.start()
+        }
+    }
+
+    private fun setupFirstAnimation(zoom: Boolean = true) {
+        val duration = if (zoom) FIRST_ANIMATION_DURATION else OTHER_ANIMATION_DURATION
+        val alphaAnimator = ValueAnimator.ofFloat(0f, 1f)
+        alphaAnimator.interpolator = AccelerateDecelerateInterpolator()
+        alphaAnimator.addUpdateListener {
+            val progress = it.animatedValue as Float
+            globe.alpha = progress
+            sphere.alpha = progress
+        }
+
+        val cameraAnimator = ValueAnimator.ofFloat(START_CAMERA_Z, FINAL_CAMERA_Z)
+        cameraAnimator.interpolator = AccelerateDecelerateInterpolator()
+        cameraAnimator.addUpdateListener {
+            val progress = it.animatedValue as Float
+            val array = camera.array
+            array[14] = progress
+            setCamera(camera)
+        }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.duration = duration
+        if (zoom) {
+            animatorSet.play(alphaAnimator).with(cameraAnimator)
+        } else {
+            animatorSet.play(alphaAnimator)
+        }
+        animatorSet.addListener(onEnd = {
+            zoomComplete = true
+        })
+        runOnUiThread { animatorSet.start() }
+    }
+
+    private fun setupRotateAnimation() {
+        val animatorGlobe = ValueAnimator.ofFloat(0f, 1f)
+        animatorGlobe.duration = ROTATION_DURATION_GLOBE
+        animatorGlobe.repeatCount = Animation.INFINITE
+        animatorGlobe.interpolator = LinearInterpolator()
+        animatorGlobe.addUpdateListener {
+            val progress = it.animatedValue as Float
+            globe.rotationY = progress * 360f
+        }
+
+        val animatorSphere = ValueAnimator.ofFloat(0f, 1f)
+        animatorSphere.duration = ROTATION_DURATION_SPHERE
+        animatorSphere.repeatCount = Animation.INFINITE
+        animatorSphere.interpolator = LinearInterpolator()
+        animatorSphere.addUpdateListener {
+            val progress = it.animatedValue as Float
+            sphere.rotationY = progress * 360f
+        }
+
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(animatorGlobe, animatorSphere)
+        runOnUiThread {
+            rotationAnimatorSet = animatorSet
+            animatorSet.start()
+            if (!isRotating) {
+                animatorSet.pause()
+            }
         }
     }
 
@@ -279,9 +410,11 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         sphere.setCamera(camera)
     }
 
-    private fun drawFrame(dt: Long, bgColor: Float4, bufferId: Int = 0, drawBlock: (Long) -> Unit) {
+    private fun drawFrame(dt: Long, @ColorInt bgColor: Int, bufferId: Int = 0, drawBlock: (Long) -> Unit) {
+        val color = colorToFloatArray(bgColor)
+
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, bufferId)
-        GLES20.glClearColor(bgColor.x, bgColor.y, bgColor.z, bgColor.w)
+        GLES20.glClearColor(color[0], color[1], color[2], color[3])
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
@@ -360,16 +493,9 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         }
     }
 
-    fun destroy() {
-        val textureHandle = IntArray(2)
-        textureHandle[0] = bgTexture
-        textureHandle[1] = globeTexture
-        GLES20.glDeleteTextures(textureHandle.size, textureHandle, 0)
-
-        GLES20.glDeleteFramebuffers(frameBufferIds.size, frameBufferIds, 0)
-        GLES20.glDeleteTextures(frameTextureIds.size, frameTextureIds, 0)
-        GLES20.glDeleteRenderbuffers(rboIds.size, rboIds, 0)
-
-        programs.forEach { it.destroy() }
+    private fun runOnUiThread(block: () -> Unit) {
+        Handler(Looper.getMainLooper()).post {
+            block()
+        }
     }
 }

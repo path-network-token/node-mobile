@@ -3,9 +3,11 @@ package network.path.mobilenode.ui.opengl
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Matrix
 import android.opengl.GLES20
 import android.opengl.GLUtils
+import androidx.annotation.ColorInt
 import androidx.annotation.RawRes
 
 fun CharArray.addMultiple(index: Int, vararg v: Int): Int {
@@ -32,6 +34,12 @@ fun loadRawResource(context: Context, @RawRes resId: Int): String =
         context.resources.openRawResource(resId).bufferedReader().use {
             it.readText()
         }
+
+fun colorToFloatArray(@ColorInt color: Int) =
+        floatArrayOf(Color.red(color).toFloat() / 255f,
+                Color.green(color).toFloat() / 255f,
+                Color.blue(color).toFloat() / 255f,
+                Color.alpha(color).toFloat() / 255f)
 
 private fun Bitmap.flip(isVertical: Boolean): Bitmap {
     val matrix = Matrix().apply {
@@ -78,34 +86,3 @@ fun loadTexture(context: Context, resourceId: Int, flipVertical: Boolean = false
 
     return textureHandle[0]
 }
-
-//// Read in the resource
-//val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
-//val buffer = ByteArray(bitmap.width * bitmap.height * 4)
-//
-//for (y in 0 until bitmap.height)
-//for (x in 0 until bitmap.width) {
-//    val pixel = bitmap.getPixel(x, y)
-//    buffer[(y * bitmap.width + x) * 4 + 0] = (pixel shr 16 and 0xFF).toByte()
-//    buffer[(y * bitmap.width + x) * 4 + 1] = (pixel shr 8 and 0xFF).toByte()
-//    buffer[(y * bitmap.width + x) * 4 + 2] = (pixel shr 0 and 0xFF).toByte()
-//    buffer[(y * bitmap.width + x) * 4 + 3] = (pixel shr 24 and 0xFF).toByte()
-//}
-//
-//val byteBuffer = ByteBuffer.allocateDirect(bitmap.width * bitmap.height * 4)
-//byteBuffer.put(buffer).position(0)
-//
-//// Bind to the texture in OpenGL
-//GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0])
-//
-//// Set filtering
-//GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-//GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
-//GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-//GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
-//
-//// Load the bitmap into the bound texture.
-//GLES20.glTexImage2D(
-//GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap.width, bitmap.height, 0,
-//GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, byteBuffer
-//)
