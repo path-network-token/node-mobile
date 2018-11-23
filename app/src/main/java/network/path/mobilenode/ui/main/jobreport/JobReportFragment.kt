@@ -1,6 +1,6 @@
 package network.path.mobilenode.ui.main.jobreport
 
-import android.animation.ValueAnimator
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -32,7 +32,7 @@ class JobReportFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_job_report
 
     private val jobReportViewModel by viewModel<JobReportViewModel>()
-    private var progressAnimator: ValueAnimator? = null
+    private var progressAnimator: ObjectAnimator? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,12 +90,9 @@ class JobReportFragment : BaseFragment() {
             oldAnimator.animatedFraction
         } else 1f
 
-        val view = jobPercentageProgressBar
-        val animator = ValueAnimator.ofInt(view?.progress ?: 0, pct.toInt())
+        val view = jobPercentageProgressBar ?: return
+        val animator = ObjectAnimator.ofInt(view, "progress", view.progress, pct.toInt())
         animator.duration = (ANIMATION_DURATION * fraction).toLong()
-        animator.addUpdateListener {
-            view?.progress = it.animatedValue as Int
-        }
         animator.start()
         progressAnimator = animator
     }

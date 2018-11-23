@@ -1,6 +1,6 @@
 package network.path.mobilenode.ui.main.jobreport
 
-import android.animation.ValueAnimator
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
@@ -20,7 +20,7 @@ constructor(
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-    private var animator: ValueAnimator? = null
+    private var animator: ObjectAnimator? = null
 
     init {
         inflate(context, R.layout.latency_chart, this)
@@ -41,11 +41,8 @@ constructor(
     fun setLatencyMillis(latency: Long, firstLatency: Long?, maxMillis: Long) {
         latencyProgressBar.max = maxMillis.toInt()
 
-        val animator = ValueAnimator.ofInt(latencyProgressBar.progress, latency.toInt())
+        val animator = ObjectAnimator.ofInt(latencyProgressBar, "progress", latencyProgressBar.progress, latency.toInt())
         animator.duration = 250L
-        animator.addUpdateListener {
-            latencyProgressBar.progress = it.animatedValue as Int
-        }
         animator.start()
         this.animator?.cancel()
         this.animator = animator
