@@ -5,14 +5,12 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_splash.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
-import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -46,34 +44,28 @@ class SplashFragment : BaseFragment() {
     }
 
     private fun animateIn() {
-        footerLogo.translationX = -1000f
-        footerText.translationX = 1000f
-
         val logoAlphaAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f)
-        val logoScaleAnimator = ValueAnimator.ofFloat(0.5f, 1f)
-        logoScaleAnimator.interpolator = DecelerateInterpolator()
+        val logoScaleAnimator = ValueAnimator.ofFloat(0.8f, 1f)
+        logoScaleAnimator.interpolator = AccelerateDecelerateInterpolator()
         logoScaleAnimator.addUpdateListener {
             val progress = it.animatedValue as Float
             logo?.scaleX = progress
             logo?.scaleY = progress
         }
         val logoSet = AnimatorSet()
-        logoSet.duration = 500L
+        logoSet.duration = 750L
         logoSet.playTogether(logoAlphaAnimator, logoScaleAnimator)
 
-        val leftAnimator = ObjectAnimator.ofFloat(footerLogo, TranslationFractionProperty(false), -0.6f, 0f)
-        val rightAnimator = ObjectAnimator.ofFloat(footerText, TranslationFractionProperty(false), 0.6f, 0f)
-        val footerSet = AnimatorSet()
-        footerSet.duration = 500L
-        footerSet.startDelay = 250L
-        footerSet.playTogether(leftAnimator, rightAnimator)
-
-        val versionAnimator = ObjectAnimator.ofFloat(version, "alpha", 0f, 1f)
-        versionAnimator.interpolator = AccelerateInterpolator()
-        versionAnimator.duration = 750L
+        val footerLogoAlpha = ObjectAnimator.ofFloat(footerLogo, "alpha", 0f, 1f)
+        val footerTextAlpha = ObjectAnimator.ofFloat(footerText, "alpha", 0f, 1f)
+        val versionAlpha = ObjectAnimator.ofFloat(version, "alpha", 0f, 1f)
+        val alphaSet = AnimatorSet()
+        alphaSet.interpolator = AccelerateDecelerateInterpolator()
+        alphaSet.duration = 1000L
+        alphaSet.playTogether(footerLogoAlpha, footerTextAlpha, versionAlpha)
 
         val set = AnimatorSet()
-        set.playTogether(logoSet, footerSet, versionAnimator)
+        set.playTogether(logoSet, alphaSet)
         set.start()
     }
 }
