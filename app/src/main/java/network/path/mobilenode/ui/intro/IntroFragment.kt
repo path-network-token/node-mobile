@@ -38,22 +38,25 @@ class IntroFragment : BaseFragment() {
                     .navigate(R.id.action_introFragment_to_disclaimerFragment)
         }
 
-        setInitialValues()
         animateIn()
     }
 
     private fun animateIn() {
+        headerDivider.translationX = -1000f
+        screenTitleTextView.translationY = -1000f
+        activateButton.translationY = 1000f
+
         val animation = ValueAnimator.ofFloat(0f, 1f)
         animation.addUpdateListener {
             val value = it.animatedValue as Float
-            pathDescriptionTextView.alpha = value
-            disclaimerButton.alpha = value
+            pathDescriptionTextView?.alpha = value
+            disclaimerButton?.alpha = value
 
             val scale = 0.5f + 0.5f * value
-            pathDescriptionTextView.scaleX = scale
-            pathDescriptionTextView.scaleY = scale
-            disclaimerButton.scaleX = scale
-            disclaimerButton.scaleY = scale
+            pathDescriptionTextView?.scaleX = scale
+            pathDescriptionTextView?.scaleY = scale
+            disclaimerButton?.scaleX = scale
+            disclaimerButton?.scaleY = scale
         }
         animation.duration = 400L
 
@@ -72,13 +75,7 @@ class IntroFragment : BaseFragment() {
         val set = AnimatorSet()
         set.playTogether(dividerAnimation, ySet, animation)
         set.startDelay = 200L
-        set.doOnEnd { activateButton.updateDrawable() }
+        set.doOnEnd { activateButton?.updateDrawable() }
         set.start()
-    }
-
-    private fun setInitialValues() {
-        headerDivider.translationX = -1000f
-        screenTitleTextView.translationY = -1000f
-        activateButton.translationY = 1000f
     }
 }
