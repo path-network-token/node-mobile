@@ -43,7 +43,6 @@ class IntroFragment : BaseFragment() {
 
     private fun animateIn() {
         headerDivider.translationX = -1000f
-        screenTitleTextView.translationY = -1000f
         activateButton.translationY = 1000f
 
         val animation = ValueAnimator.ofFloat(0f, 1f)
@@ -64,16 +63,13 @@ class IntroFragment : BaseFragment() {
         dividerAnimation.interpolator = AccelerateDecelerateInterpolator()
         dividerAnimation.duration = 250L
 
-        val headerAnimation = ObjectAnimator.ofFloat(screenTitleTextView, TranslationFractionProperty(true), -0.3f, 0f)
         val buttonAnimation = ObjectAnimator.ofFloat(activateButton, TranslationFractionProperty(true), 0.3f, 0f)
-        val ySet = AnimatorSet()
-        ySet.interpolator = DecelerateInterpolator()
-        ySet.startDelay = 150L
-        ySet.duration = 250L
-        ySet.playTogether(headerAnimation, buttonAnimation)
+        buttonAnimation.interpolator = DecelerateInterpolator()
+        buttonAnimation.startDelay = 150L
+        buttonAnimation.duration = 250L
 
         val set = AnimatorSet()
-        set.playTogether(dividerAnimation, ySet, animation)
+        set.playTogether(dividerAnimation, buttonAnimation, animation)
         set.startDelay = 200L
         set.doOnEnd { activateButton?.updateDrawable() }
         set.start()
