@@ -2,7 +2,6 @@ package network.path.mobilenode.ui.splash
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -45,16 +44,13 @@ class SplashFragment : BaseFragment() {
 
     private fun animateIn() {
         val logoAlphaAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f)
-        val logoScaleAnimator = ValueAnimator.ofFloat(0.8f, 1f)
-        logoScaleAnimator.interpolator = AccelerateDecelerateInterpolator()
-        logoScaleAnimator.addUpdateListener {
-            val progress = it.animatedValue as Float
-            logo?.scaleX = progress
-            logo?.scaleY = progress
-        }
+        val logoScaleXAnimator = ObjectAnimator.ofFloat(logo, "scaleX", 0.8f, 1f)
+        val logoScaleYAnimator = ObjectAnimator.ofFloat(logo, "scaleY", 0.8f, 1f)
         val logoSet = AnimatorSet()
         logoSet.duration = 750L
-        logoSet.playTogether(logoAlphaAnimator, logoScaleAnimator)
+        logoSet.interpolator = AccelerateDecelerateInterpolator()
+        logoSet.playTogether(logoAlphaAnimator, logoScaleXAnimator, logoScaleYAnimator)
+
 
         val footerLogoAlpha = ObjectAnimator.ofFloat(footerLogo, "alpha", 0f, 1f)
         val footerTextAlpha = ObjectAnimator.ofFloat(footerText, "alpha", 0f, 1f)
