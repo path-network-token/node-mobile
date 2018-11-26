@@ -1,8 +1,10 @@
 package network.path.mobilenode.utils
 
+import android.animation.Animator
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.animation.doOnEnd
 
 class TranslationFractionProperty(private val vertical: Boolean) : Property<View, Float>(Float::class.java, "translateFraction") {
     override fun get(view: View): Float {
@@ -26,5 +28,13 @@ class TranslationFractionProperty(private val vertical: Boolean) : Property<View
     private fun getParentValue(view: View): Int {
         val parent = view.parent as? ViewGroup
         return (if (vertical) parent?.measuredHeight else parent?.measuredWidth) ?: 0
+    }
+}
+
+fun Animator.startAfter(animator: Animator?) {
+    if (animator != null) {
+        animator.doOnEnd { this.start() }
+    } else {
+        this.start()
     }
 }
