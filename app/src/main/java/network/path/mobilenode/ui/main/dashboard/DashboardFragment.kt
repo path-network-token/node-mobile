@@ -1,8 +1,12 @@
 package network.path.mobilenode.ui.main.dashboard
 
+import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -53,6 +57,7 @@ class DashboardFragment : BaseFragment() {
         restoreGlState(savedInstanceState)
 
         setupClicks()
+        animateIn()
     }
 
     override fun onPause() {
@@ -81,6 +86,7 @@ class DashboardFragment : BaseFragment() {
         restoreGlState(savedInstanceState)
     }
 
+    // STATE MANAGEMENT
     private fun saveGlState(outState: Bundle? = null) {
         openGlState = openGlSurfaceView.saveState()
         outState?.putBundle(STATE_OPENGL, openGlState)
@@ -91,6 +97,11 @@ class DashboardFragment : BaseFragment() {
         if (state != null) {
             openGlSurfaceView.restoreState(state)
         }
+    }
+
+    // Private
+    private fun animateIn() {
+
     }
 
     private fun setupClicks() {
@@ -139,12 +150,43 @@ class DashboardFragment : BaseFragment() {
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
     }
 
+    private var runningAnimator: ValueAnimator? = null
     private fun setRunning(isRunning: Boolean) {
-        toggleButton.isSelected = !isRunning
-        diagonalLine.visibility = if (isRunning) View.GONE else View.VISIBLE
-        labelPaused.visibility = if (isRunning) View.GONE else View.VISIBLE
-        pausedBackground.visibility = if (isRunning) View.GONE else View.VISIBLE
-        openGlSurfaceView.setRunning(isRunning)
+        if (isRunning == toggleButton.isSelected) {
+            toggleButton.isSelected = !isRunning
+
+            val oldAnimator = runningAnimator
+            val fraction = if (oldAnimator != null) {
+                oldAnimator.cancel()
+                oldAnimator.animatedFraction
+            } else 1f
+            runningAnimator = null
+
+            val animator = ValueAnimator.ofFloat(0f, 1f)
+            animator.addUpdateListener {
+                val progress = it.animatedValue as Float
+                diagonalLine?.alpha = progress
+                pausedBackground?.alpha = progress * 0.9f
+                labelPaused?.alpha = progress
+            }
+            animator.interpolator = AccelerateDecelerateInterpolator()
+            animator.duration = (250 * fraction).toLong()
+            if (isRunning) {
+                animator.doOnEnd { updatePauseVisibility(true) }
+                animator.reverse()
+            } else {
+                animator.doOnStart { updatePauseVisibility(false) }
+                animator.start()
+            }
+
+            openGlSurfaceView.setRunning(isRunning)
+        }
+    }
+
+    private fun updatePauseVisibility(hidden: Boolean) {
+        diagonalLine?.visibility = if (hidden) View.GONE else View.VISIBLE
+        labelPaused?.visibility = if (hidden) View.GONE else View.VISIBLE
+        pausedBackground?.visibility = if (hidden) View.GONE else View.VISIBLE
     }
 
     private fun String?.orNoData() = this ?: getString(R.string.no_data)
