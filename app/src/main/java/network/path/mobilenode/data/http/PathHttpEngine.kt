@@ -122,9 +122,8 @@ class PathHttpEngine(
 
     private fun registerNetworkHandler() = launch {
         networkMonitor.connected.consumeEach {
-            if (!timeoutJob.isCancelled) {
-                timeoutJob.cancel()
-            }
+            timeoutJob.cancel()
+            delay(500L)
             performCheckIn()
         }
     }
