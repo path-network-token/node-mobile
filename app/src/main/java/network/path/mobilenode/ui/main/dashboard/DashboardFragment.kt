@@ -1,10 +1,15 @@
 package network.path.mobilenode.ui.main.dashboard
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
@@ -21,6 +26,7 @@ import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
+import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,6 +45,11 @@ class DashboardFragment : BaseFragment() {
 
     private lateinit var openGlSurfaceView: OpenGLSurfaceView
     private var openGlState: Bundle? = null
+
+    private var runningAnimator: ValueAnimator? = null
+
+    private var previousStatus: ConnectionStatus? = null
+    private var statusAnimator: Animator? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,7 +112,39 @@ class DashboardFragment : BaseFragment() {
 
     // Private
     private fun animateIn() {
+        separator.translationX = -1000f
+        updateAlpha(0f)
+        jobReportButton.translationY = 1000f
 
+        val dividerAnimator = ObjectAnimator.ofFloat(separator, TranslationFractionProperty(false), -0.6f, 0f)
+        dividerAnimator.duration = 300L
+        dividerAnimator.interpolator = AccelerateDecelerateInterpolator()
+
+        val alphaAnimator = ValueAnimator.ofFloat(0f, 1f)
+        alphaAnimator.addUpdateListener {
+            val progress = it.animatedValue as Float
+            updateAlpha(progress)
+        }
+        alphaAnimator.duration = 250L
+        alphaAnimator.startDelay = 200L
+        alphaAnimator.interpolator = LinearInterpolator()
+
+        val buttonAnimator = ObjectAnimator.ofFloat(jobReportButton, TranslationFractionProperty(true), 0.3f, 0f)
+        buttonAnimator.duration = 250L
+        buttonAnimator.interpolator = DecelerateInterpolator()
+
+        val set = AnimatorSet()
+        set.play(dividerAnimator).with(alphaAnimator).before(buttonAnimator)
+        set.start()
+    }
+
+    private fun updateAlpha(alpha: Float) {
+        statusDot?.alpha = alpha
+        labelStatus?.alpha = alpha
+        subnetAddressLabel?.alpha = alpha
+        ipWithSubnetAddress?.alpha = alpha
+        nodeIdTextView?.alpha = alpha
+        dashboardDetails?.alpha = alpha
     }
 
     private fun setupClicks() {
@@ -130,13 +173,43 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun setStatus(status: ConnectionStatus) {
-        ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(status.dotColor))
-
-        subnetAddressLabel.setTextColor(status.textColor)
         labelStatus.text = status.label
-        separator.setBackgroundColor(status.separatorColor)
-
         openGlSurfaceView.setConnectionStatus(status)
+
+        val oldStatus = previousStatus
+        if (oldStatus != null && oldStatus != status) {
+            statusAnimator?.cancel()
+
+            val animator = ValueAnimator.ofArgb(oldStatus.dotColor, status.dotColor)
+            animator.addUpdateListener {
+                val progress = it.animatedValue as Int
+                ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(progress))
+            }
+
+            val textAnimator = ValueAnimator.ofArgb(oldStatus.textColor, status.textColor)
+            textAnimator.addUpdateListener {
+                val progress = it.animatedValue as Int
+                subnetAddressLabel?.setTextColor(progress)
+            }
+
+            val separatorAnimator = ValueAnimator.ofArgb(oldStatus.separatorColor, status.separatorColor)
+            separatorAnimator.addUpdateListener {
+                val progress = it.animatedValue as Int
+                separator?.setBackgroundColor(progress)
+            }
+
+            val set = AnimatorSet()
+            set.playTogether(animator, textAnimator, separatorAnimator)
+            set.duration = 400L
+            set.start()
+
+            statusAnimator = set
+        } else {
+            ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(status.dotColor))
+            subnetAddressLabel.setTextColor(status.textColor)
+            separator.setBackgroundColor(status.separatorColor)
+        }
+        previousStatus = status
     }
 
     private fun setOperatorDetails(details: AutonomousSystem?) {
@@ -150,7 +223,6 @@ class DashboardFragment : BaseFragment() {
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
     }
 
-    private var runningAnimator: ValueAnimator? = null
     private fun setRunning(isRunning: Boolean) {
         if (isRunning == toggleButton.isSelected) {
             toggleButton.isSelected = !isRunning

@@ -78,6 +78,12 @@ class PathHttpEngine(
     override fun start() {
         checkIn()
         pollJobs()
+
+//        fixedRateTimer("TEST", false, Date(), 5_000) {
+//            launch {
+//                status.send(if (status.valueOrNull == ConnectionStatus.CONNECTED) ConnectionStatus.DISCONNECTED else ConnectionStatus.CONNECTED)
+//            }
+//        }
     }
 
     override fun processResult(result: JobResult) {
