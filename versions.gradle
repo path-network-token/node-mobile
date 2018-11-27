@@ -2,8 +2,8 @@ ext.versions = [
         minSdk              : 21,
         compileSdk          : 28,
         targetSdk           : 28,
-        appVersion          : '1.2.1',
-        appVersionCode      : 10201,
+        appVersion          : '1.2.3',
+        appVersionCode      : 10203,
         androidCoreKtx      : '1.0.1',
         androidFragmentKtx  : '1.0.0',
         androidJunit5       : '1.2.0.0',
@@ -35,5 +35,5 @@ ext.versions = [
         retrofit            : '2.4.0',
         retrofitCoroutines  : '0.9.2',
         trueTime            : '3.4',
-        jsoup               : '1.10.3',
+        jsoup               : '1.11.3',
 ]

@@ -67,9 +67,8 @@
         app:layout_constraintGuide_percent="0.45"
         />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/value1"
-        style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/no_data"
@@ -78,9 +77,8 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/value2"
-        style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -91,9 +89,8 @@
         tools:text="FOOBARBAZ-AS-AP FOOBAZBAR FOOBARBAZ COMMUNICATION TECHNOLOGY CO., LTD"
         />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/value3"
-        style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/no_data"
@@ -103,9 +100,8 @@
         tools:text="unknown"
         />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/value4"
-        style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/android"

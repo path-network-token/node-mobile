@@ -33,18 +33,13 @@
 
     <TextView
         android:id="@+id/ipWithSubnetAddress"
-        style="@style/Text.Default"
+        style="@style/LabelIp"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginBottom="@dimen/padding_m"
-        android:gravity="center"
-        android:letterSpacing="0.06"
-        android:lines="1"
+        android:paddingStart="@dimen/screen_root_layout_padding"
+        android:paddingEnd="@dimen/screen_root_layout_padding"
         android:text="@string/n_a"
-        app:autoSizeMaxTextSize="44sp"
-        app:autoSizeMinTextSize="22sp"
-        app:autoSizeStepGranularity="2sp"
-        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -153,15 +148,12 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/labelStatus"
-        style="@style/Text.Default.Bold.Small"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/round_rect"
-        android:gravity="center"
-        android:letterSpacing="0.11"
         android:paddingStart="@dimen/padding_l"
         android:paddingEnd="@dimen/padding_l"
         android:text="@string/status_disconnected"

@@ -55,7 +55,7 @@
                     android:duration="3000"
                     android:propertyName="strokeWidth"
                     android:repeatCount="infinite"
-                    android:valueFrom="1.0"
+                    android:valueFrom="2.0"
                     android:valueTo="0.0"
                     android:valueType="floatType"
                     />

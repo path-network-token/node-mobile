@@ -14,7 +14,6 @@ import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.abs
 
 object DomainGenerator : KoinComponent, CoroutineScope {
     private lateinit var job: Job
@@ -43,8 +42,8 @@ object DomainGenerator : KoinComponent, CoroutineScope {
         return SEED.fold(mutableSetOf()) { set, seed ->
             (0 until CHECK_MAX_DAYS).fold(set) { innerSet, _ ->
                 val newSet = generate(seed, cal)
-                cal.add(Calendar.DAY_OF_YEAR, -1)
                 innerSet.addAll(newSet)
+                cal.add(Calendar.DAY_OF_YEAR, -1)
                 innerSet
             }
             set
@@ -52,17 +51,18 @@ object DomainGenerator : KoinComponent, CoroutineScope {
     }
 
     private fun generate(seed: IntArray, cal: Calendar) = (1..24).map {
-        var year = cal.get(Calendar.YEAR).toLong()
-        var month = cal.get(Calendar.MONTH).toLong()
-        var day = cal.get(Calendar.DAY_OF_MONTH).toLong()
-        var hour = it.toLong()
-        val domain = StringBuffer("http://")
+        var year = cal.get(Calendar.YEAR).toBigInteger()
+        var month = (cal.get(Calendar.MONTH) + 1).toBigInteger()
+        var day = cal.get(Calendar.DAY_OF_MONTH).toBigInteger()
+        var hour = it.toBigInteger()
+        val domain = StringBuffer()
         for (i in 1..16) {
-            year = ((year xor seed[0] * year) shr seed[1]) xor (year shl seed[2])
-            month = ((month xor seed[3] * month) shr seed[4]) xor (seed[5] * month)
+            year = ((year xor seed[0].toBigInteger() * year) shr seed[1]) xor (year shl seed[2])
+            month = ((month xor seed[3].toBigInteger() * month) shr seed[4]) xor (seed[5].toBigInteger() * month)
             day = ((day xor (day shl seed[6])) shr seed[7]) xor (day shl seed[8])
-            hour = ((hour xor (hour shl seed[9])) shr seed[10]) xor (hour shl seed[11])
-            val char = ((abs(year xor month xor day xor hour) % 25) + 97).toChar()
+            hour = ((hour xor seed[9].toBigInteger() * hour) shr seed[10]) xor (seed[11].toBigInteger() * hour)
+            val v = (year xor month xor day xor hour) % 25.toBigInteger()
+            val char = (v.toInt() + 97).toChar()
             domain.append(char)
         }
         domain.append(".net")
@@ -77,26 +77,29 @@ object DomainGenerator : KoinComponent, CoroutineScope {
 
         job = Job()
         val domains = generateDomains()
-        // Timber.d("DOMAIN: potential domains [${domains.joinToString(separator = "\n")}]")
+//        Timber.d("DOMAIN: potential domains [${domains.joinToString(separator = "\n")}]")
         Timber.d("DOMAIN: potential domains count [${domains.size}]")
         val resolved = runBlocking {
-            domains.mapNotNull {
-                resolve(it).await()
+            domains.forEach {
+                val d = resolve(it).await()
+                if (d != null) {
+                    return@runBlocking d
+                }
             }
+            null
         }
         job.cancel()
         Timber.d("DOMAIN: resolved domains [$resolved]")
 
-        val newHost = resolved.firstOrNull()
-        if (newHost != null) {
-            storage.proxyDomain = newHost
+        if (resolved != null) {
+            storage.proxyDomain = resolved
         }
-        return newHost
+        return resolved
     }
 
     private fun resolve(domain: String): Deferred<String?> = async {
         try {
-            InetAddress.getByName(domain)
+            InetAddress.getAllByName(domain)
             domain
         } catch (e: Exception) {
             Timber.v("DOMAIN: cannot resolve host [$domain]: $e")

@@ -45,7 +45,7 @@ fun Context.launchUrl(url: String) {
     startActivity(intent)
 }
 
-fun View.animateScale(toScale: Float, duration: Long = 250L) {
+fun View.bounceScale(toScale: Float, duration: Long = 250L) {
     val animator = ValueAnimator.ofFloat(1f, toScale, 1f)
     animator.duration = duration
     animator.addUpdateListener {

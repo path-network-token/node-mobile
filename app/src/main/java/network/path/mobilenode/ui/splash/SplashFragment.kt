@@ -1,7 +1,10 @@
 package network.path.mobilenode.ui.splash
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_splash.*
 import network.path.mobilenode.BuildConfig
@@ -23,6 +26,7 @@ class SplashFragment : BaseFragment() {
             it.onViewCreated()
             it.nextScreen.observe(this, ::showScreen)
         }
+        animateIn()
     }
 
     override fun onResume() {
@@ -36,5 +40,28 @@ class SplashFragment : BaseFragment() {
             SplashViewModel.NextScreen.MAIN -> R.id.action_splashFragment_to_mainFragment
         }
         NavHostFragment.findNavController(this).navigate(actionId)
+    }
+
+    private fun animateIn() {
+        val logoAlphaAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f)
+        val logoScaleXAnimator = ObjectAnimator.ofFloat(logo, "scaleX", 0.8f, 1f)
+        val logoScaleYAnimator = ObjectAnimator.ofFloat(logo, "scaleY", 0.8f, 1f)
+        val logoSet = AnimatorSet()
+        logoSet.duration = 750L
+        logoSet.interpolator = AccelerateDecelerateInterpolator()
+        logoSet.playTogether(logoAlphaAnimator, logoScaleXAnimator, logoScaleYAnimator)
+
+
+        val footerLogoAlpha = ObjectAnimator.ofFloat(footerLogo, "alpha", 0f, 1f)
+        val footerTextAlpha = ObjectAnimator.ofFloat(footerText, "alpha", 0f, 1f)
+        val versionAlpha = ObjectAnimator.ofFloat(version, "alpha", 0f, 1f)
+        val alphaSet = AnimatorSet()
+        alphaSet.interpolator = AccelerateDecelerateInterpolator()
+        alphaSet.duration = 1000L
+        alphaSet.playTogether(footerLogoAlpha, footerTextAlpha, versionAlpha)
+
+        val set = AnimatorSet()
+        set.playTogether(logoSet, alphaSet)
+        set.start()
     }
 }

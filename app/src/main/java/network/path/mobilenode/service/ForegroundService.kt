@@ -86,9 +86,10 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
         setUpWakeLock()
         setUpNotificationChannelId()
-        system.start()
         createStatusHandler()
         scheduleNativeRestart()
+        startForegroundNotification(false)
+        system.start()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
