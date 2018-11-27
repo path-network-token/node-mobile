@@ -45,10 +45,12 @@ class PathHttpEngine(
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
         private const val POLL_INTERVAL_MS = 9_000L
         private const val MAX_JOBS = 10
+        private const val MAX_RETRIES = 5
     }
 
     private val currentExecutionUuids = java.util.concurrent.ConcurrentHashMap<String, Boolean>()
 
+    private var retryCounter = 0
     private var useProxy = false
     private var httpService: PathService? = null
     private var timeoutJob = Job()
@@ -230,7 +232,11 @@ class PathHttpEngine(
 
     private suspend fun <T> executeServiceCall(call: suspend () -> Deferred<T>?): T? {
         return try {
-            call()?.await()
+            val result = call()?.await()
+            if (result != null) {
+                retryCounter = 0
+            }
+            result
         } catch (e: Exception) {
             var fallback = true
             if (e is HttpException) {
@@ -242,8 +248,11 @@ class PathHttpEngine(
                 }
             }
             if (fallback) {
-                Timber.w("HTTP: switching proxy mode to [${!useProxy}]")
-                httpService = getHttpService(!useProxy)
+                if (++retryCounter >= MAX_RETRIES) {
+                    Timber.w("HTTP: switching proxy mode to [${!useProxy}]")
+                    retryCounter = 0
+                    httpService = getHttpService(!useProxy)
+                }
             }
             Timber.w("HTTP: Service call exception: $e")
             null
