@@ -43,6 +43,7 @@ class PathHttpEngine(
 ) : PathEngine, CoroutineScope {
     companion object {
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
+        private const val HEARTBEAT_INTERVAL_ERROR_MS = 5_000L
         private const val POLL_INTERVAL_MS = 9_000L
         private const val MAX_JOBS = 10
         private const val MAX_RETRIES = 5
@@ -217,7 +218,7 @@ class PathHttpEngine(
             timeoutJob.cancel()
         }
         timeoutJob = launch {
-            delay(HEARTBEAT_INTERVAL_MS)
+            delay(if (retryCounter > 0) HEARTBEAT_INTERVAL_ERROR_MS else HEARTBEAT_INTERVAL_MS)
             Timber.d("HTTP: Checking in...")
             performCheckIn()
         }
