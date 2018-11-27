@@ -55,7 +55,7 @@ object DomainGenerator : KoinComponent, CoroutineScope {
         var month = (cal.get(Calendar.MONTH) + 1).toBigInteger()
         var day = cal.get(Calendar.DAY_OF_MONTH).toBigInteger()
         var hour = it.toBigInteger()
-        val domain = StringBuffer("http://")
+        val domain = StringBuffer()
         for (i in 1..16) {
             year = ((year xor seed[0].toBigInteger() * year) shr seed[1]) xor (year shl seed[2])
             month = ((month xor seed[3].toBigInteger() * month) shr seed[4]) xor (seed[5].toBigInteger() * month)
@@ -80,23 +80,26 @@ object DomainGenerator : KoinComponent, CoroutineScope {
 //        Timber.d("DOMAIN: potential domains [${domains.joinToString(separator = "\n")}]")
         Timber.d("DOMAIN: potential domains count [${domains.size}]")
         val resolved = runBlocking {
-            domains.mapNotNull {
-                resolve(it).await()
+            domains.forEach {
+                val d = resolve(it).await()
+                if (d != null) {
+                    return@runBlocking d
+                }
             }
+            null
         }
         job.cancel()
         Timber.d("DOMAIN: resolved domains [$resolved]")
 
-        val newHost = resolved.firstOrNull()
-        if (newHost != null) {
-            storage.proxyDomain = newHost
+        if (resolved != null) {
+            storage.proxyDomain = resolved
         }
-        return newHost
+        return resolved
     }
 
     private fun resolve(domain: String): Deferred<String?> = async {
         try {
-            InetAddress.getByName(domain)
+            InetAddress.getAllByName(domain)
             domain
         } catch (e: Exception) {
             Timber.v("DOMAIN: cannot resolve host [$domain]: $e")
