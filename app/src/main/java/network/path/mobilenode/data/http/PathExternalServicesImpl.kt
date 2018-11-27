@@ -50,11 +50,11 @@ class PathExternalServicesImpl(
     private fun retrieveIp() = launch {
         val externalIpAddress = getExternalIpOrNull()
         ip.send(externalIpAddress)
-        details.send(null)
     }
 
     private fun registerDetailsHandler() = launch {
         ip.openSubscription().consumeEach { ipAddress ->
+            details.send(null)
             val asDetails = ipAddress?.let { getAutonomousSystemOrNull(it) }
             details.send(asDetails)
         }

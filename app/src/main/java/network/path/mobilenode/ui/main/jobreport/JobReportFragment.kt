@@ -91,7 +91,7 @@ class JobReportFragment : BaseFragment() {
 
         val value = stats.find { it.type == checkType } ?: stats.last()
         val total = stats.sumBy { it.count.toInt() }
-        val pct = value.count * 100f / total
+        val pct = if (total == 0) 0f else (value.count * 100f / total)
         jobPercentageTextView.text = getString(R.string.job_percentage, pct)
 
         setPercent(pct)
