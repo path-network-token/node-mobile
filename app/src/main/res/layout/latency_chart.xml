@@ -11,7 +11,7 @@
         android:id="@+id/latencyProgressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="3dp"
+        android:layout_height="4dp"
         android:layout_marginEnd="@dimen/padding_m"
         android:indeterminate="false"
         app:layout_constraintBottom_toBottomOf="@+id/latencyValueTextView"

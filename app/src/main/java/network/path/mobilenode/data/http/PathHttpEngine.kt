@@ -78,6 +78,12 @@ class PathHttpEngine(
     override fun start() {
         checkIn()
         pollJobs()
+
+//        kotlin.concurrent.fixedRateTimer("TEST", false, java.util.Date(), 5_000) {
+//            launch {
+//                status.send(if (status.valueOrNull == ConnectionStatus.CONNECTED) ConnectionStatus.DISCONNECTED else ConnectionStatus.CONNECTED)
+//            }
+//        }
     }
 
     override fun processResult(result: JobResult) {
@@ -116,9 +122,8 @@ class PathHttpEngine(
 
     private fun registerNetworkHandler() = launch {
         networkMonitor.connected.consumeEach {
-            if (!timeoutJob.isCancelled) {
-                timeoutJob.cancel()
-            }
+            timeoutJob.cancel()
+            delay(500L)
             performCheckIn()
         }
     }

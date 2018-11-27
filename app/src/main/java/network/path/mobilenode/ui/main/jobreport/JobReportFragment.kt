@@ -1,12 +1,15 @@
 package network.path.mobilenode.ui.main.jobreport
 
-import android.animation.ValueAnimator
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.annotation.IdRes
+import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.average_latency_layout.*
 import kotlinx.android.synthetic.main.fragment_job_report.*
 import kotlinx.android.synthetic.main.job_types_layout.*
@@ -16,9 +19,11 @@ import network.path.mobilenode.R
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.ui.base.BaseFragment
-import network.path.mobilenode.utils.animateScale
+import network.path.mobilenode.utils.TranslationFractionProperty
+import network.path.mobilenode.utils.bounceScale
 import network.path.mobilenode.utils.formatDifference
 import network.path.mobilenode.utils.observe
+import network.path.mobilenode.utils.startAfter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ObsoleteCoroutinesApi
@@ -32,31 +37,40 @@ class JobReportFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_job_report
 
     private val jobReportViewModel by viewModel<JobReportViewModel>()
-    private var progressAnimator: ValueAnimator? = null
+    private var progressAnimator: ObjectAnimator? = null
+    private var enterAnimator: ObjectAnimator? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupCloseScreenButton()
-        setupJobTypesClickListeners()
+        closeScreenImageView.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
+        jobTypesButtonsPanel.setOnCheckedChangeListener { _, checkedId ->
+            selectStatistics(checkedId)
+        }
 
         jobReportViewModel.let {
             it.onViewCreated()
             it.statistics.observe(this, ::setStatistics)
             it.selectedType.observe(this, ::setSelected)
         }
+
+        animateIn()
     }
 
-    private fun setupCloseScreenButton() {
-        closeScreenImageView.setOnClickListener {
-            requireActivity().onBackPressed()
-        }
-    }
+    private fun animateIn() {
+        jobPercentageProgressBar.translationX = 1000f
 
-    private fun setupJobTypesClickListeners() {
-        jobTypesButtonsPanel.setOnCheckedChangeListener { _, checkedId ->
-            selectStatistics(checkedId)
-        }
+        val pctAnimator = ObjectAnimator.ofFloat(jobPercentageProgressBar, TranslationFractionProperty(false), 0.5f, 0f)
+        pctAnimator.duration = 250L
+        pctAnimator.interpolator = AccelerateDecelerateInterpolator()
+
+        pctAnimator.startDelay = 250L
+        pctAnimator.start()
+        pctAnimator.doOnEnd { enterAnimator = null }
+        enterAnimator = pctAnimator
     }
 
     private fun selectStatistics(@IdRes id: Int) {
@@ -90,13 +104,10 @@ class JobReportFragment : BaseFragment() {
             oldAnimator.animatedFraction
         } else 1f
 
-        val view = jobPercentageProgressBar
-        val animator = ValueAnimator.ofInt(view?.progress ?: 0, pct.toInt())
+        val view = jobPercentageProgressBar ?: return
+        val animator = ObjectAnimator.ofInt(view, "progress", view.progress, pct.toInt())
         animator.duration = (ANIMATION_DURATION * fraction).toLong()
-        animator.addUpdateListener {
-            view?.progress = it.animatedValue as Int
-        }
-        animator.start()
+        animator.startAfter(enterAnimator)
         progressAnimator = animator
     }
 
@@ -104,13 +115,13 @@ class JobReportFragment : BaseFragment() {
         val maxMillis = statistics.map { it.averageLatency }.max() ?: 10_000L
 
         val first = statistics[0]
-        set(checksButton1, latencyChart1, first, maxMillis)
+        set(checksButton1, latencyChart1, first, maxMillis, enterAnimator)
 
         val second = statistics[1]
-        set(checksButton2, latencyChart2, second, maxMillis)
+        set(checksButton2, latencyChart2, second, maxMillis, latencyChart1.animator)
 
         val other = statistics[CHECKS_COUNT - 1]
-        set(checksButtonOther, latencyChartOther, other, maxMillis)
+        set(checksButtonOther, latencyChartOther, other, maxMillis, latencyChart2.animator)
 
         // Total jobs count
         val firstValue = jobReportViewModel.firstStats?.map { it.count }?.sum()
@@ -119,11 +130,11 @@ class JobReportFragment : BaseFragment() {
         totalJobsLabel.setText(TextUtils.concat(getString(R.string.total_jobs_performed).toUpperCase(), " ", formattedValue), TextView.BufferType.SPANNABLE)
 
         if (firstValue != null && firstValue != totalValue) {
-            totalJobsLabel.animateScale(1.1f)
+            totalJobsLabel.bounceScale(1.1f)
         }
     }
 
-    private fun set(button: RadioButton, chart: LatencyChart, stat: CheckTypeStatistics, maxMillis: Long) {
+    private fun set(button: RadioButton, chart: LatencyChart, stat: CheckTypeStatistics, maxMillis: Long, after: Animator? = null) {
         val title = stat.type.title
         button.text = title
 
@@ -134,10 +145,9 @@ class JobReportFragment : BaseFragment() {
                 firstValue?.count
         )
         chart.setLabel(TextUtils.concat("$title (", formattedValue, ")"))
-        chart.setLatencyMillis(stat.averageLatency, firstValue?.averageLatency, maxMillis)
-
+        chart.setLatencyMillis(stat.averageLatency, firstValue?.averageLatency, maxMillis, after)
         if (firstValue != null && stat.count != firstValue.count) {
-            chart.animateScale(1.1f)
+            chart.bounceScale(1.1f)
         }
     }
 

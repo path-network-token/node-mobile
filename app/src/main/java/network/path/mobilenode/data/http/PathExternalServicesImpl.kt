@@ -50,6 +50,7 @@ class PathExternalServicesImpl(
     private fun retrieveIp() = launch {
         val externalIpAddress = getExternalIpOrNull()
         ip.send(externalIpAddress)
+        details.send(null)
     }
 
     private fun registerDetailsHandler() = launch {

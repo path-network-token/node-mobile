@@ -57,6 +57,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         private const val FRAMEBUFFER_COUNT = 2
         private const val START_CAMERA_Z = -5f
         private const val FINAL_CAMERA_Z = -2.5f
+        private const val MAX_GLOBE_ALPHA = 0.85f
+        private const val MAX_SPHERE_ALPHA = 0.5f
 
         private const val COLOR_ANIMATION_DURATION = 3_000L
         private const val FIRST_ANIMATION_DURATION = 3_000L
@@ -205,8 +207,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         // Camera position (and zoom animation)
         if (zoomComplete) {
             camera.translate(0.0f, 0.2f, FINAL_CAMERA_Z)
-            globe.alpha = 1f
-            sphere.alpha = 1f
+            globe.alpha = MAX_GLOBE_ALPHA
+            sphere.alpha = MAX_SPHERE_ALPHA
         } else {
             camera.translate(0.0f, 0.2f, START_CAMERA_Z)
             globe.alpha = 0f
@@ -343,8 +345,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer, Koi
         alphaAnimator.interpolator = AccelerateDecelerateInterpolator()
         alphaAnimator.addUpdateListener {
             val progress = it.animatedValue as Float
-            globe.alpha = progress
-            sphere.alpha = progress
+            globe.alpha = progress * MAX_GLOBE_ALPHA
+            sphere.alpha = progress * MAX_SPHERE_ALPHA
         }
 
         val cameraAnimator = ValueAnimator.ofFloat(START_CAMERA_Z, FINAL_CAMERA_Z)

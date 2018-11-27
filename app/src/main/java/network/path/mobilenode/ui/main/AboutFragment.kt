@@ -1,17 +1,21 @@
 package network.path.mobilenode.ui.main
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.opengl.EGL14
 import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.setupFadeTextSwitchers
 
 class AboutFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_about
@@ -28,7 +32,13 @@ class AboutFragment : BaseFragment() {
                     .navigate(R.id.action_aboutFragment_to_disclaimerFragment)
         }
 
+        setupTexts()
         populateData()
+        animateIn()
+    }
+
+    private fun setupTexts() {
+        requireContext().setupFadeTextSwitchers(R.font.exo_regular, R.style.DashboardDetails, null, value1, value2, value3, value4)
     }
 
     private fun populateData() {
@@ -37,8 +47,8 @@ class AboutFragment : BaseFragment() {
         label3.text = getString(R.string.label_gl_version)
         label4.text = getString(R.string.label_glsl_version)
 
-        value1.text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
-        value2.text = "${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT} ${Build.VERSION.CODENAME})"
+        value1.setText("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+        value2.setText("${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT} ${Build.VERSION.CODENAME})")
 
         retrieveGlInfo()
     }
@@ -87,13 +97,35 @@ class AboutFragment : BaseFragment() {
 
         EGL14.eglMakeCurrent(eglDisp, eglSurface, eglSurface, eglCtx)
 
-        value3.text = GLES20.glGetString(GLES20.GL_VERSION)
-        value4.text = GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION)
+        value3.setText(GLES20.glGetString(GLES20.GL_VERSION))
+        value4.setText(GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION))
 
         EGL14.eglMakeCurrent(eglDisp, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
 
         EGL14.eglDestroyContext(eglDisp, eglCtx)
         EGL14.eglDestroySurface(eglDisp, eglSurface)
         EGL14.eglTerminate(eglDisp)
+    }
+
+    private fun animateIn() {
+        val logoAlphaAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f)
+        val logoScaleXAnimator = ObjectAnimator.ofFloat(logo, "scaleX", 0.8f, 1f)
+        val logoScaleYAnimator = ObjectAnimator.ofFloat(logo, "scaleY", 0.8f, 1f)
+        val logoSet = AnimatorSet()
+        logoSet.duration = 750L
+        logoSet.interpolator = AccelerateDecelerateInterpolator()
+        logoSet.playTogether(logoAlphaAnimator, logoScaleXAnimator, logoScaleYAnimator)
+
+        val footerLogoAlpha = ObjectAnimator.ofFloat(footerLogo, "alpha", 0f, 1f)
+        val footerTextAlpha = ObjectAnimator.ofFloat(footerText, "alpha", 0f, 1f)
+        val versionAlpha = ObjectAnimator.ofFloat(details, "alpha", 0f, 1f)
+        val alphaSet = AnimatorSet()
+        alphaSet.interpolator = AccelerateDecelerateInterpolator()
+        alphaSet.duration = 1000L
+        alphaSet.playTogether(footerLogoAlpha, footerTextAlpha, versionAlpha)
+
+        val set = AnimatorSet()
+        set.playTogether(logoSet, alphaSet)
+        set.start()
     }
 }

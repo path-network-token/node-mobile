@@ -37,7 +37,7 @@ class PillButton : Button {
         updateDrawable()
     }
 
-    private fun updateDrawable() {
+    fun updateDrawable() {
         if (!isEnabled || isPressed) {
             handler?.removeCallbacks(runnable)
             animatedDrawable?.stop()
