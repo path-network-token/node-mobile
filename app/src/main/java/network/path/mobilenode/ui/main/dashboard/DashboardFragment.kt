@@ -7,9 +7,11 @@ import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
@@ -28,6 +30,7 @@ import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.observe
+import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ObsoleteCoroutinesApi
@@ -54,6 +57,9 @@ class DashboardFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupClicks()
+        setupTexts()
+
         dashboardViewModel.let {
             it.onViewCreated()
             it.nodeId.observe(this, ::setNodeId)
@@ -67,7 +73,6 @@ class DashboardFragment : BaseFragment() {
         openGlSurfaceView = surfaceView
         restoreGlState(savedInstanceState)
 
-        setupClicks()
         animateIn()
     }
 
@@ -163,6 +168,14 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
+    private fun setupTexts() {
+        val context = requireContext()
+        context.setupFadeTextSwitchers(R.font.exo_regular, R.style.DashboardDetails, null, value1, value2, value3, value4)
+        context.setupFadeTextSwitchers(R.font.exo_bold, R.style.LabelStatus, {
+            it.layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        }, labelStatus)
+    }
+
     private fun setNodeId(nodeId: String?) {
         nodeIdTextView.text = getString(R.string.node_id, nodeId
                 ?: getString(R.string.unconfirmed_node_id))
@@ -173,7 +186,7 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun setStatus(status: ConnectionStatus) {
-        labelStatus.text = status.label
+        labelStatus.setText(status.label)
         openGlSurfaceView.setConnectionStatus(status)
 
         val oldStatus = previousStatus
@@ -213,13 +226,14 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun setOperatorDetails(details: AutonomousSystem?) {
-        value1.text = details?.asNumber.orNoData()
-        value2.text = details?.asDescription.orNoData()
-        value3.text = details?.asCountryCode.orNoData()
+        value1.setText(details?.asNumber.orNoData())
+        value2.setText(details?.asDescription.orNoData())
+        value3.setText(details?.asCountryCode.orNoData())
+        value4.setText(getString(R.string.android))
     }
 
     private fun setJobList(jobList: JobList) {
-        value1.text = jobList.asn?.orNoData()
+        value1.setText(jobList.asn?.orNoData())
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
     }
 

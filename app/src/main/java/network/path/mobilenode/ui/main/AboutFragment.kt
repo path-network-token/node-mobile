@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_about.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.setupFadeTextSwitchers
 
 class AboutFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_about
@@ -31,8 +32,13 @@ class AboutFragment : BaseFragment() {
                     .navigate(R.id.action_aboutFragment_to_disclaimerFragment)
         }
 
+        setupTexts()
         populateData()
         animateIn()
+    }
+
+    private fun setupTexts() {
+        requireContext().setupFadeTextSwitchers(R.font.exo_regular, R.style.DashboardDetails, null, value1, value2, value3, value4)
     }
 
     private fun populateData() {
@@ -41,8 +47,8 @@ class AboutFragment : BaseFragment() {
         label3.text = getString(R.string.label_gl_version)
         label4.text = getString(R.string.label_glsl_version)
 
-        value1.text = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
-        value2.text = "${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT} ${Build.VERSION.CODENAME})"
+        value1.setText("${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+        value2.setText("${Build.VERSION.RELEASE} (${Build.VERSION.SDK_INT} ${Build.VERSION.CODENAME})")
 
         retrieveGlInfo()
     }
@@ -91,8 +97,8 @@ class AboutFragment : BaseFragment() {
 
         EGL14.eglMakeCurrent(eglDisp, eglSurface, eglSurface, eglCtx)
 
-        value3.text = GLES20.glGetString(GLES20.GL_VERSION)
-        value4.text = GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION)
+        value3.setText(GLES20.glGetString(GLES20.GL_VERSION))
+        value4.setText(GLES20.glGetString(GLES20.GL_SHADING_LANGUAGE_VERSION))
 
         EGL14.eglMakeCurrent(eglDisp, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
 
