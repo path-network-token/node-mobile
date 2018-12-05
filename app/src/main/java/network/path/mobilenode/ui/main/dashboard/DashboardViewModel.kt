@@ -11,7 +11,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import java.util.*
@@ -32,12 +31,6 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _status = MutableLiveData<ConnectionStatus>()
     val status: LiveData<ConnectionStatus> = _status
 
-    private val _operatorDetails = MutableLiveData<AutonomousSystem?>()
-    val operatorDetails: LiveData<AutonomousSystem?> = _operatorDetails
-
-    private val _ipAddress = MutableLiveData<String?>()
-    val ipAddress: LiveData<String?> = _ipAddress
-
     private val _jobList = MutableLiveData<JobList>()
     val jobList: LiveData<JobList> = _jobList
 
@@ -48,8 +41,6 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
         job = Job()
         registerNodeIdHandler()
         registerStatusHandler()
-        registerIpHandler()
-        registerDetailsHandler()
         registerJobListHandler()
         registerRunningHandler()
     }
@@ -67,18 +58,6 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private fun registerStatusHandler() = launch {
         system.status.openSubscription().consumeEach {
             _status.postValue(it)
-        }
-    }
-
-    private fun registerIpHandler() = launch {
-        system.ip.openSubscription().consumeEach {
-            _ipAddress.postValue(it)
-        }
-    }
-
-    private fun registerDetailsHandler() = launch {
-        system.details.openSubscription().consumeEach {
-            _operatorDetails.postValue(it)
         }
     }
 

@@ -31,7 +31,7 @@
     <!-- Dashboard -->
     <string name="operator_asn">operator asn:</string>
     <string name="autonomous_service">as:</string>
-    <string name="country">country:</string>
+    <string name="location">location:</string>
     <string name="device_type">device type:</string>
     <string name="view_job_report">view job report</string>
     <string name="subnet_address">subnet address</string>
