@@ -21,6 +21,7 @@ import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.ForegroundService
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
@@ -272,6 +273,7 @@ class PathHttpEngine(
             this.useProxy = true
             okHttpClient.newBuilder()
                     .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .addInterceptor(createProxyInterceptor())
                     .build()
         } else {
             if (useProxy) {
@@ -290,5 +292,11 @@ class PathHttpEngine(
         false
     } catch (e: IOException) {
         true
+    }
+
+    private fun createProxyInterceptor() = Interceptor { chain ->
+        val url = chain.request().url().newBuilder().scheme("http").build()
+        val request = chain.request().newBuilder().url(url).build()
+        chain.proceed(request)
     }
 }

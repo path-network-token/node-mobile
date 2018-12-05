@@ -21,7 +21,6 @@ class PathSystem(
         private val job: Job,
         private val engine: PathEngine,
         private val storage: PathStorage,
-        private val externalServices: PathExternalServices,
         private val jobExecutor: PathJobExecutor,
         private val networkMonitor: NetworkMonitor
 ) : CoroutineScope {
@@ -29,8 +28,6 @@ class PathSystem(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
-    val ip get() = externalServices.ip
-    val details get() = externalServices.details
     val status get() = engine.status
     val nodeId get() = engine.nodeId
     val jobList get() = engine.jobList
@@ -45,7 +42,6 @@ class PathSystem(
     fun start() {
         networkMonitor.start()
         engine.start()
-        externalServices.start()
 
         // Initial statistics value
         launch {
@@ -59,7 +55,6 @@ class PathSystem(
 
     fun stop() {
         engine.stop()
-        externalServices.stop()
         networkMonitor.stop()
     }
 

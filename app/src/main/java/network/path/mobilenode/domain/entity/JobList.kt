@@ -6,7 +6,9 @@ data class JobList(
         val type: String,
         val nodeId: String?,
         @SerializedName("ASN")
-        val asn: String?,
+        val asn: Int?,
+        @SerializedName("AS_organization")
+        val asOrganization: String?,
         val networkPrefix: String?,
         val location: String?,
         val jobs: List<JobExecutionId>

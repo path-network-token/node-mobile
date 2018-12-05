@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.job_report_button.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.entity.AutonomousSystem
 import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
 import network.path.mobilenode.ui.base.BaseFragment
@@ -64,8 +63,6 @@ class DashboardFragment : BaseFragment() {
             it.onViewCreated()
             it.nodeId.observe(this, ::setNodeId)
             it.status.observe(this, ::setStatus)
-            it.operatorDetails.observe(this, ::setOperatorDetails)
-            it.ipAddress.observe(this, ::setIpAddress)
             it.jobList.observe(this, ::setJobList)
             it.isRunning.observe(this, ::setRunning)
         }
@@ -174,15 +171,13 @@ class DashboardFragment : BaseFragment() {
         context.setupFadeTextSwitchers(R.font.exo_bold, R.style.LabelStatus, {
             it.layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }, labelStatus)
+
+        value4.setText(getText(R.string.android))
     }
 
     private fun setNodeId(nodeId: String?) {
         nodeIdTextView.text = getString(R.string.node_id, nodeId
                 ?: getString(R.string.unconfirmed_node_id))
-    }
-
-    private fun setIpAddress(ipAddress: String?) {
-        ipWithSubnetAddress.text = ipAddress ?: getString(R.string.n_a)
     }
 
     private fun setStatus(status: ConnectionStatus) {
@@ -225,16 +220,11 @@ class DashboardFragment : BaseFragment() {
         previousStatus = status
     }
 
-    private fun setOperatorDetails(details: AutonomousSystem?) {
-        value1.setText(details?.asNumber.orNoData())
-        value2.setText(details?.asDescription.orNoData())
-        value3.setText(details?.asCountryCode.orNoData())
-        value4.setText(getString(R.string.android))
-    }
-
     private fun setJobList(jobList: JobList) {
-        value1.setText(jobList.asn?.orNoData())
         ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
+        value1.setText(jobList.asn?.toString().orNoData())
+        value2.setText(jobList.asOrganization.orNoData())
+        value3.setText(jobList.location.orNoData())
     }
 
     private fun setRunning(isRunning: Boolean) {

@@ -8,13 +8,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
-import network.path.mobilenode.data.http.PathExternalServicesImpl
 import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
 import network.path.mobilenode.domain.PathEngine
-import network.path.mobilenode.domain.PathExternalServices
 import network.path.mobilenode.domain.PathJobExecutor
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.PathSystem
@@ -47,11 +45,10 @@ val appModule = module {
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
     single { SphereDataProvider(2, 1.1f) }
 
-    single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
     single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
 
     scope("service") { Job() }
-    single { PathSystem(get(), get(), get(), get(), get(), get()) }
+    single { PathSystem(get(), get(), get(), get(), get()) }
 
     factory { Runners(get()) }
 
