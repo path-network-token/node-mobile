@@ -190,8 +190,10 @@ class DashboardFragment : BaseFragment() {
 
             val animator = ValueAnimator.ofArgb(oldStatus.dotColor, status.dotColor)
             animator.addUpdateListener {
-                val progress = it.animatedValue as Int
-                ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(progress))
+                if (statusDot != null) {
+                    val progress = it.animatedValue as Int
+                    ImageViewCompat.setImageTintList(statusDot, ColorStateList.valueOf(progress))
+                }
             }
 
             val textAnimator = ValueAnimator.ofArgb(oldStatus.textColor, status.textColor)
