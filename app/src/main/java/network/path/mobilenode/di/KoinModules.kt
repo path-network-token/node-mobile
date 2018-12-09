@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
+import network.path.mobilenode.data.http.CustomDns
 import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.data.runner.Runners
@@ -73,4 +74,5 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
             level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 //            level = HttpLoggingInterceptor.Level.BODY
         })
+        .dns(CustomDns())
         .build()

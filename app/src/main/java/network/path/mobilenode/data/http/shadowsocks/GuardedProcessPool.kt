@@ -66,7 +66,7 @@ class GuardedProcessPool {
             try {
                 var callback: (() -> Unit)? = null
                 while (guardThreads.get() === host) {
-                    Timber.d("start process: ${Commandline.toString(cmd)}")
+                    Timber.d("PROCESS: ${Commandline.toString(cmd)}")
                     val startTime = SystemClock.elapsedRealtime()
 
                     process = ProcessBuilder(cmd)
@@ -82,12 +82,12 @@ class GuardedProcessPool {
                     process.waitFor()
 
                     if (SystemClock.elapsedRealtime() - startTime < 1000) {
-                        Timber.w("process exit too fast, stop guard: $cmdName")
+                        Timber.w("PROCESS: exit too fast, stop guard: $cmdName")
                         break
                     }
                 }
             } catch (_: InterruptedException) {
-                Timber.d("thread interrupt, destroy process: $cmdName")
+                Timber.d("PROCESS: interrupted, destroy process: $cmdName")
             } catch (e: IOException) {
                 pushException(e)
             } finally {

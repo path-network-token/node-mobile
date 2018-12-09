@@ -21,7 +21,6 @@ import network.path.mobilenode.domain.entity.JobResult
 import network.path.mobilenode.service.ForegroundService
 import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.HttpException
 import timber.log.Timber
@@ -271,10 +270,7 @@ class PathHttpEngine(
         val client = if (useProxy && isPortInUse(port)) {
             Timber.d("HTTP: proxy port [$port] is in use, connecting")
             this.useProxy = true
-            okHttpClient.newBuilder()
-                    .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
-                    .addInterceptor(createProxyInterceptor())
-                    .build()
+            okHttpClient.newBuilder().addProxy(host, port).build()
         } else {
             if (useProxy) {
                 Timber.d("HTTP: proxy port [$port] is not in use, proxy is not running")
@@ -294,9 +290,11 @@ class PathHttpEngine(
         true
     }
 
-    private fun createProxyInterceptor() = Interceptor { chain ->
-        val url = chain.request().url().newBuilder().scheme("http").build()
-        val request = chain.request().newBuilder().url(url).build()
-        chain.proceed(request)
-    }
+    private fun OkHttpClient.Builder.addProxy(host: String, port: Int): OkHttpClient.Builder =
+            proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .addInterceptor { chain ->
+                        val request = chain.request()
+                        val url = request.url().newBuilder().scheme("http").build()
+                        chain.proceed(request.newBuilder().url(url).build())
+                    }
 }
