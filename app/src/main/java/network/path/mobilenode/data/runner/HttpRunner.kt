@@ -1,5 +1,6 @@
 package network.path.mobilenode.data.runner
 
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
 import network.path.mobilenode.domain.entity.CheckType
@@ -57,8 +58,17 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
                 .method(method, null)
                 .url(completeUrl)
 
+        var hasUserAgent = false
         jobRequest.headers?.flatMap { it.entries }?.forEach { entry ->
             requestBuilder.addHeader(entry.key, entry.value)
+            if (entry.key == "User-Agent") {
+                hasUserAgent = true
+            }
+        }
+
+        if (!hasUserAgent) {
+            val ua = "Mozilla/5.0 (Path Network ${Constants.PATH_API_VERSION}; Android; ${System.getProperty("os.arch")}) ${BuildConfig.VERSION_NAME}/${BuildConfig.VERSION_CODE} (KHTML, like Gecko)"
+            requestBuilder.addHeader("User-Agent", ua)
         }
 
         return requestBuilder.build()
