@@ -32,6 +32,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @ObsoleteCoroutinesApi
@@ -74,5 +75,16 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
             level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 //            level = HttpLoggingInterceptor.Level.BODY
         })
+        .addInterceptor { chain ->
+            try {
+                chain.proceed(chain.request())
+            } catch (e: Throwable) {
+                if (e is IOException) {
+                    throw e
+                } else {
+                    throw IOException(e)
+                }
+            }
+        }
         .dns(CustomDns())
         .build()
