@@ -71,10 +71,15 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .readTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
         .writeTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
         .connectTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-//            level = HttpLoggingInterceptor.Level.BODY
-        })
+        .addInterceptor { chain ->
+            val request = chain.request()
+            if (request.header("User-Agent") == null) {
+                val ua = "Mozilla/5.0 (Path Network ${Constants.PATH_API_VERSION}; Android; ${System.getProperty("os.arch")}) ${BuildConfig.VERSION_NAME}/${BuildConfig.VERSION_CODE} (KHTML, like Gecko)"
+                chain.proceed(request.newBuilder().header("User-Agent", ua).build())
+            } else {
+                chain.proceed(request)
+            }
+        }
         .addInterceptor { chain ->
             try {
                 chain.proceed(chain.request())
@@ -86,5 +91,9 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
                 }
             }
         }
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.HEADERS else HttpLoggingInterceptor.Level.NONE
+//            level = HttpLoggingInterceptor.Level.BODY
+        })
         .dns(CustomDns())
         .build()
