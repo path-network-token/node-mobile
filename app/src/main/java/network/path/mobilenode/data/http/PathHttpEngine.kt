@@ -242,7 +242,7 @@ class PathHttpEngine(
             var fallback = true
             if (e is HttpException) {
                 if (e.code() == 422) {
-                    val body = e.response()?.body()
+                    val body = e.response().body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
                     fallback = false

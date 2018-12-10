@@ -40,3 +40,5 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+-dontwarn org.xbill.DNS.spi.**
