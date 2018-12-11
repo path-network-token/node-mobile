@@ -52,7 +52,7 @@ val appModule = module {
     scope("service") { Job() }
     single { PathSystem(get(), get(), get(), get(), get()) }
 
-    factory { Runners(get()) }
+    factory { Runners(get(), get()) }
 
     factory<PathJobExecutor> { PathJobExecutorImpl(get()) }
 
