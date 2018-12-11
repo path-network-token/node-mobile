@@ -22,8 +22,6 @@ android {
         versionCode ver.appVersionCode
         versionName ver.appVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'ICANHAZIP_BASE_URL', '"https://icanhazip.com/"'
-        buildConfigField 'String', 'IPTOASN_BASE_URL', '"https://api.iptoasn.com/"'
         buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
         manifestPlaceholders = [applicationLabel: "Path Mobile"]
 
@@ -95,6 +93,7 @@ android {
 }
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Communication
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"

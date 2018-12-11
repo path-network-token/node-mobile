@@ -242,7 +242,7 @@ class PathHttpEngine(
             var fallback = true
             if (e is HttpException) {
                 if (e.code() == 422) {
-                    val body = e.response()?.body()
+                    val body = e.response().body()
                     Timber.w("HTTP exception: $body")
                     // TODO: Parse
                     fallback = false
@@ -270,9 +270,7 @@ class PathHttpEngine(
         val client = if (useProxy && isPortInUse(port)) {
             Timber.d("HTTP: proxy port [$port] is in use, connecting")
             this.useProxy = true
-            okHttpClient.newBuilder()
-                    .proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
-                    .build()
+            okHttpClient.newBuilder().addProxy(host, port).build()
         } else {
             if (useProxy) {
                 Timber.d("HTTP: proxy port [$port] is not in use, proxy is not running")
@@ -291,4 +289,12 @@ class PathHttpEngine(
     } catch (e: IOException) {
         true
     }
+
+    private fun OkHttpClient.Builder.addProxy(host: String, port: Int): OkHttpClient.Builder =
+            proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(host, port)))
+                    .addInterceptor { chain ->
+                        val request = chain.request()
+                        val url = request.url().newBuilder().scheme("http").build()
+                        chain.proceed(request.newBuilder().url(url).build())
+                    }
 }

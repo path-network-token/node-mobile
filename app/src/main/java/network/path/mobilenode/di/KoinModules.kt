@@ -8,13 +8,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
-import network.path.mobilenode.data.http.PathExternalServicesImpl
+import network.path.mobilenode.data.http.CustomDns
 import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
 import network.path.mobilenode.domain.PathEngine
-import network.path.mobilenode.domain.PathExternalServices
 import network.path.mobilenode.domain.PathJobExecutor
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.PathSystem
@@ -33,6 +32,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @ObsoleteCoroutinesApi
@@ -47,11 +47,10 @@ val appModule = module {
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
     single { SphereDataProvider(2, 1.1f) }
 
-    single<PathExternalServices> { PathExternalServicesImpl(get(), get(), get()) }
     single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
 
     scope("service") { Job() }
-    single { PathSystem(get(), get(), get(), get(), get(), get()) }
+    single { PathSystem(get(), get(), get(), get(), get()) }
 
     factory { Runners(get()) }
 
@@ -72,8 +71,20 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .readTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
         .writeTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
         .connectTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+        .addInterceptor { chain ->
+            try {
+                chain.proceed(chain.request())
+            } catch (e: Throwable) {
+                if (e is IOException) {
+                    throw e
+                } else {
+                    throw IOException(e)
+                }
+            }
+        }
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 //            level = HttpLoggingInterceptor.Level.BODY
         })
+        .dns(CustomDns())
         .build()
