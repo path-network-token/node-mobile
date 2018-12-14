@@ -1,22 +1,27 @@
 package network.path.mobilenode.data.runner
 
+import com.google.gson.Gson
 import kotlinx.coroutines.withTimeout
 import network.path.mobilenode.Constants
-import network.path.mobilenode.Constants.DEFAULT_TRACEPATH_PORT
+import network.path.mobilenode.data.runner.mrt.MTR
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import network.path.mobilenode.domain.entity.endpointHost
-import network.path.mobilenode.domain.entity.endpointPortOrDefault
-import pl.droidsonroids.tracepath.android.Tracepath
 
-class TracepathRunner : Runner {
+class TracepathRunner(private val gson: Gson) : Runner {
+    companion object {
+        init {
+            System.loadLibrary("traceroute")
+        }
+    }
+
     override val checkType = CheckType.TRACEROUTE
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runTracepathJob(it) }
 
     private suspend fun runTracepathJob(jobRequest: JobRequest) =
             withTimeout(Constants.TRACEPATH_JOB_TIMEOUT_MILLIS) {
-                val port = jobRequest.endpointPortOrDefault(DEFAULT_TRACEPATH_PORT)
-                Tracepath.tracepath(jobRequest.endpointHost, port)
+                val res = MTR().trace(jobRequest.endpointHost)
+                if (res != null) gson.toJson(res.filter { it != null && it.ttl != 0 }) else ""
             }
 }
