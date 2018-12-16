@@ -21,7 +21,8 @@ class TracepathRunner(private val gson: Gson) : Runner {
 
     private suspend fun runTracepathJob(jobRequest: JobRequest) =
             withTimeout(Constants.TRACEPATH_JOB_TIMEOUT_MILLIS) {
-                val res = MTR().trace(jobRequest.endpointHost)
+                val port = jobRequest.endpointPort ?: 0
+                val res = MTR().trace(jobRequest.endpointHost, port)
                 if (res != null) gson.toJson(res.filter { it != null && it.ttl != 0 }) else ""
             }
 }

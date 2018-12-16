@@ -9,29 +9,53 @@
 #define JNI_REG_CLASS "network/path/mobilenode/data/runner/mrt/MTR"
 #define JNI_RESULT_CLASS "network/path/mobilenode/data/runner/mrt/MtrResult"
 
-JNIEXPORT jobjectArray JNICALL native_trace(JNIEnv *env, jclass clazz, jstring server) {
+JNIEXPORT jobjectArray JNICALL native_trace(JNIEnv *env, jclass clazz, jstring server, jint port) {
+    jobjectArray array = NULL;
+    char **argv = NULL;
+    int argc = 3;
+
     const char *c_str;
     c_str = (*env)->GetStringUTFChars(env, server, NULL);
     if (c_str == NULL) {
-        return NULL;
+        goto complete;
     }
 
     // after using it, remember to release the memory
-    const char *argv[] = {"traceroute", "-4", c_str};
+    if (port != 0) {
+        argc = 5;
+    }
+    argv = malloc(argc * sizeof(char *));
+    if (argv == NULL) {
+        goto complete;
+    }
+
+    for (int i = 0; i < argc; ++i) {
+        argv[i] = malloc(255 * sizeof(char));
+        memset(argv[i], 0, 255);
+    }
+
+    int argi = 0;
+    strcpy(argv[argi++], "traceroute");
+    strcpy(argv[argi++], "-4");
+    strcpy(argv[argi++], c_str);
+    if (port != 0) {
+        strcpy(argv[argi++], "-p");
+        sprintf(argv[argi++], "%d", port);
+    }
+
     int count = 0;
     probe_result *results = NULL;
-    int res = traceroute(3, (char **) &argv, &count, &results);
-    (*env)->ReleaseStringUTFChars(env, server, c_str);
+    int res = traceroute(argc, argv, &count, &results);
 
     if (res) {
-        return NULL;
+        goto complete;
     }
 
     jclass cls = (*env)->FindClass(env, JNI_RESULT_CLASS);
     jmethodID constructorId = (*env)->GetMethodID(env, cls, "<init>",
                                                   "(ILjava/lang/String;Ljava/lang/String;ZILjava/lang/String;DLjava/lang/String;)V");
 
-    jobjectArray array = (*env)->NewObjectArray(env, count, cls, NULL);
+    array = (*env)->NewObjectArray(env, count, cls, NULL);
     for (int i = 0; i < count; ++i) {
         probe_result *probe_res = &results[i];
         if (probe_res->ttl == 0) continue;
@@ -70,18 +94,33 @@ JNIEXPORT jobjectArray JNICALL native_trace(JNIEnv *env, jclass clazz, jstring s
                                       err);
         (*env)->SetObjectArrayElement(env, array, i, o);
     }
+
+    complete:
     if (results != NULL) {
         free(results);
+    }
+    if (c_str != NULL) {
+        (*env)->ReleaseStringUTFChars(env, server, c_str);
+    }
+    if (argv != NULL) {
+        for (int i = 0; i < argc; ++i) {
+            if (argv[i] != NULL) {
+                free(argv[i]);
+                argv[i] = NULL;
+            }
+        }
+        free(argv);
     }
     return array;
 }
 
 
 static JNINativeMethod gMethods[] = {
-        {"trace", "(Ljava/lang/String;)[L" JNI_RESULT_CLASS ";", (void *) native_trace},
+        {"trace", "(Ljava/lang/String;I)[L" JNI_RESULT_CLASS ";", (void *) native_trace},
 };
 
-static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods, int numMethods) {
+static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *gMethods,
+                                 int numMethods) {
     jclass clazz;
     clazz = (*env)->FindClass(env, className);
     if (clazz == NULL) {
@@ -96,7 +135,8 @@ static int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMe
 }
 
 static int registerNatives(JNIEnv *env) {
-    if (!registerNativeMethods(env, JNI_REG_CLASS, gMethods, sizeof(gMethods) / sizeof(gMethods[0]))) {
+    if (!registerNativeMethods(env, JNI_REG_CLASS, gMethods,
+                               sizeof(gMethods) / sizeof(gMethods[0]))) {
         return JNI_FALSE;
     }
     return JNI_TRUE;
