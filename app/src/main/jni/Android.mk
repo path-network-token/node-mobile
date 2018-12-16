@@ -19,6 +19,40 @@ ROOT_PATH := $(LOCAL_PATH)
 BUILD_SHARED_EXECUTABLE := $(LOCAL_PATH)/build-shared-executable.mk
 
 ########################################################
+## traceroute
+########################################################
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := traceroute
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/traceroute
+
+traceroute_src_files := \
+    NativeTrace.c \
+    as_lookups.c \
+    csum.c \
+    clif.c \
+    extension.c \
+    mod-dccp.c \
+    mod-icmp.c \
+    mod-raw.c \
+    mod-tcp.c \
+    mod-tcpconn.c \
+    mod-udp.c \
+    module.c \
+    poll.c \
+    random.c \
+    time.c \
+    traceroute.c
+
+LOCAL_LDLIBS := -llog
+
+LOCAL_SRC_FILES := $(addprefix traceroute/, $(traceroute_src_files))
+
+include $(BUILD_SHARED_LIBRARY)
+
+########################################################
 ## libsodium
 ########################################################
 
@@ -504,3 +538,4 @@ include $(BUILD_STATIC_LIBRARY)
 
 # Import cpufeatures
 $(call import-module,android/cpufeatures)
+

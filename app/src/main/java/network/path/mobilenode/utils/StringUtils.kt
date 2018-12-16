@@ -18,6 +18,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import network.path.mobilenode.R
 import java.text.DecimalFormat
+import java.util.*
 
 val SIGN_FORMAT = DecimalFormat("+#;-#")
 
@@ -27,11 +28,12 @@ fun Context.formatDifference(
         @ColorRes positiveColor: Int = R.color.apple_green,
         @ColorRes negativeColor: Int = R.color.coral_pink,
         separator: String = " ",
-        fmt: String = "%s"): SpannableStringBuilder {
-    val sb = SpannableStringBuilder(fmt.format(newValue))
+        fmt: String = "%,d",
+        locale: Locale = Locale.getDefault()): SpannableStringBuilder {
+    val sb = SpannableStringBuilder(fmt.format(locale, newValue))
     if (oldValue != null && oldValue != newValue) {
         val color = ContextCompat.getColor(this, if (oldValue > newValue) negativeColor else positiveColor)
-        val formattedValue = SpannableString(fmt.format(SIGN_FORMAT.format(newValue - oldValue)))
+        val formattedValue = SpannableString(fmt.format(locale, SIGN_FORMAT.format(newValue - oldValue)))
         formattedValue.setSpan(ForegroundColorSpan(color), 0, formattedValue.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         sb.append(separator).append(formattedValue)
     }

@@ -58,6 +58,7 @@ class DashboardFragment : BaseFragment() {
 
         setupClicks()
         setupTexts()
+        setJobList(null)
 
         dashboardViewModel.let {
             it.onViewCreated()
@@ -222,11 +223,11 @@ class DashboardFragment : BaseFragment() {
         previousStatus = status
     }
 
-    private fun setJobList(jobList: JobList) {
-        ipWithSubnetAddress.text = jobList.networkPrefix ?: getString(R.string.n_a)
-        value1.setText(jobList.asn?.toString().orNoData())
-        value2.setText(jobList.asOrganization.orNoData())
-        value3.setText(jobList.location.orNoData())
+    private fun setJobList(jobList: JobList?) {
+        ipWithSubnetAddress.text = jobList?.networkPrefix ?: getString(R.string.n_a)
+        value1.setText(jobList?.asn?.toString().orNoData())
+        value2.setText(jobList?.asOrganization.orNoData())
+        value3.setText(jobList?.location.orNoData())
     }
 
     private fun setRunning(isRunning: Boolean) {

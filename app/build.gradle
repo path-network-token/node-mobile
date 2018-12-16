@@ -97,7 +97,6 @@ dependencies {
 
     // Communication
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
-    implementation "pl.droidsonroids:tracepath-android:$versions.tracepath"
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-scalars:$versions.retrofit"

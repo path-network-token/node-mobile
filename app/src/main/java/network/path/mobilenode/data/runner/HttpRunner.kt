@@ -3,6 +3,7 @@ package network.path.mobilenode.data.runner
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
+import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import okhttp3.HttpUrl
@@ -11,9 +12,10 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
-private val httpProtocolRegex = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
-
-class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
+class HttpRunner(private val okHttpClient: OkHttpClient, private val storage: PathStorage) : Runner {
+    companion object {
+        private val HTTP_PROTOCOL_REGEX = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
+    }
 
     override val checkType = CheckType.HTTP
 
@@ -39,7 +41,7 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
         val completeUrl = with(jobRequest) {
             val prependedProtocol = when {
                 endpointAddress == null -> throw IOException("Missing endpoint address in $jobRequest")
-                endpointAddress.matches(httpProtocolRegex) -> ""
+                endpointAddress.matches(HTTP_PROTOCOL_REGEX) -> ""
                 else -> "http://"
             }
 
@@ -67,7 +69,8 @@ class HttpRunner(private val okHttpClient: OkHttpClient) : Runner {
         }
 
         if (!hasUserAgent) {
-            val ua = "Mozilla/5.0 (Path Network ${Constants.PATH_API_VERSION}; Android; ${System.getProperty("os.arch")}) ${BuildConfig.VERSION_NAME}/${BuildConfig.VERSION_CODE} (KHTML, like Gecko)"
+            val nodeId = storage.nodeId
+            val ua = "Mozilla/5.0 (Path Network ${Constants.PATH_API_VERSION}; Android; ${System.getProperty("os.arch")}) ${BuildConfig.VERSION_NAME}/${BuildConfig.VERSION_CODE} (KHTML, like Gecko) Node/$nodeId"
             requestBuilder.addHeader("User-Agent", ua)
         }
 
