@@ -51,7 +51,7 @@
     <string name="unknown_checks">Unknown checks</string>
     <string name="other_checks">Other checks</string>
     <string name="average_latency">Average latency</string>
-    <string name="latency_chart_value">%1$s ms</string>
+    <string name="latency_chart_value">%1$,d ms</string>
     <string name="job_percentage">%.0f%%</string>
 
     <!-- Disclaimer -->

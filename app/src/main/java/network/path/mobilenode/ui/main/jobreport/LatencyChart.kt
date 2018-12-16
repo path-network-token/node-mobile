@@ -37,7 +37,7 @@ constructor(
             val maxMillis = it.getInt(R.styleable.LatencyChart_max_millis, 0)
 
             latencyChartLabelTextView.text = titleText
-            latencyValueTextView.text = context.getString(R.string.latency_chart_value, progressMillis.toString())
+            latencyValueTextView.text = context.getString(R.string.latency_chart_value, progressMillis)
 
             latencyProgressBar.progress = progressMillis
             latencyProgressBar.max = maxMillis
