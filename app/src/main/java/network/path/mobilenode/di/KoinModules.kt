@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
@@ -35,6 +36,7 @@ import org.koin.dsl.module.module
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 val appModule = module {

@@ -2,15 +2,16 @@ package network.path.mobilenode.data.http
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.entity.CheckIn
@@ -31,6 +32,7 @@ import java.net.ServerSocket
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class PathHttpEngine(
@@ -116,6 +118,7 @@ class PathHttpEngine(
         job.cancel()
         pollJob.cancel()
         timeoutJob.cancel()
+        httpService?.close()
     }
 
     override fun toggle() {
@@ -225,15 +228,15 @@ class PathHttpEngine(
     }
 
     private suspend fun test() {
-        val dummyRequest = JobRequest(protocol = "tcp", payload = "HELO\n", endpointAddress = "smtp.gmail.com", endpointPort = 587, jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
+//        val dummyRequest = JobRequest(protocol = "tcp", payload = "HELO\n", endpointAddress = "smtp.gmail.com", endpointPort = 587, jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
 //        val dummyRequest = JobRequest(protocol = "tcp", payload = "GET /\n\n", endpointAddress = "www.google.com", endpointPort = 80, jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
-//        val dummyRequest = JobRequest(protocol = "", method="traceroute", payload = "HELLO", endpointAddress = "www.google.com", jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
+        val dummyRequest = JobRequest(protocol = "", method="traceroute", payload = "HELLO", endpointAddress = "www.google.com", jobUuid = "DUMMY_UUID", executionUuid = "DUMMY_UUID")
         requests.send(dummyRequest)
     }
 
-    private suspend fun <T> executeServiceCall(call: suspend () -> Deferred<T>?): T? {
+    private suspend fun <T> executeServiceCall(call: suspend () -> T?): T? {
         return try {
-            val result = call()?.await()
+            val result = call()
             if (result != null) {
                 retryCounter = 0
             }
@@ -261,6 +264,8 @@ class PathHttpEngine(
     }
 
     private fun getHttpService(useProxy: Boolean): PathService {
+        httpService?.close()
+
         val host = ForegroundService.LOCALHOST
         val port = ForegroundService.SS_LOCAL_PORT
 
@@ -280,7 +285,7 @@ class PathHttpEngine(
             this.useProxy = false
             okHttpClient
         }
-        return PathServiceImpl(client, gson)
+        return PathServiceNew(BuildConfig.HTTP_SERVER_URL, OkHttpWorkerPool(client, 10), gson)
     }
 
     private fun isPortInUse(port: Int) = try {
