@@ -67,7 +67,6 @@
         style="@style/DashboardDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:entries="@array/value_data_usage"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"

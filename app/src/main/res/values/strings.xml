@@ -75,8 +75,6 @@
     <string name="total_jobs_performed">Total jobs performed:</string>
     <string name="label_data_usage">Data usage</string>
 
-    <string-array name="value_data_usage">
-        <item>Cellular &amp; WiFi</item>
-        <item>WiFi Only</item>
-    </string-array>
+    <string name="value_wifi_and_cellular">Cellular &amp; WiFi</string>
+    <string name="value_wifi_only">WiFi Only</string>
 </resources>

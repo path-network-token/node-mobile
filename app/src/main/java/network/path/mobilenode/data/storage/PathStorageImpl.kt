@@ -3,6 +3,7 @@ package network.path.mobilenode.data.storage
 import android.content.Context
 import android.preference.PreferenceManager
 import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.domain.WifiSetting
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.utils.prefs
@@ -21,6 +22,8 @@ class PathStorageImpl(context: Context) : PathStorage {
         private const val CHECKS_LATENCY_KEY_SUFFIX = "_LATENCY_MILLIS_KEY"
 
         private const val PROXY_DOMAIN_KEY = "PROXY_DOMAIN_KEY"
+
+        private const val WIFI_SETTING_KEY = "WIFI_SETTING_KEY"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -30,6 +33,14 @@ class PathStorageImpl(context: Context) : PathStorage {
     override var nodeId: String? by prefsOptional(sharedPreferences, NODE_ID_KEY, String::class.java)
 
     override var isActivated: Boolean by prefs(sharedPreferences, IS_SERVICE_RUNNING_KEY, false)
+
+    private var wifiSettingValue: Int by prefs(sharedPreferences, WIFI_SETTING_KEY, WifiSetting.WIFI_AND_CELLULAR.ordinal)
+
+    override var wifiSetting: WifiSetting
+        get() = WifiSetting.valueOf(wifiSettingValue) ?: WifiSetting.WIFI_AND_CELLULAR
+        set(value) {
+            wifiSettingValue = value.value
+        }
 
     override var proxyDomain: String? by prefsOptional(sharedPreferences, PROXY_DOMAIN_KEY, String::class.java, 3_600_000L) // 1 hour
 
