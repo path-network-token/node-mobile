@@ -68,7 +68,7 @@ constructor(
                 R.color.coral_pink,
                 R.color.apple_green,
                 "\n",
-                context.getString(R.string.latency_chart_value))
+                stringFormat = context.getString(R.string.latency_chart_value))
         latencyValueTextView.setText(formattedValue, TextView.BufferType.SPANNABLE)
     }
 
