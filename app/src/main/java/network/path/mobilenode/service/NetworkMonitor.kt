@@ -22,7 +22,7 @@ class NetworkMonitor(private val context: Context) : KoinComponent {
     val connected: BroadcastChannel<Boolean> = _connected
 
     private val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private val networkReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

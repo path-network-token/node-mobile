@@ -7,17 +7,27 @@ import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
+import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.domain.WifiSetting
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.setupFadeTextSwitchers
+import org.koin.android.ext.android.inject
 
 class AboutFragment : BaseFragment() {
+    private val storage by inject<PathStorage>()
+
     override val layoutResId = R.layout.fragment_about
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,12 +43,54 @@ class AboutFragment : BaseFragment() {
         }
 
         setupTexts()
+        setupSpinner()
         populateData()
         animateIn()
     }
 
     private fun setupTexts() {
         requireContext().setupFadeTextSwitchers(R.font.exo_regular, R.style.DashboardDetails, null, value1, value2, value3, value4)
+    }
+
+    private fun setupSpinner() {
+        val values = WifiSetting.values()
+        val context = requireContext()
+        val adapter = object : ArrayAdapter<WifiSetting>(context, R.layout.view_spinner_item, values) {
+            private val inflater = LayoutInflater.from(context)
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View =
+                    getCustomView(position, convertView, parent)
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+                    getCustomView(position, convertView, parent)
+
+            private fun getCustomView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = convertView
+                        ?: inflater.inflate(R.layout.view_spinner_item, parent, false)
+                val setting = getItem(position)
+                if (view is TextView) {
+                    if (setting != null) {
+                        view.text = context.getString(when (setting) {
+                            WifiSetting.WIFI_AND_CELLULAR -> R.string.value_wifi_and_cellular
+                            WifiSetting.WIFI_ONLY -> R.string.value_wifi_only
+                        })
+                    }
+                }
+                return view
+            }
+        }
+        // Specify the layout to use when the list of choices appears
+        // adapter.setDropDownViewResource(R.layout.view_spinner_item)
+        valueUsage.adapter = adapter
+        valueUsage.setSelection(values.indexOf(storage.wifiSetting))
+        valueUsage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(view: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(view: AdapterView<*>?, selectedView: View?, position: Int, id: Long) {
+                storage.wifiSetting = values[position]
+            }
+        }
     }
 
     private fun populateData() {

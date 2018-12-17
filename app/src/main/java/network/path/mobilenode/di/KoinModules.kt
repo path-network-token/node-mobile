@@ -77,11 +77,7 @@ private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
             try {
                 chain.proceed(chain.request())
             } catch (e: Throwable) {
-                if (e is IOException) {
-                    throw e
-                } else {
-                    throw IOException(e)
-                }
+                throw if (e is IOException) e else IOException(e)
             }
         }
         .addInterceptor(HttpLoggingInterceptor().apply {

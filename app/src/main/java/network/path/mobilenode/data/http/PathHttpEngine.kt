@@ -1,5 +1,7 @@
 package network.path.mobilenode.data.http
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.domain.WifiSetting
 import network.path.mobilenode.domain.entity.CheckIn
 import network.path.mobilenode.domain.entity.ConnectionStatus
 import network.path.mobilenode.domain.entity.JobList
@@ -189,7 +192,22 @@ class PathHttpEngine(
         } catch (e: Exception) {
             null
         }
-        val jobsToRequest = if (_isRunning) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
+        var requestJobs = true
+        if (storage.wifiSetting == WifiSetting.WIFI_ONLY) {
+            // Make sure we are on WiFi if wifiOnly setting is used
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+                val network = networkMonitor.connectivityManager.activeNetwork
+                val capabilities = networkMonitor.connectivityManager.getNetworkCapabilities(network)
+                requestJobs = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+                Timber.d("HTTP: network [$network], setting [${storage.wifiSetting}, requestJobs = $requestJobs")
+            } else {
+                @Suppress("DEPRECATION")
+                val networkInfo = networkMonitor.connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                requestJobs = networkInfo?.isConnected == true
+                Timber.d("HTTP: network info [$networkInfo], setting [${storage.wifiSetting}], requestJobs = $requestJobs")
+            }
+        }
+        val jobsToRequest = if (_isRunning && requestJobs) max(MAX_JOBS - currentExecutionUuids.size, 0) else 0
         return CheckIn(
                 nodeId = storage.nodeId,
                 wallet = storage.walletAddress,

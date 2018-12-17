@@ -51,7 +51,7 @@
     <string name="unknown_checks">Unknown checks</string>
     <string name="other_checks">Other checks</string>
     <string name="average_latency">Average latency</string>
-    <string name="latency_chart_value">%1$,d ms</string>
+    <string name="latency_chart_value">%1$s ms</string>
     <string name="job_percentage">%.0f%%</string>
 
     <!-- Disclaimer -->
@@ -73,5 +73,8 @@
     <string name="status_disconnected">Disconnected</string>
     <string name="label_paused">Paused</string>
     <string name="total_jobs_performed">Total jobs performed:</string>
+    <string name="label_data_usage">Data usage</string>
 
+    <string name="value_wifi_and_cellular">Cellular &amp; WiFi</string>
+    <string name="value_wifi_only">WiFi Only</string>
 </resources>
