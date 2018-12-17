@@ -58,13 +58,11 @@ class AboutFragment : BaseFragment() {
         val adapter = object : ArrayAdapter<WifiSetting>(context, R.layout.view_spinner_item, values) {
             private val inflater = LayoutInflater.from(context)
 
-            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                return getCustomView(position, convertView, parent)
-            }
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View =
+                    getCustomView(position, convertView, parent)
 
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                return getCustomView(position, convertView, parent)
-            }
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+                    getCustomView(position, convertView, parent)
 
             private fun getCustomView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView
