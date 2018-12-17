@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ArrayAdapter
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
@@ -33,12 +34,22 @@ class AboutFragment : BaseFragment() {
         }
 
         setupTexts()
+        setupSpinner()
         populateData()
         animateIn()
     }
 
     private fun setupTexts() {
         requireContext().setupFadeTextSwitchers(R.font.exo_regular, R.style.DashboardDetails, null, value1, value2, value3, value4)
+    }
+
+    private fun setupSpinner() {
+        val context = requireContext()
+        val adapter = ArrayAdapter.createFromResource(context, R.array.value_data_usage, R.layout.view_spinner_item)
+        // Specify the layout to use when the list of choices appears
+        // adapter.setDropDownViewResource(R.layout.view_spinner_item)
+        valueUsage.adapter = adapter
+        valueUsage.setSelection(0)
     }
 
     private fun populateData() {

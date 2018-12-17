@@ -43,6 +43,39 @@
         />
 
     <TextView
+        android:id="@+id/labelUsage"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="@string/label_data_usage"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45"
+        />
+
+    <Spinner
+        android:id="@+id/valueUsage"
+        style="@style/DashboardDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/value_data_usage"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@id/labelUsage"
+        app:layout_constraintBottom_toBottomOf="@id/labelUsage"
+        />
+
+    <TextView
         android:id="@+id/disclaimerButton"
         style="@style/Text.Default.Medium"
         android:layout_width="wrap_content"
@@ -55,7 +88,7 @@
         app:layout_constraintBottom_toTopOf="@id/footerText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/details"
+        app:layout_constraintTop_toBottomOf="@id/labelUsage"
         />
 
     <ImageView
