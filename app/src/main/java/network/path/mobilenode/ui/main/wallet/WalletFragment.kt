@@ -10,6 +10,8 @@ import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.onTextChanged
 import network.path.mobilenode.utils.showToast
 import org.koin.android.ext.android.inject
+import org.web3j.crypto.Hash
+import org.web3j.utils.Numeric
 
 class WalletFragment : BaseFragment() {
     companion object {
@@ -28,6 +30,7 @@ class WalletFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
             walletAddressInputEditText.setText(storage.walletAddress)
+            onWalletAddressChanged(storage.walletAddress)
         }
         setupViews()
     }
@@ -37,7 +40,7 @@ class WalletFragment : BaseFragment() {
             setHorizontallyScrolling(false)
             maxLines = WALLET_ADDRESS_MAX_LINES
 
-            onTextChanged { onWalletAddressChanged(it.toString()) }
+            onTextChanged { onWalletAddressChanged(it) }
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId in arrayOf(EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL)) {
                     updatePathWalletAddress()
@@ -48,10 +51,10 @@ class WalletFragment : BaseFragment() {
         linkWalletButton.setOnClickListener { updatePathWalletAddress() }
     }
 
-    private fun onWalletAddressChanged(text: String) {
+    private fun onWalletAddressChanged(text: CharSequence) {
         val validationError = when {
             text.isBlank() -> getString(R.string.blank_path_wallet_address_error)
-            ETH_ADDRESS_REGEX.matches(text) -> null
+            isValid(text) -> null
             else -> getString(R.string.invalid_path_wallet_address_error)
         }
 
@@ -64,5 +67,27 @@ class WalletFragment : BaseFragment() {
             storage.walletAddress = walletAddressInputEditText.text.toString()
             showToast(requireContext(), R.string.address_saved_toast)
         }
+    }
+
+    private fun isValid(address: CharSequence) =
+            Numeric.prependHexPrefix(address.toString()) == checkedAddress(address)
+
+    private fun checkedAddress(address: CharSequence): String {
+        val cleanAddress = Numeric.cleanHexPrefix(address.toString()).toLowerCase()
+
+        val sb = StringBuilder()
+        val hash = Hash.sha3String(cleanAddress)
+        val hashChars = hash.substring(2).toCharArray()
+
+        val chars = cleanAddress.toCharArray()
+        for (i in chars.indices) {
+            val c = if (Character.digit(hashChars[i], 16) and 0xFF > 7) {
+                Character.toUpperCase(chars[i])
+            } else {
+                Character.toLowerCase(chars[i])
+            }
+            sb.append(c)
+        }
+        return Numeric.prependHexPrefix(sb.toString())
     }
 }
