@@ -2,6 +2,7 @@ package network.path.mobilenode.data.storage
 
 import android.content.Context
 import android.preference.PreferenceManager
+import network.path.mobilenode.Constants
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.WifiSetting
 import network.path.mobilenode.domain.entity.CheckType
@@ -12,7 +13,6 @@ import network.path.mobilenode.utils.prefsOptional
 class PathStorageImpl(context: Context) : PathStorage {
     companion object {
         private const val PATH_ADDRESS_KEY = "PATH_ADDRESS_KEY"
-        private const val PATH_DEFAULT_WALLET_ADDRESS = "0x0000000000000000000000000000000000000000"
 
         private const val NODE_ID_KEY = "NODE_ID_KEY"
         private const val IS_SERVICE_RUNNING_KEY = "IS_SERVICE_RUNNING_KEY"
@@ -28,7 +28,7 @@ class PathStorageImpl(context: Context) : PathStorage {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    override var walletAddress: String by prefs(sharedPreferences, PATH_ADDRESS_KEY, PATH_DEFAULT_WALLET_ADDRESS)
+    override var walletAddress: String by prefs(sharedPreferences, PATH_ADDRESS_KEY, Constants.PATH_DEFAULT_WALLET_ADDRESS)
 
     override var nodeId: String? by prefsOptional(sharedPreferences, NODE_ID_KEY, String::class.java)
 
