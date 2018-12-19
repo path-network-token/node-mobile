@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.EditorInfo
+import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.Constants
 import network.path.mobilenode.R
@@ -13,6 +14,7 @@ import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.onTextChanged
+import network.path.mobilenode.utils.toggleSoftKeyboard
 import org.koin.android.ext.android.inject
 import org.web3j.crypto.Hash
 import org.web3j.utils.Numeric
@@ -112,6 +114,11 @@ class WalletFragment : BaseFragment() {
         val set = AnimatorSet()
         set.playSequentially(slideSet, alphaSet)
         set.start()
+        set.doOnEnd {
+            walletAddressInputEditText.setSelection(0, walletAddressInputEditText.text?.length ?: 0)
+            walletAddressInputEditText.requestFocus()
+            walletAddressInputEditText.toggleSoftKeyboard(true)
+        }
     }
 
     private fun animateViewIn() {
@@ -153,7 +160,9 @@ class WalletFragment : BaseFragment() {
 
     private fun updatePathWalletAddress() {
         if (linkWalletButton.isEnabled) {
-            storage.walletAddress = walletAddressInputEditText.text.toString()
+            val newAddress = walletAddressInputEditText.text.toString()
+            storage.walletAddress = newAddress
+            walletAddressTextView.setText(newAddress)
             setMode(false)
         }
     }
