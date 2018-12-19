@@ -7,10 +7,13 @@ import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
 import timber.log.Timber
+
+
 
 fun EditText.onTextChanged(callback: (CharSequence) -> Unit) {
     addTextChangedListener(object : TextWatcher {
@@ -54,4 +57,13 @@ fun View.bounceScale(toScale: Float, duration: Long = 250L) {
         this.scaleX = value
     }
     animator.start()
+}
+
+fun EditText.toggleSoftKeyboard(visible: Boolean) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    if (visible) {
+        imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    } else {
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
 }
