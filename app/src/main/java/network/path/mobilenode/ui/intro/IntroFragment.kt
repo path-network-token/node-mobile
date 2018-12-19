@@ -30,7 +30,7 @@ class IntroFragment : BaseFragment() {
         activateButton.setOnClickListener {
             viewModel.onActivateClick()
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_introFragment_to_loadingFragment)
+                    .navigate(R.id.action_introFragment_to_mainFragment)
         }
 
         disclaimerButton.setOnClickListener {
