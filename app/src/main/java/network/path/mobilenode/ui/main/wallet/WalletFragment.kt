@@ -33,15 +33,9 @@ class WalletFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState == null) {
-            walletAddressInputEditText.setText(storage.walletAddress)
-            onWalletAddressChanged(storage.walletAddress)
-        }
         setupEditViews()
         setupViewViews()
-
-        val isEdit = !hasAddress()
-        setMode(isEdit)
+        setMode(!hasAddress())
     }
 
     private fun setMode(isEdit: Boolean) {
@@ -61,6 +55,7 @@ class WalletFragment : BaseFragment() {
         editButton.visibility = viewVisibility
 
         if (isEdit) {
+            updateEditAddress(storage.walletAddress)
             animateEditIn()
         } else {
             animateViewIn()
@@ -81,6 +76,11 @@ class WalletFragment : BaseFragment() {
             }
         }
         linkWalletButton.setOnClickListener { updatePathWalletAddress() }
+    }
+
+    private fun updateEditAddress(address: String) {
+        walletAddressInputEditText.setText(address)
+        onWalletAddressChanged(address)
     }
 
     private fun setupViewViews() {
