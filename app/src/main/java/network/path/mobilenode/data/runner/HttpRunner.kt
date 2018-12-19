@@ -1,18 +1,20 @@
 package network.path.mobilenode.data.runner
 
+import kotlinx.coroutines.InternalCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.Constants
 import network.path.mobilenode.Constants.TCP_UDP_PORT_RANGE
+import network.path.mobilenode.data.http.OkHttpWorkerPool
+import network.path.mobilenode.data.http.getBody
 import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.domain.entity.CheckType
 import network.path.mobilenode.domain.entity.JobRequest
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import java.io.IOException
 
-class HttpRunner(private val okHttpClient: OkHttpClient, private val storage: PathStorage) : Runner {
+@InternalCoroutinesApi
+class HttpRunner(private val workerPool: OkHttpWorkerPool, private val storage: PathStorage) : Runner {
     companion object {
         private val HTTP_PROTOCOL_REGEX = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
     }
@@ -21,20 +23,12 @@ class HttpRunner(private val okHttpClient: OkHttpClient, private val storage: Pa
 
     override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runHttpJob(it) }
 
-    private fun runHttpJob(jobRequest: JobRequest): String {
+    private suspend fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)
 
-        return okHttpClient.newCall(request).execute().use {
-            it.bodyStringOrEmpty()
-        }
-    }
-
-    private fun Response.bodyStringOrEmpty(): String {
-        val responseBody = peekBody(Constants.RESPONSE_LENGTH_BYTES_MAX.toLong()).string()
-        if (!isSuccessful) {
-            throw IOException("Unsuccessful response code: ${code()}, body: $responseBody")
-        }
-        return responseBody
+        val response = workerPool.execute(request)
+        val body = response.getBody()
+        return body.string()
     }
 
     private fun buildRequest(jobRequest: JobRequest): Request {

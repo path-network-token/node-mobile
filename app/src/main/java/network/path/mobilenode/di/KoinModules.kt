@@ -12,7 +12,6 @@ import network.path.mobilenode.Constants
 import network.path.mobilenode.data.http.CustomDns
 import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
-import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathJobExecutor
@@ -54,9 +53,7 @@ val appModule = module {
     scope("service") { Job() }
     single { PathSystem(get(), get(), get(), get(), get()) }
 
-    factory { Runners(get(), get(), get()) }
-
-    factory<PathJobExecutor> { PathJobExecutorImpl(get()) }
+    factory<PathJobExecutor> { PathJobExecutorImpl(get(), get(), get()) }
 
     viewModel { IntroViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }
