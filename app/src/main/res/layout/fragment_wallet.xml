@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:paddingStart="@dimen/screen_root_layout_padding"
     android:paddingEnd="@dimen/screen_root_layout_padding"
-    android:paddingBottom="80dp"
+    android:paddingBottom="@dimen/bottom_bar_height"
     >
 
     <!-- Viewing part -->
@@ -112,6 +112,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
+        app:errorTextAppearance="@style/EditError"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/walletPrompt"

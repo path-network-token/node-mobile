@@ -14,6 +14,7 @@ import network.path.mobilenode.domain.PathStorage
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.onTextChanged
+import network.path.mobilenode.utils.setError
 import network.path.mobilenode.utils.toggleSoftKeyboard
 import org.koin.android.ext.android.inject
 import org.web3j.crypto.Hash
@@ -36,6 +37,11 @@ class WalletFragment : BaseFragment() {
         setupEditViews()
         setupViewViews()
         setMode(!hasAddress())
+    }
+
+    override fun onDestroyView() {
+        walletAddressInputEditText?.toggleSoftKeyboard(false)
+        super.onDestroyView()
     }
 
     private fun setMode(isEdit: Boolean) {
@@ -115,9 +121,13 @@ class WalletFragment : BaseFragment() {
         set.playSequentially(slideSet, alphaSet)
         set.start()
         set.doOnEnd {
-            walletAddressInputEditText.setSelection(0, walletAddressInputEditText.text?.length ?: 0)
-            walletAddressInputEditText.requestFocus()
-            walletAddressInputEditText.toggleSoftKeyboard(true)
+            with(walletAddressInputEditText) {
+                if (this != null) {
+                    setSelection(0, text?.length ?: 0)
+                    requestFocus()
+                    toggleSoftKeyboard(true)
+                }
+            }
         }
     }
 
@@ -155,7 +165,7 @@ class WalletFragment : BaseFragment() {
         }
 
         linkWalletButton.isEnabled = validationError == null
-        walletAddressInputLayout.error = validationError
+        walletAddressInputLayout.setError(validationError, R.font.exo_regular)
     }
 
     private fun updatePathWalletAddress() {

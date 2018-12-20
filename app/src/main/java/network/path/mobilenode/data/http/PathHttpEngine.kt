@@ -148,7 +148,9 @@ class PathHttpEngine(
         if (result != null) {
             processJobs(result)
         } else {
-            status.send(ConnectionStatus.DISCONNECTED)
+            if (status.value != ConnectionStatus.LOOKING) {
+                status.send(ConnectionStatus.DISCONNECTED)
+            }
             scheduleCheckIn()
         }
     }

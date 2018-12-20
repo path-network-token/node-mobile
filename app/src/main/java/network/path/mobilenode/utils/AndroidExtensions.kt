@@ -3,14 +3,21 @@ package network.path.mobilenode.utils
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.FontRes
 import androidx.annotation.StringRes
+import androidx.core.content.res.ResourcesCompat
+import com.google.android.material.textfield.TextInputLayout
 import timber.log.Timber
 
 
@@ -66,4 +73,18 @@ fun EditText.toggleSoftKeyboard(visible: Boolean) {
     } else {
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
+}
+
+fun Resources.dpToPx(dp: Float): Float =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics)
+
+fun TextInputLayout.setError(error: CharSequence?, @FontRes fontId: Int) {
+    this.error = if (error != null) {
+        val s = SpannableString(error)
+        val typeface = ResourcesCompat.getFont(context, fontId)
+        if (typeface != null) {
+            s.setSpan(TypefaceSpan(typeface), 0, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        s
+    } else null
 }
