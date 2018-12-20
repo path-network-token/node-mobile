@@ -10,4 +10,6 @@
     <dimen name="button_size">40dp</dimen>
 
     <dimen name="screen_root_layout_padding">20dp</dimen>
+
+    <dimen name="bottom_bar_height">80dp</dimen>
 </resources>

@@ -21,6 +21,7 @@ import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.DisclaimerViewModel
 import network.path.mobilenode.ui.intro.IntroViewModel
+import network.path.mobilenode.ui.main.MainViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
@@ -60,6 +61,7 @@ val appModule = module {
     viewModel { JobReportViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
     viewModel { DisclaimerViewModel() }
+    viewModel { MainViewModel(get()) }
 }
 
 private fun createLenientGson(): Gson = GsonBuilder()

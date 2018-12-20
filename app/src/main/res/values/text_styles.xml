@@ -43,6 +43,17 @@
         <item name="android:textSize">@dimen/text_size_xlarge</item>
     </style>
 
+    <!-- EDIT TEXT -->
+    <style name="Edit" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">@font/exo_medium</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="EditError" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/coral_pink</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
     <!-- INDIVIDUAL STYLES -->
     <style name="SplashNode" parent="Text.Default">
         <item name="android:fontFamily">@font/exo_extra_light</item>

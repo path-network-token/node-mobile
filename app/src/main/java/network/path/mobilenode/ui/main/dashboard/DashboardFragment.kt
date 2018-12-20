@@ -274,6 +274,7 @@ class DashboardFragment : BaseFragment() {
         get() = getString(when (this) {
             ConnectionStatus.CONNECTED -> R.string.status_connected
             ConnectionStatus.PROXY -> R.string.status_proxy
+            ConnectionStatus.LOOKING,
             ConnectionStatus.DISCONNECTED -> R.string.status_disconnected
         })
 
@@ -281,18 +282,23 @@ class DashboardFragment : BaseFragment() {
         get() = ContextCompat.getColor(requireContext(), when (this) {
             ConnectionStatus.CONNECTED -> R.color.apple_green
             ConnectionStatus.PROXY -> R.color.amber
+            ConnectionStatus.LOOKING,
             ConnectionStatus.DISCONNECTED -> R.color.coral_pink
         })
 
     private val ConnectionStatus.textColor: Int
         get() = ContextCompat.getColor(requireContext(), when (this) {
-            ConnectionStatus.CONNECTED, ConnectionStatus.PROXY -> R.color.light_teal
+            ConnectionStatus.CONNECTED,
+            ConnectionStatus.PROXY -> R.color.light_teal
+            ConnectionStatus.LOOKING,
             ConnectionStatus.DISCONNECTED -> R.color.coral_pink
         })
 
     private val ConnectionStatus.separatorColor: Int
         get() = ContextCompat.getColor(requireContext(), when (this) {
-            ConnectionStatus.CONNECTED, ConnectionStatus.PROXY -> R.color.tealish
+            ConnectionStatus.CONNECTED,
+            ConnectionStatus.PROXY -> R.color.tealish
+            ConnectionStatus.LOOKING,
             ConnectionStatus.DISCONNECTED -> R.color.coral_pink
         })
 }
