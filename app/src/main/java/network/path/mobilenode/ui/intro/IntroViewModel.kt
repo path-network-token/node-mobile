@@ -3,18 +3,20 @@ package network.path.mobilenode.ui.intro
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import network.path.mobilenode.library.domain.PathStorage
+import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.service.startPathService
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class IntroViewModel(
         private val context: Context,
-        private val storage: PathStorage
+        private val system: PathSystem
 ) : ViewModel() {
     fun onActivateClick() {
-        storage.isActivated = true
+        system.storage.isActivated = true
         context.startPathService()
     }
 }

@@ -17,16 +17,22 @@ import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
-import network.path.mobilenode.library.domain.PathStorage
+import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.library.domain.WifiSetting
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.android.ext.android.inject
 
+@ObsoleteCoroutinesApi
+@InternalCoroutinesApi
+@ExperimentalCoroutinesApi
 class AboutFragment : BaseFragment() {
-    private val storage by inject<PathStorage>()
+    private val system by inject<PathSystem>()
 
     override val layoutResId = R.layout.fragment_about
 
@@ -82,13 +88,13 @@ class AboutFragment : BaseFragment() {
         // Specify the layout to use when the list of choices appears
         // adapter.setDropDownViewResource(R.layout.view_spinner_item)
         valueUsage.adapter = adapter
-        valueUsage.setSelection(values.indexOf(storage.wifiSetting))
+        valueUsage.setSelection(values.indexOf(system.storage.wifiSetting))
         valueUsage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(view: AdapterView<*>?) {
             }
 
             override fun onItemSelected(view: AdapterView<*>?, selectedView: View?, position: Int, id: Long) {
-                storage.wifiSetting = values[position]
+                system.storage.wifiSetting = values[position]
             }
         }
     }

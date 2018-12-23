@@ -7,12 +7,18 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_splash.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@ObsoleteCoroutinesApi
+@InternalCoroutinesApi
+@ExperimentalCoroutinesApi
 class SplashFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_splash
 

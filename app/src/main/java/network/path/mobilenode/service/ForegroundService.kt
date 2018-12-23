@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -22,13 +23,12 @@ import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
-import org.koin.androidx.scope.ext.android.bindScope
-import org.koin.androidx.scope.ext.android.getOrCreateScope
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class ForegroundService : LifecycleService(), CoroutineScope {
     companion object {
         private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
@@ -54,7 +54,6 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
     override fun onCreate() {
         super.onCreate()
-        bindScope(getOrCreateScope("service"))
         Timber.d("PATH SERVICE: onCreate()")
 
         setUpWakeLock()
@@ -122,12 +121,14 @@ class ForegroundService : LifecycleService(), CoroutineScope {
     }
 }
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 private val Context.foregroundServiceIntent
     get() = Intent(this, ForegroundService::class.java)
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 fun Context.startPathService() =
         ContextCompat.startForegroundService(this, foregroundServiceIntent)

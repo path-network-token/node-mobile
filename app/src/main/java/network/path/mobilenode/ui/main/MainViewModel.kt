@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -14,8 +15,9 @@ import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
 import kotlin.coroutines.CoroutineContext
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class MainViewModel(private val pathSystem: PathSystem) : ViewModel(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main

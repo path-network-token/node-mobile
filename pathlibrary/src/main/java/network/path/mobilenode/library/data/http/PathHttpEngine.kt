@@ -78,11 +78,9 @@ class PathHttpEngine(
             }
         }
 
-    init {
-        registerNetworkHandler()
-    }
-
     override fun start() {
+        registerNetworkHandler()
+
         launch {
             delay(1000)
             httpService = getHttpService(false)

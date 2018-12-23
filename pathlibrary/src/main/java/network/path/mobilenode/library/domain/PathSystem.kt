@@ -2,12 +2,16 @@ package network.path.mobilenode.library.domain
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.instacart.library.truetime.TrueTimeRx
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -16,22 +20,32 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.Constants
+import network.path.mobilenode.library.data.android.LastLocationProvider
 import network.path.mobilenode.library.data.android.NetworkMonitor
+import network.path.mobilenode.library.data.http.CustomDns
+import network.path.mobilenode.library.data.http.PathHttpEngine
 import network.path.mobilenode.library.data.http.shadowsocks.Executable
 import network.path.mobilenode.library.data.http.shadowsocks.GuardedProcessPool
+import network.path.mobilenode.library.data.runner.PathJobExecutorImpl
+import network.path.mobilenode.library.data.storage.PathStorageImpl
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.library.domain.entity.JobRequest
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class PathSystem(
         private val context: Context,
         private val engine: PathEngine,
-        private val storage: PathStorage,
+        val storage: PathStorage,
         private val jobExecutor: PathJobExecutor,
         private val networkMonitor: NetworkMonitor
 ) : CoroutineScope {
@@ -43,6 +57,40 @@ class PathSystem(
         private const val PROXY_PORT = 443
         private const val PROXY_PASSWORD = "PathNetwork"
         private const val PROXY_ENCRYPTION_METHOD = "aes-256-cfb"
+
+        fun create(context: Context): PathSystem {
+            val gson = createLenientGson()
+            val okHttpClient = createOkHttpClient()
+            val networkMonitor = NetworkMonitor(context)
+            val locationProvider = LastLocationProvider(context)
+            val storage = PathStorageImpl(context)
+            val engine = PathHttpEngine(locationProvider, networkMonitor, okHttpClient, gson, storage)
+            val jobExecutor = PathJobExecutorImpl(okHttpClient, storage, gson)
+            return PathSystem(context, engine, storage, jobExecutor, networkMonitor)
+        }
+
+        private fun createLenientGson(): Gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()
+
+        private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+                .readTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .writeTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .connectTimeout(Constants.JOB_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .addInterceptor { chain ->
+                    try {
+                        chain.proceed(chain.request())
+                    } catch (e: Throwable) {
+                        throw if (e is IOException) e else IOException(e)
+                    }
+                }
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+//            level = HttpLoggingInterceptor.Level.BODY
+                })
+                .dns(CustomDns())
+                .build()
+
     }
 
     override val coroutineContext: CoroutineContext
@@ -133,7 +181,7 @@ class PathSystem(
 
 
     private fun startNativeProcesses() {
-        val host = DomainGenerator.findDomain() ?: PROXY_HOST
+        val host = DomainGenerator.findDomain(storage) ?: PROXY_HOST
         if (host != null) {
             Timber.d("PATH SERVICE: found proxy domain [$host]")
             Executable.killAll()

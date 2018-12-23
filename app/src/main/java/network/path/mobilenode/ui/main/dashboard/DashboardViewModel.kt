@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
@@ -17,8 +18,9 @@ import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.CoroutineContext
 
-@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 @ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class DashboardViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
     private lateinit var job: Job
 

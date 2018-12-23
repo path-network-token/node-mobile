@@ -7,17 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
 import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-object DomainGenerator : KoinComponent, CoroutineScope {
+object DomainGenerator : CoroutineScope {
     private lateinit var job: Job
-
-    private val storage by inject<PathStorage>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
@@ -68,7 +64,7 @@ object DomainGenerator : KoinComponent, CoroutineScope {
         domain.toString()
     }.toSet()
 
-    fun findDomain(): String? {
+    fun findDomain(storage: PathStorage): String? {
         val saved = storage.proxyDomain
         if (saved != null) {
             return saved

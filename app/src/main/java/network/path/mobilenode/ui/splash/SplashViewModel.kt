@@ -6,13 +6,19 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import network.path.mobilenode.library.domain.PathStorage
+import network.path.mobilenode.library.domain.PathSystem
 import kotlin.coroutines.CoroutineContext
 
 
-class SplashViewModel(private val storage: PathStorage) : ViewModel(), CoroutineScope {
+@ExperimentalCoroutinesApi
+@ObsoleteCoroutinesApi
+@InternalCoroutinesApi
+class SplashViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
     companion object {
         private const val SPLASH_SHOW_TIME_MILLIS = 2000L
     }
@@ -25,7 +31,7 @@ class SplashViewModel(private val storage: PathStorage) : ViewModel(), Coroutine
     private val showNextScreenJob = launch(start = CoroutineStart.LAZY) {
         delay(SPLASH_SHOW_TIME_MILLIS)
 //        val value = NextScreen.INTRO
-        val value = if (storage.isActivated) NextScreen.MAIN else NextScreen.INTRO
+        val value = if (system.storage.isActivated) NextScreen.MAIN else NextScreen.INTRO
         _nextScreen.postValue(value)
     }
 
