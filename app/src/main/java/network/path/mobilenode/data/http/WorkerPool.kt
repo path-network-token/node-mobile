@@ -16,6 +16,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -106,4 +107,15 @@ class OkHttpWorkerPool(
             }
         }
     }
+}
+
+fun Response.getBody(): ResponseBody {
+    val body = body()
+    if (!isSuccessful) {
+        throw IOException("Unsuccessful response code: ${code()}, body: $body")
+    }
+    if (body == null) {
+        throw IOException("Response body is null")
+    }
+    return body
 }

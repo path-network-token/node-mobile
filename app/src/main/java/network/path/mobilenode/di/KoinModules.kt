@@ -12,7 +12,6 @@ import network.path.mobilenode.Constants
 import network.path.mobilenode.data.http.CustomDns
 import network.path.mobilenode.data.http.PathHttpEngine
 import network.path.mobilenode.data.runner.PathJobExecutorImpl
-import network.path.mobilenode.data.runner.Runners
 import network.path.mobilenode.data.storage.PathStorageImpl
 import network.path.mobilenode.domain.PathEngine
 import network.path.mobilenode.domain.PathJobExecutor
@@ -22,6 +21,7 @@ import network.path.mobilenode.service.LastLocationProvider
 import network.path.mobilenode.service.NetworkMonitor
 import network.path.mobilenode.ui.intro.DisclaimerViewModel
 import network.path.mobilenode.ui.intro.IntroViewModel
+import network.path.mobilenode.ui.main.MainViewModel
 import network.path.mobilenode.ui.main.dashboard.DashboardViewModel
 import network.path.mobilenode.ui.main.jobreport.JobReportViewModel
 import network.path.mobilenode.ui.opengl.glutils.ObjLoader
@@ -54,15 +54,14 @@ val appModule = module {
     scope("service") { Job() }
     single { PathSystem(get(), get(), get(), get(), get()) }
 
-    factory { Runners(get(), get(), get()) }
-
-    factory<PathJobExecutor> { PathJobExecutorImpl(get()) }
+    factory<PathJobExecutor> { PathJobExecutorImpl(get(), get(), get()) }
 
     viewModel { IntroViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }
     viewModel { JobReportViewModel(get()) }
     viewModel { DashboardViewModel(get()) }
     viewModel { DisclaimerViewModel() }
+    viewModel { MainViewModel(get()) }
 }
 
 private fun createLenientGson(): Gson = GsonBuilder()

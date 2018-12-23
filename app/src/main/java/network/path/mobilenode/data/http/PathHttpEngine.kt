@@ -65,7 +65,7 @@ class PathHttpEngine(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + job
 
-    override val status = ConflatedBroadcastChannel(ConnectionStatus.DISCONNECTED)
+    override val status = ConflatedBroadcastChannel(ConnectionStatus.LOOKING)
     override val requests = ConflatedBroadcastChannel<JobRequest>()
     override val nodeId = ConflatedBroadcastChannel(storage.nodeId)
     override val jobList = ConflatedBroadcastChannel<JobList>()
@@ -148,7 +148,9 @@ class PathHttpEngine(
         if (result != null) {
             processJobs(result)
         } else {
-            status.send(ConnectionStatus.DISCONNECTED)
+            if (status.value != ConnectionStatus.LOOKING) {
+                status.send(ConnectionStatus.DISCONNECTED)
+            }
             scheduleCheckIn()
         }
     }

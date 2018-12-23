@@ -13,10 +13,12 @@
 
     <string name="bottom_bar_dashboard">Dashboard</string>
     <string name="bottom_bar_wallet">Wallet</string>
-    <string name="setup_wallet">Setup wallet</string>
+    <string name="setup_wallet_header">Setup wallet</string>
+    <string name="wallet_header">Wallet</string>
     <string name="hint_wallet_address">WALLET ADDRESS</string> <!--uppercase problem workaround-->
     <string name="wallet_address_info">To earn path tokens we\nneed your wallet address</string>
     <string name="link_button_text">Link</string>
+    <string name="button_update">Update</string>
 
     <!-- Splash -->
     <string name="node">node</string>

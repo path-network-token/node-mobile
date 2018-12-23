@@ -40,6 +40,7 @@ class PathSystem(
     }
 
     fun start() {
+        jobExecutor.start()
         networkMonitor.start()
         engine.start()
 
@@ -56,6 +57,7 @@ class PathSystem(
     fun stop() {
         engine.stop()
         networkMonitor.stop()
+        jobExecutor.stop()
     }
 
     private fun registerJobRequestHandler() = launch {

@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit
 object Constants {
     const val PATH_API_VERSION = "1.0.1"
 
+    const val PATH_DEFAULT_WALLET_ADDRESS = "0x0000000000000000000000000000000000000000"
+
     const val JOB_TIMEOUT_MILLIS = 10_000L
     const val TCP_UDP_READ_WRITE_TIMEOUT_MILLIS = 5000L
     const val DEFAULT_DEGRADED_TIMEOUT_MILLIS = 1000L

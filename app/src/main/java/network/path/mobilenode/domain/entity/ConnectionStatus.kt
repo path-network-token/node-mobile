@@ -1,5 +1,5 @@
 package network.path.mobilenode.domain.entity
 
 enum class ConnectionStatus {
-    CONNECTED, PROXY, DISCONNECTED
+    LOOKING, CONNECTED, PROXY, DISCONNECTED
 }

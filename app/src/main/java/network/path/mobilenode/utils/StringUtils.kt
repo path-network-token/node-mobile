@@ -1,6 +1,8 @@
 package network.path.mobilenode.utils
 
 import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.text.Html
 import android.text.Spannable
 import android.text.SpannableString
@@ -11,6 +13,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.CharacterStyle
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.MetricAffectingSpan
 import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
@@ -19,6 +22,8 @@ import androidx.core.content.ContextCompat
 import network.path.mobilenode.R
 import java.text.DecimalFormat
 import java.util.*
+
+
 
 val SIGN_FORMAT = DecimalFormat("+#,###,###;-#,###,###")
 
@@ -101,5 +106,17 @@ class CustomClickableSpan(private val url: String,
     override fun updateDrawState(ds: TextPaint) {
         super.updateDrawState(ds)
         ds.isUnderlineText = false
+    }
+}
+
+class TypefaceSpan(private val typeface: Typeface) : MetricAffectingSpan() {
+    override fun updateMeasureState(p: TextPaint) {
+        p.typeface = typeface
+        p.flags = p.flags or Paint.SUBPIXEL_TEXT_FLAG
+    }
+
+    override fun updateDrawState(tp: TextPaint) {
+        tp.typeface = typeface
+        tp.flags = tp.flags or Paint.SUBPIXEL_TEXT_FLAG
     }
 }
