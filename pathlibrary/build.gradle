@@ -31,7 +31,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue 'string', 'HTTP_SERVER_URL', '"https://jobs-api.path.network/"'
             buildConfigField 'String', 'HTTP_SERVER_URL', '"https://jobs-api.path.network/"'
         }
     }
