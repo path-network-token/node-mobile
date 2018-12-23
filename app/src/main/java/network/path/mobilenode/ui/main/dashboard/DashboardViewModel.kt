@@ -10,9 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.domain.entity.ConnectionStatus
-import network.path.mobilenode.domain.entity.JobList
+import network.path.mobilenode.library.domain.PathSystem
+import network.path.mobilenode.library.domain.entity.ConnectionStatus
+import network.path.mobilenode.library.domain.entity.JobList
 import java.util.*
 import java.util.zip.Adler32
 import kotlin.coroutines.CoroutineContext

@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.library.domain.PathStorage
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 

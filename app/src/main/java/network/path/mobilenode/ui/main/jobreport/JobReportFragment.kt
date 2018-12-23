@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.job_types_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.entity.CheckType
-import network.path.mobilenode.domain.entity.CheckTypeStatistics
+import network.path.mobilenode.library.domain.entity.CheckType
+import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.bounceScale

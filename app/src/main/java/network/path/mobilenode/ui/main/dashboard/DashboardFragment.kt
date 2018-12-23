@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.job_report_button.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.entity.ConnectionStatus
-import network.path.mobilenode.domain.entity.JobList
+import network.path.mobilenode.library.domain.entity.ConnectionStatus
+import network.path.mobilenode.library.domain.entity.JobList
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
 import network.path.mobilenode.utils.TranslationFractionProperty

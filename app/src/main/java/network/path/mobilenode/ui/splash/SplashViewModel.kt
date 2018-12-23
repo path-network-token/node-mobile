@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.library.domain.PathStorage
 import kotlin.coroutines.CoroutineContext
 
 

@@ -1,4 +1,4 @@
--keepclasseswithmembers class network.path.mobilenode.domain.entity.** { *; }
+-keepclasseswithmembers class network.path.mobilenode.library.domain.entity.** { *; }
 
 ## https://github.com/square/okhttp/blob/master/okhttp/src/main/resources/META-INF/proguard/okhttp3.pro
 # JSR 305 annotations are for embedding nullability information.

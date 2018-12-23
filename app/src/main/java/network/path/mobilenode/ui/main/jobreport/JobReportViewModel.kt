@@ -10,9 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.domain.entity.CheckType
-import network.path.mobilenode.domain.entity.CheckTypeStatistics
+import network.path.mobilenode.library.domain.PathSystem
+import network.path.mobilenode.library.domain.entity.CheckType
+import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi

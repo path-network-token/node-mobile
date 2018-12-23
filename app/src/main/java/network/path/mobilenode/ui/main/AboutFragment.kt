@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.PathStorage
-import network.path.mobilenode.domain.WifiSetting
+import network.path.mobilenode.library.domain.PathStorage
+import network.path.mobilenode.library.domain.WifiSetting
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.android.ext.android.inject

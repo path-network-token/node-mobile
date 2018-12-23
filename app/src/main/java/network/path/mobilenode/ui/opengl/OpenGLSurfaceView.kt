@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.entity.ConnectionStatus
+import network.path.mobilenode.library.domain.entity.ConnectionStatus
 
 class OpenGLSurfaceView
 @JvmOverloads constructor(context: Context, attrSet: AttributeSet? = null) : GLSurfaceView(context, attrSet) {

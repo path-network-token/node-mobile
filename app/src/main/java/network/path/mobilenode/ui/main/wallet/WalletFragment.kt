@@ -8,9 +8,9 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.EditorInfo
 import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import network.path.mobilenode.Constants
+import network.path.mobilenode.library.Constants
 import network.path.mobilenode.R
-import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.library.domain.PathStorage
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.onTextChanged

@@ -5,20 +5,19 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
-import network.path.mobilenode.Constants
-import network.path.mobilenode.data.http.CustomDns
-import network.path.mobilenode.data.http.PathHttpEngine
-import network.path.mobilenode.data.runner.PathJobExecutorImpl
-import network.path.mobilenode.data.storage.PathStorageImpl
-import network.path.mobilenode.domain.PathEngine
-import network.path.mobilenode.domain.PathJobExecutor
-import network.path.mobilenode.domain.PathStorage
-import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.service.LastLocationProvider
-import network.path.mobilenode.service.NetworkMonitor
+import network.path.mobilenode.library.Constants
+import network.path.mobilenode.library.data.android.LastLocationProvider
+import network.path.mobilenode.library.data.android.NetworkMonitor
+import network.path.mobilenode.library.data.http.CustomDns
+import network.path.mobilenode.library.data.http.PathHttpEngine
+import network.path.mobilenode.library.data.runner.PathJobExecutorImpl
+import network.path.mobilenode.library.data.storage.PathStorageImpl
+import network.path.mobilenode.library.domain.PathEngine
+import network.path.mobilenode.library.domain.PathJobExecutor
+import network.path.mobilenode.library.domain.PathStorage
+import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.ui.intro.DisclaimerViewModel
 import network.path.mobilenode.ui.intro.IntroViewModel
 import network.path.mobilenode.ui.main.MainViewModel
@@ -49,10 +48,9 @@ val appModule = module {
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
     single { SphereDataProvider(2, 1.1f) }
 
-    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get(), get()) }
+    single<PathEngine> { PathHttpEngine(get(), get(), get(), get(), get()) }
 
-    scope("service") { Job() }
-    single { PathSystem(get(), get(), get(), get(), get()) }
+    single { PathSystem(androidApplication(), get(), get(), get(), get()) }
 
     factory<PathJobExecutor> { PathJobExecutorImpl(get(), get(), get()) }
 
