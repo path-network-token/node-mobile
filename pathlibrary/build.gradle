@@ -17,6 +17,8 @@ android {
 
         buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
 
+        consumerProguardFiles 'proguard-rules.pro'
+
         externalNativeBuild {
             ndkBuild {
                 abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
