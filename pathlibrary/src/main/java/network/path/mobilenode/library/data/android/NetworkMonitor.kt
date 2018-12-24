@@ -9,17 +9,13 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.launch
-import org.koin.standalone.KoinComponent
 
-@ExperimentalCoroutinesApi
-class NetworkMonitor(private val context: Context) : KoinComponent {
-    private val _connected = ConflatedBroadcastChannel(false)
-    val connected: BroadcastChannel<Boolean> = _connected
+class NetworkMonitor(private val context: Context) {
+    interface Listener {
+        fun onStatusChanged(connected: Boolean)
+    }
+
+    var isConnected = false
 
     private val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -32,6 +28,18 @@ class NetworkMonitor(private val context: Context) : KoinComponent {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
+    // Listeners
+    private val listeners = mutableListOf<Listener>()
+
+    fun addListener(l: Listener) {
+        listeners.add(l)
+    }
+
+    fun removeListener(l: Listener) {
+        listeners.remove(l)
+    }
+
+    // Lifecycle
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             networkCallback = NetworkCallback()
@@ -64,10 +72,9 @@ class NetworkMonitor(private val context: Context) : KoinComponent {
     }
 
     private fun updateStatus(isConnected: Boolean) {
-        if (isConnected != _connected.valueOrNull) {
-            GlobalScope.launch {
-                _connected.send(isConnected)
-            }
+        if (isConnected != this.isConnected) {
+            this.isConnected = isConnected
+            listeners.forEach { it.onStatusChanged(isConnected) }
         }
     }
 

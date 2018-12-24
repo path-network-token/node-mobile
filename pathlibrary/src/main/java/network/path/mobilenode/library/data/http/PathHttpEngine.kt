@@ -10,7 +10,6 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import network.path.mobilenode.library.BuildConfig
@@ -44,7 +43,7 @@ class PathHttpEngine(
         private val okHttpClient: OkHttpClient,
         private val gson: Gson,
         private val storage: PathStorage
-) : PathEngine, CoroutineScope {
+) : PathEngine, NetworkMonitor.Listener, CoroutineScope {
     companion object {
         private const val HEARTBEAT_INTERVAL_MS = 30_000L
         private const val HEARTBEAT_INTERVAL_ERROR_MS = 5_000L
@@ -79,8 +78,6 @@ class PathHttpEngine(
         }
 
     override fun start() {
-        registerNetworkHandler()
-
         launch {
             delay(1000)
             httpService = getHttpService(false)
@@ -129,8 +126,8 @@ class PathHttpEngine(
         performCheckIn()
     }
 
-    private fun registerNetworkHandler() = launch {
-        networkMonitor.connected.consumeEach {
+    override fun onStatusChanged(connected: Boolean) {
+        launch {
             timeoutJob.cancel()
             delay(500L)
             performCheckIn()
@@ -184,9 +181,9 @@ class PathHttpEngine(
         }
     }
 
-    private suspend fun createCheckInMessage(): CheckIn {
+    private fun createCheckInMessage(): CheckIn {
         val location = try {
-            lastLocationProvider.getLastRealLocationOrNull()
+            lastLocationProvider.location()
         } catch (e: Exception) {
             null
         }
