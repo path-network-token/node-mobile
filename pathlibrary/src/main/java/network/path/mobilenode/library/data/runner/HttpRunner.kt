@@ -1,33 +1,31 @@
 package network.path.mobilenode.library.data.runner
 
-import kotlinx.coroutines.InternalCoroutinesApi
 import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.Constants
-import network.path.mobilenode.library.data.http.OkHttpWorkerPool
 import network.path.mobilenode.library.data.http.getBody
 import network.path.mobilenode.library.domain.PathStorage
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.JobRequest
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 
-@InternalCoroutinesApi
-class HttpRunner(private val workerPool: OkHttpWorkerPool, private val storage: PathStorage) : Runner {
+class HttpRunner(private val okHttpClient: OkHttpClient, private val storage: PathStorage) : Runner {
     companion object {
         private val HTTP_PROTOCOL_REGEX = "^https?://.*".toRegex(RegexOption.IGNORE_CASE)
     }
 
     override val checkType = CheckType.HTTP
 
-    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runHttpJob(it) }
+    override fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runHttpJob(it) }
 
-    private suspend fun runHttpJob(jobRequest: JobRequest): String {
+    private fun runHttpJob(jobRequest: JobRequest): String {
         val request = buildRequest(jobRequest)
 
-        val response = workerPool.execute(request)
-        val body = response.getBody()
-        return body.string()
+        return okHttpClient.newCall(request).execute().use {
+            it.getBody().string()
+        }
     }
 
     private fun buildRequest(jobRequest: JobRequest): Request {

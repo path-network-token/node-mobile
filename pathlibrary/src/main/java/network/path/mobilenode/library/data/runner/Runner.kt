@@ -6,5 +6,5 @@ import network.path.mobilenode.library.domain.entity.JobResult
 
 interface Runner {
     val checkType: CheckType
-    suspend fun runJob(jobRequest: JobRequest): JobResult
+    fun runJob(jobRequest: JobRequest): JobResult
 }

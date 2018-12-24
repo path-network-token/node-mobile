@@ -1,6 +1,5 @@
 package network.path.mobilenode.library.data.runner
 
-import kotlinx.coroutines.withTimeout
 import network.path.mobilenode.library.Constants
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.JobRequest
@@ -13,9 +12,13 @@ import java.net.InetAddress
 class UdpRunner : Runner {
     override val checkType = CheckType.UDP
 
-    override suspend fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) { runUdpJob(it) }
+    override fun runJob(jobRequest: JobRequest) = computeJobResult(checkType, jobRequest) {
+        runWithTimeout(Constants.JOB_TIMEOUT_MILLIS) {
+            runUdpJob(it)
+        }
+    }
 
-    private suspend fun runUdpJob(jobRequest: JobRequest) = withTimeout(Constants.JOB_TIMEOUT_MILLIS) {
+    private fun runUdpJob(jobRequest: JobRequest): String {
         val port = jobRequest.endpointPortOrDefault(Constants.DEFAULT_UDP_PORT)
 
         DatagramSocket().use {
@@ -25,6 +28,6 @@ class UdpRunner : Runner {
             val datagramPacket = DatagramPacket(body.toByteArray(), body.length, socketAddress, port)
             it.send(datagramPacket)
         }
-        "UDP packet sent successfully"
+        return "UDP packet sent successfully"
     }
 }

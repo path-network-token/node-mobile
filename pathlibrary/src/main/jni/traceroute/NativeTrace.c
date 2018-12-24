@@ -6,8 +6,9 @@
 #include <android/log.h>
 #include "traceroute.h"
 
-#define JNI_REG_CLASS "network/path/mobilenode/data/runner/mrt/MTR"
-#define JNI_RESULT_CLASS "network/path/mobilenode/data/runner/mrt/MtrResult"
+#define JNI_PACKAGE "network/path/mobilenode/library/data/runner/mtr/"
+#define JNI_REG_CLASS JNI_PACKAGE "Mtr"
+#define JNI_RESULT_CLASS JNI_PACKAGE "MtrResult"
 
 JNIEXPORT jobjectArray JNICALL native_trace(JNIEnv *env, jclass clazz, jstring server, jint port) {
     jobjectArray array = NULL;

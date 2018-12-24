@@ -78,6 +78,8 @@ class PathHttpEngine(
         }
 
     override fun start() {
+        networkMonitor.addListener(this)
+
         launch {
             delay(1000)
             httpService = getHttpService(false)
@@ -115,6 +117,8 @@ class PathHttpEngine(
         pollJob.cancel()
         timeoutJob.cancel()
         httpService?.close()
+
+        networkMonitor.removeListener(this)
     }
 
     override fun toggle() {

@@ -1,45 +1,38 @@
 package network.path.mobilenode.library.data.runner
 
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.async
-import network.path.mobilenode.library.data.http.OkHttpWorkerPool
 import network.path.mobilenode.library.domain.PathJobExecutor
 import network.path.mobilenode.library.domain.PathStorage
 import network.path.mobilenode.library.domain.entity.JobRequest
 import network.path.mobilenode.library.domain.entity.JobResult
 import okhttp3.OkHttpClient
-import kotlin.coroutines.CoroutineContext
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
-@InternalCoroutinesApi
-class PathJobExecutorImpl(okHttpClient: OkHttpClient, private val storage: PathStorage, private val gson: Gson) : PathJobExecutor, CoroutineScope {
-    private val workerPool = OkHttpWorkerPool(okHttpClient, 10)
+class PathJobExecutorImpl(private val okHttpClient: OkHttpClient, private val storage: PathStorage, private val gson: Gson) : PathJobExecutor {
+    private lateinit var executor: ExecutorService
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+    override fun start() {
+        executor = Executors.newCachedThreadPool()
+    }
 
-    override fun execute(request: JobRequest): Deferred<JobResult> {
+    override fun execute(request: JobRequest): Future<JobResult> {
         val runner = with(request) {
             when {
                 protocol == null -> FallbackRunner
-                protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner(workerPool, storage)
+                protocol.startsWith(prefix = "http", ignoreCase = true) -> HttpRunner(okHttpClient, storage)
                 protocol.startsWith(prefix = "tcp", ignoreCase = true) -> TcpRunner()
                 protocol.startsWith(prefix = "udp", ignoreCase = true) -> UdpRunner()
-                method.orEmpty().startsWith(prefix = "traceroute", ignoreCase = true) -> TracepathRunner(gson)
+                method.orEmpty().startsWith(prefix = "traceroute", ignoreCase = true) -> TraceRunner(gson)
                 else -> FallbackRunner
             }
         }
-        return async { runner.runJob(request) }
-    }
-
-    override fun start() {
-        workerPool.startWorkers()
+        return executor.submit(Callable { runner.runJob(request) })
     }
 
     override fun stop() {
-        workerPool.close()
+        executor.shutdown()
     }
 }

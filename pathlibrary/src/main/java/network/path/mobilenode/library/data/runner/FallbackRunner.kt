@@ -8,7 +8,7 @@ import network.path.mobilenode.library.domain.entity.Status
 object FallbackRunner : Runner {
     override val checkType = CheckType.UNKNOWN
 
-    override suspend fun runJob(jobRequest: JobRequest) = JobResult(
+    override fun runJob(jobRequest: JobRequest) = JobResult(
             checkType = checkType,
             responseBody = "No runner found for $jobRequest",
             responseTime = 0L,

@@ -158,7 +158,7 @@ class PathSystem(
 
     private suspend fun process(request: JobRequest) {
         Timber.d("SYSTEM: received [$request]")
-        val result = jobExecutor.execute(request).await()
+        val result = jobExecutor.execute(request).get()
         storage.recordStatistics(result.checkType, result.responseTime)
         engine.processResult(result)
         sendStatistics()

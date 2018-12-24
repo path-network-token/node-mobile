@@ -8,8 +8,11 @@ import network.path.mobilenode.library.domain.entity.JobResult
 import network.path.mobilenode.library.domain.entity.Status
 import timber.log.Timber
 import java.io.IOException
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
-suspend fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block: suspend (JobRequest) -> String): JobResult {
+fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block: (JobRequest) -> String): JobResult {
     var responseBody = ""
     var isResponseKnown = false
 
@@ -37,6 +40,12 @@ suspend fun computeJobResult(checkType: CheckType, jobRequest: JobRequest, block
             responseBody = responseBody,
             status = status
     )
+}
+
+inline fun <T>runWithTimeout(timeout: Long, crossinline block: () -> T): T {
+    val executor = Executors.newSingleThreadExecutor()
+    val f = executor.submit(Callable { block() })
+    return f.get(timeout, TimeUnit.MILLISECONDS)
 }
 
 inline fun measureRealtimeMillis(block: () -> Unit): Long {
