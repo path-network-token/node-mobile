@@ -18,14 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
-package network.path.mobilenode.library.data.http.shadowsocks
+package network.path.mobilenode.library.utils
 
 import android.os.Build
 import android.os.SystemClock
 import android.system.ErrnoException
 import android.system.Os
 import android.util.Log
-import network.path.mobilenode.library.utils.Commandline
 import timber.log.Timber
 import java.io.File
 import java.io.IOException

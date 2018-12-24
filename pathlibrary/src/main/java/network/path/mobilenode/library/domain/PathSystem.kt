@@ -24,13 +24,13 @@ import network.path.mobilenode.library.data.android.LastLocationProvider
 import network.path.mobilenode.library.data.android.NetworkMonitor
 import network.path.mobilenode.library.data.http.CustomDns
 import network.path.mobilenode.library.data.http.PathHttpEngine
-import network.path.mobilenode.library.data.http.shadowsocks.Executable
-import network.path.mobilenode.library.data.http.shadowsocks.GuardedProcessPool
 import network.path.mobilenode.library.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.library.data.storage.PathStorageImpl
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
 import network.path.mobilenode.library.domain.entity.JobRequest
+import network.path.mobilenode.library.utils.Executable
+import network.path.mobilenode.library.utils.GuardedProcessPool
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber

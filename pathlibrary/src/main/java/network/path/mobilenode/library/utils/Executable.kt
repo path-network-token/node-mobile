@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-package network.path.mobilenode.library.data.http.shadowsocks
+package network.path.mobilenode.library.utils
 
 import android.app.Application
 import android.system.ErrnoException
