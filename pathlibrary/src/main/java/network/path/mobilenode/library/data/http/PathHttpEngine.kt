@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
@@ -31,6 +30,7 @@ import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.ServerSocket
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
@@ -57,8 +57,9 @@ class PathHttpEngine(
     private var retryCounter = 0
     private var useProxy = false
     private var httpService: PathService? = null
-    private var timeoutJob = Job()
-    private var pollJob = Job()
+
+    private var timeoutTimer: Timer? = null
+    private var pollTimer: Timer? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO
@@ -114,8 +115,8 @@ class PathHttpEngine(
     }
 
     override fun stop() {
-        pollJob.cancel()
-        timeoutJob.cancel()
+        pollTimer?.cancel()
+        timeoutTimer?.cancel()
 
         networkMonitor.removeListener(this)
     }
@@ -131,7 +132,7 @@ class PathHttpEngine(
 
     override fun onStatusChanged(connected: Boolean) {
         launch {
-            timeoutJob.cancel()
+            timeoutTimer?.cancel()
             delay(500L)
             performCheckIn()
         }
@@ -217,30 +218,38 @@ class PathHttpEngine(
 
     private fun pollJobs() {
         Timber.d("HTTP: Start processing jobs...")
-        pollJob.cancel()
-        pollJob = launch {
-            if (currentExecutionUuids.isNotEmpty()) {
-                // Process only jobs which were not marked as active.
-                val ids = currentExecutionUuids.filterValues { !it }.keys.toList()
-                Timber.d("HTTP: ${ids.size} jobs to be processed")
-                ids.forEach { processJob(it) }
-            }
-            Timber.d("HTTP: Scheduling next jobs processing cycle...")
-            delay(POLL_INTERVAL_MS)
-            pollJobs()
+        if (currentExecutionUuids.isNotEmpty()) {
+            // Process only jobs which were not marked as active.
+            val ids = currentExecutionUuids.filterValues { !it }.keys.toList()
+            Timber.d("HTTP: ${ids.size} jobs to be processed")
+            ids.forEach { launch { processJob(it) } }
         }
+        Timber.d("HTTP: Scheduling next jobs processing cycle...")
+
+        val timer = Timer("poll")
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                pollJobs()
+            }
+        }, POLL_INTERVAL_MS)
+        pollTimer = timer
     }
 
     private fun scheduleCheckIn() {
         Timber.d("HTTP: Scheduling check in...")
-        if (!timeoutJob.isCancelled) {
-            timeoutJob.cancel()
-        }
-        timeoutJob = launch {
-            delay(if (retryCounter > 0) HEARTBEAT_INTERVAL_ERROR_MS else HEARTBEAT_INTERVAL_MS)
-            Timber.d("HTTP: Checking in...")
-            performCheckIn()
-        }
+        timeoutTimer?.cancel()
+
+        val timer = Timer("checkIn")
+        val delay = if (retryCounter > 0) HEARTBEAT_INTERVAL_ERROR_MS else HEARTBEAT_INTERVAL_MS
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                Timber.d("HTTP: Checking in...")
+                launch {
+                    performCheckIn()
+                }
+            }
+        }, delay)
+        timeoutTimer = timer
     }
 
     private suspend fun test() {
