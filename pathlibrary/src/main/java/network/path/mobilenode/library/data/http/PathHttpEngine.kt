@@ -12,7 +12,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.Constants
 import network.path.mobilenode.library.data.android.LastLocationProvider
 import network.path.mobilenode.library.data.android.NetworkMonitor
@@ -25,6 +24,7 @@ import network.path.mobilenode.library.domain.entity.JobList
 import network.path.mobilenode.library.domain.entity.JobRequest
 import network.path.mobilenode.library.domain.entity.JobResult
 import okhttp3.OkHttpClient
+import retrofit2.Call
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -116,7 +116,6 @@ class PathHttpEngine(
     override fun stop() {
         pollJob.cancel()
         timeoutJob.cancel()
-        httpService?.close()
 
         networkMonitor.removeListener(this)
     }
@@ -251,9 +250,9 @@ class PathHttpEngine(
         requests.send(dummyRequest)
     }
 
-    private suspend fun <T> executeServiceCall(call: suspend () -> T?): T? {
+    private fun <T> executeServiceCall(call: () -> Call<T>?): T? {
         return try {
-            val result = call()
+            val result = call()?.execute()?.body()
             if (result != null) {
                 retryCounter = 0
             }
@@ -281,8 +280,6 @@ class PathHttpEngine(
     }
 
     private fun getHttpService(useProxy: Boolean): PathService {
-        httpService?.close()
-
         val host = Constants.LOCALHOST
         val port = Constants.SS_LOCAL_PORT
 
@@ -302,7 +299,7 @@ class PathHttpEngine(
             this.useProxy = false
             okHttpClient
         }
-        return PathServiceNew(BuildConfig.HTTP_SERVER_URL, OkHttpWorkerPool(client, 10), gson)
+        return PathServiceImpl(client, gson)
     }
 
     private fun isPortInUse(port: Int) = try {

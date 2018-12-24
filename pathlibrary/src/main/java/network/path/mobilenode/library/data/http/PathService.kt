@@ -1,64 +1,37 @@
 package network.path.mobilenode.library.data.http
 
 import com.google.gson.Gson
-import kotlinx.coroutines.InternalCoroutinesApi
+import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.domain.entity.CheckIn
 import network.path.mobilenode.library.domain.entity.JobList
 import network.path.mobilenode.library.domain.entity.JobRequest
 import network.path.mobilenode.library.domain.entity.JobResult
-import okhttp3.MediaType
-import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PathService {
-    suspend fun checkIn(nodeId: String?, checkIn: CheckIn): JobList
+    @POST("/checkin/{nodeId}")
+    fun checkIn(@Path("nodeId") nodeId: String?, @Body checkIn: CheckIn): Call<JobList>
 
-    suspend fun requestDetails(executionId: String): JobRequest
+    @GET("/job_request/{executionId}")
+    fun requestDetails(@Path("executionId") executionId: String): Call<JobRequest>
 
-    suspend fun postResult(nodeId: String, executionId: String, result: JobResult)
-
-    fun close()
+    @POST("/job_result/{nodeId}/{executionId}")
+    fun postResult(@Path("nodeId") nodeId: String, @Path("executionId") executionId: String, @Body result: JobResult): Call<Unit>
 }
 
-@InternalCoroutinesApi
-class PathServiceNew(private val baseUrl: String,
-                     private val workerPool: OkHttpWorkerPool,
-                     private val gson: Gson) : PathService {
-    companion object {
-        private val JSON = MediaType.parse("application/json; charset=utf-8")
-    }
-
-    init {
-        workerPool.startWorkers()
-    }
-
-    override suspend fun checkIn(nodeId: String?, checkIn: CheckIn): JobList {
-        val request = Request.Builder()
-                .url("${baseUrl}checkin/$nodeId")
-                .post(RequestBody.create(JSON, gson.toJson(checkIn)))
-                .build()
-        val response = workerPool.execute(request)
-        val body = response.getBody()
-        return gson.fromJson(body.string(), JobList::class.java)
-    }
-
-    override suspend fun requestDetails(executionId: String): JobRequest {
-        val request = Request.Builder()
-                .url("${baseUrl}job_request/$executionId")
-                .build()
-        val response = workerPool.execute(request)
-        val body = response.getBody()
-        return gson.fromJson(body.string(), JobRequest::class.java)
-    }
-
-    override suspend fun postResult(nodeId: String, executionId: String, result: JobResult) {
-        val request = Request.Builder()
-                .url("${baseUrl}job_result/$nodeId/$executionId")
-                .post(RequestBody.create(JSON, gson.toJson(result)))
-                .build()
-        val response = workerPool.execute(request)
-        response.getBody()
-    }
-
-    override fun close() = workerPool.close()
-}
+class PathServiceImpl(
+        okHttpClient: OkHttpClient,
+        gson: Gson
+) : PathService by Retrofit.Builder()
+        .baseUrl(BuildConfig.HTTP_SERVER_URL)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(okHttpClient)
+        .build()
+        .create(PathService::class.java)
