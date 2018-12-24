@@ -1,23 +1,13 @@
 package network.path.mobilenode.library.domain
 
 import com.instacart.library.truetime.TrueTimeRx
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.net.InetAddress
 import java.util.*
-import kotlin.coroutines.CoroutineContext
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
-object DomainGenerator : CoroutineScope {
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
-
+object DomainGenerator {
     private const val CHECK_MAX_DAYS = 10
     private val SEED = listOf(
             intArrayOf(8, 11, 17, 4, 25, 16, 13, 19, 12, 7, 14, 47)
@@ -70,35 +60,27 @@ object DomainGenerator : CoroutineScope {
             return saved
         }
 
-        job = Job()
         val domains = generateDomains()
 //        Timber.d("DOMAIN: potential domains [${domains.joinToString(separator = "\n")}]")
         Timber.d("DOMAIN: potential domains count [${domains.size}]")
-        val resolved = runBlocking {
-            domains.forEach {
-                val d = resolve(it).await()
-                if (d != null) {
-                    return@runBlocking d
-                }
-            }
-            null
-        }
-        job.cancel()
-        Timber.d("DOMAIN: resolved domains [$resolved]")
+        val executor = Executors.newCachedThreadPool()
+        val result = executor.invokeAll(domains.map {
+            Callable { resolve(it) }
+        })
+        val resolved = result.mapNotNull { it.get() }.firstOrNull()
 
+        Timber.d("DOMAIN: resolved domains [$resolved]")
         if (resolved != null) {
             storage.proxyDomain = resolved
         }
         return resolved
     }
 
-    private fun resolve(domain: String): Deferred<String?> = async {
-        try {
-            InetAddress.getAllByName(domain)
-            domain
-        } catch (e: Exception) {
-            Timber.v("DOMAIN: cannot resolve host [$domain]: $e")
-            null
-        }
+    private fun resolve(domain: String): String? = try {
+        InetAddress.getAllByName(domain)
+        domain
+    } catch (e: Exception) {
+        Timber.v("DOMAIN: cannot resolve host [$domain]: $e")
+        null
     }
 }

@@ -179,7 +179,6 @@ class PathSystem(
         statistics.send(listOf(allStats[0], allStats[1], otherStats))
     }
 
-
     private fun startNativeProcesses() {
         val host = DomainGenerator.findDomain(storage) ?: PROXY_HOST
         if (host != null) {
