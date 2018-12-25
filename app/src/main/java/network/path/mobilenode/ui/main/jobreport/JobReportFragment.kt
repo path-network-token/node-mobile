@@ -13,9 +13,6 @@ import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.average_latency_layout.*
 import kotlinx.android.synthetic.main.fragment_job_report.*
 import kotlinx.android.synthetic.main.job_types_layout.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
@@ -27,9 +24,6 @@ import network.path.mobilenode.utils.observe
 import network.path.mobilenode.utils.startAfter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class JobReportFragment : BaseFragment() {
     companion object {
         private const val CHECKS_COUNT = 3

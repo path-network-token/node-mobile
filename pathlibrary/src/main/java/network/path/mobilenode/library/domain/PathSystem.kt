@@ -7,17 +7,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.instacart.library.truetime.TrueTimeRx
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.Constants
 import network.path.mobilenode.library.data.android.LastLocationProvider
@@ -28,6 +17,8 @@ import network.path.mobilenode.library.data.runner.PathJobExecutorImpl
 import network.path.mobilenode.library.data.storage.PathStorageImpl
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
+import network.path.mobilenode.library.domain.entity.ConnectionStatus
+import network.path.mobilenode.library.domain.entity.JobList
 import network.path.mobilenode.library.domain.entity.JobRequest
 import network.path.mobilenode.library.utils.Executable
 import network.path.mobilenode.library.utils.GuardedProcessPool
@@ -36,19 +27,17 @@ import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class PathSystem(
         private val context: Context,
         private val engine: PathEngine,
         val storage: PathStorage,
         private val jobExecutor: PathJobExecutor,
         private val networkMonitor: NetworkMonitor
-) : CoroutineScope {
+) : PathEngine.Listener {
     companion object {
         private const val TIMEOUT = 600
         private const val PROXY_RESTART_TIMEOUT = 3_600_000L // 1 hour
@@ -93,39 +82,58 @@ class PathSystem(
 
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+    interface Listener {
+        fun onStatusChanged(status: ConnectionStatus)
+        fun onNodeId(nodeId: String?)
+        fun onJobListReceived(jobList: JobList?)
+        fun onRunningChanged(isRunning: Boolean)
+        fun onStatisticsChanged(statistics: List<CheckTypeStatistics>)
+    }
 
-    val status get() = engine.status
-    val nodeId get() = engine.nodeId
-    val jobList get() = engine.jobList
-    val isRunning get() = engine.isRunning
-    val statistics = ConflatedBroadcastChannel<List<CheckTypeStatistics>>()
+    open class BaseListener : Listener {
+        override fun onStatusChanged(status: ConnectionStatus) {}
+        override fun onNodeId(nodeId: String?) {}
+        override fun onJobListReceived(jobList: JobList?) {}
+        override fun onRunningChanged(isRunning: Boolean) {}
+        override fun onStatisticsChanged(statistics: List<CheckTypeStatistics>) {}
+    }
 
-    private var timerJob: Job? = null
+    private val listeners = Collections.newSetFromMap(ConcurrentHashMap<Listener, Boolean>(0))
+
+    fun addListener(l: Listener) = listeners.add(l)
+    fun removeListener(l: Listener) = listeners.remove(l)
+
+    private var restartTimer: Timer? = null
     private val ssLocal = GuardedProcessPool()
     private val simpleObfs = GuardedProcessPool()
 
+    val status: ConnectionStatus get() = engine.status
+    val nodeId: String? get() = engine.nodeId
+    val jobList: JobList? get() = engine.jobList
+    val isRunning: Boolean get() = engine.isRunning
+
+    var statistics: List<CheckTypeStatistics> = emptyList()
+        private set(value) {
+            field = value
+            listeners.forEach { it.onStatisticsChanged(value) }
+        }
+
     init {
         initTrueTime()
-        registerJobRequestHandler()
-        registerNodeIdHandler()
     }
 
     fun start() {
         jobExecutor.start()
         networkMonitor.start()
+
+        engine.addListener(this)
         engine.start()
 
         // Initial statistics value
-        launch {
-            sendStatistics()
-        }
+        updateStatistics()
 
         // Native processes
-        launch {
-            startNativeProcesses()
-        }
+        startNativeProcesses()
         scheduleNativeRestart()
     }
 
@@ -135,37 +143,50 @@ class PathSystem(
 
     fun stop() {
         engine.stop()
+        engine.removeListener(this)
+
         networkMonitor.stop()
         jobExecutor.stop()
+        restartTimer?.cancel()
         // Kill them all
         Executable.killAll()
     }
 
-    private fun registerJobRequestHandler() = launch {
-        engine.requests.consumeEach {
-            process(it)
-        }
+    // PathEngine listener
+    override fun onStatusChanged(status: ConnectionStatus) {
+        listeners.forEach { it.onStatusChanged(status) }
     }
 
-    private fun registerNodeIdHandler() = launch {
-        engine.nodeId.consumeEach {
-            if (it != null) {
-                // Update nodeId in storage if it is not null
-                storage.nodeId = it
-            }
-        }
+    override fun onRequestReceived(request: JobRequest) {
+        process(request)
     }
 
-    private suspend fun process(request: JobRequest) {
+    override fun onNodeId(nodeId: String?) {
+        if (nodeId != null) {
+            storage.nodeId = nodeId
+        }
+        listeners.forEach { it.onNodeId(nodeId) }
+    }
+
+    override fun onJobListReceived(jobList: JobList?) {
+        listeners.forEach { it.onJobListReceived(jobList) }
+    }
+
+    override fun onRunning(isRunning: Boolean) {
+        listeners.forEach { it.onRunningChanged(isRunning) }
+    }
+
+    // Private methods
+    private fun process(request: JobRequest) {
         Timber.d("SYSTEM: received [$request]")
         val result = jobExecutor.execute(request).get()
         storage.recordStatistics(result.checkType, result.responseTime)
         engine.processResult(result)
-        sendStatistics()
+        updateStatistics()
         Timber.d("SYSTEM: request result [$result]")
     }
 
-    private suspend fun sendStatistics() {
+    private fun updateStatistics() {
         val allStats = CheckType.values()
                 .map { storage.statisticsForType(it) }
                 .sortedWith(compareByDescending(CheckTypeStatistics::count)
@@ -176,7 +197,7 @@ class PathSystem(
                     total.addOther(stats)
                 }
 
-        statistics.send(listOf(allStats[0], allStats[1], otherStats))
+        statistics = listOf(allStats[0], allStats[1], otherStats)
     }
 
     private fun startNativeProcesses() {
@@ -221,12 +242,15 @@ class PathSystem(
     }
 
     private fun scheduleNativeRestart() {
-        timerJob?.cancel()
-        timerJob = GlobalScope.launch(Dispatchers.IO) {
-            delay(PROXY_RESTART_TIMEOUT)
-            startNativeProcesses()
-            scheduleNativeRestart()
-        }
+        // TODO: Schedule on IO thread
+        val timer = Timer("scheduleNativeRestart")
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                startNativeProcesses()
+                scheduleNativeRestart()
+            }
+        }, PROXY_RESTART_TIMEOUT)
+        restartTimer = timer
     }
 
     @SuppressLint("CheckResult")

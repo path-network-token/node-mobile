@@ -10,17 +10,11 @@ import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.fragment_intro.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class IntroFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_intro
 

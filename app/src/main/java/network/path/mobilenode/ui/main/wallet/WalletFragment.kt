@@ -8,9 +8,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.EditorInfo
 import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
 import network.path.mobilenode.library.Constants
 import network.path.mobilenode.library.domain.PathSystem
@@ -23,9 +20,6 @@ import org.koin.android.ext.android.inject
 import org.web3j.crypto.Hash
 import org.web3j.utils.Numeric
 
-@ObsoleteCoroutinesApi
-@InternalCoroutinesApi
-@ExperimentalCoroutinesApi
 class WalletFragment : BaseFragment() {
     companion object {
         private const val WALLET_ADDRESS_MAX_LINES = 2 //not working in XML - workaround
@@ -35,7 +29,7 @@ class WalletFragment : BaseFragment() {
 
     override val layoutResId = R.layout.fragment_wallet
 
-    private val system by inject<PathSystem>()
+    private val pathSystem by inject<PathSystem>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,7 +61,7 @@ class WalletFragment : BaseFragment() {
         editButton.visibility = viewVisibility
 
         if (isEdit) {
-            updateEditAddress(system.storage.walletAddress)
+            updateEditAddress(pathSystem.storage.walletAddress)
             animateEditIn()
         } else {
             animateViewIn()
@@ -96,7 +90,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setupViewViews() {
-        walletAddressTextView.setText(system.storage.walletAddress)
+        walletAddressTextView.setText(pathSystem.storage.walletAddress)
         editButton.setOnClickListener { setMode(true) }
     }
 
@@ -177,13 +171,13 @@ class WalletFragment : BaseFragment() {
     private fun updatePathWalletAddress() {
         if (linkWalletButton.isEnabled) {
             val newAddress = walletAddressInputEditText.text.toString()
-            system.storage.walletAddress = newAddress
+            pathSystem.storage.walletAddress = newAddress
             walletAddressTextView.setText(newAddress)
             setMode(false)
         }
     }
 
-    private fun hasAddress() = system.storage.walletAddress != Constants.PATH_DEFAULT_WALLET_ADDRESS
+    private fun hasAddress() = pathSystem.storage.walletAddress != Constants.PATH_DEFAULT_WALLET_ADDRESS
 
     private fun isValid(address: CharSequence) =
             Numeric.prependHexPrefix(address.toString()) == checkedAddress(address)

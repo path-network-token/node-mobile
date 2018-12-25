@@ -9,9 +9,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.main.dashboard.DashboardFragment
@@ -19,9 +16,6 @@ import network.path.mobilenode.ui.main.wallet.WalletFragment
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class MainFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_main
 

@@ -17,9 +17,6 @@ import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_about.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.PathSystem
@@ -28,11 +25,8 @@ import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.android.ext.android.inject
 
-@ObsoleteCoroutinesApi
-@InternalCoroutinesApi
-@ExperimentalCoroutinesApi
 class AboutFragment : BaseFragment() {
-    private val system by inject<PathSystem>()
+    private val pathSystem by inject<PathSystem>()
 
     override val layoutResId = R.layout.fragment_about
 
@@ -88,13 +82,13 @@ class AboutFragment : BaseFragment() {
         // Specify the layout to use when the list of choices appears
         // adapter.setDropDownViewResource(R.layout.view_spinner_item)
         valueUsage.adapter = adapter
-        valueUsage.setSelection(values.indexOf(system.storage.wifiSetting))
+        valueUsage.setSelection(values.indexOf(pathSystem.storage.wifiSetting))
         valueUsage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(view: AdapterView<*>?) {
             }
 
             override fun onItemSelected(view: AdapterView<*>?, selectedView: View?, position: Int, id: Long) {
-                system.storage.wifiSetting = values[position]
+                pathSystem.storage.wifiSetting = values[position]
             }
         }
     }
@@ -167,8 +161,8 @@ class AboutFragment : BaseFragment() {
 
     private fun animateIn() {
         val logoAlphaAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0f, 1f)
-        val logoScaleXAnimator = ObjectAnimator.ofFloat(logo, "scaleX", 0.8f, 1f)
-        val logoScaleYAnimator = ObjectAnimator.ofFloat(logo, "scaleY", 0.8f, 1f)
+        val logoScaleXAnimator = ObjectAnimator.ofFloat(logo, "scaleX", 0.5f, 0.8f)
+        val logoScaleYAnimator = ObjectAnimator.ofFloat(logo, "scaleY", 0.5f, 0.8f)
         val logoSet = AnimatorSet()
         logoSet.duration = 750L
         logoSet.interpolator = AccelerateDecelerateInterpolator()

@@ -3,9 +3,6 @@ package network.path.mobilenode
 import android.app.Application
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.di.appModule
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.service.startPathService
@@ -14,17 +11,17 @@ import org.koin.android.ext.android.startKoin
 import timber.log.Timber
 
 
-@InternalCoroutinesApi
-@ExperimentalCoroutinesApi
-@ObsoleteCoroutinesApi
 class PathApplication : Application() {
-    private val system by inject<PathSystem>()
+    private val pathSystem by inject<PathSystem>()
 
     override fun onCreate() {
         super.onCreate()
         initLogging()
         startKoin(this, listOf(appModule))
-        if (system.storage.isActivated) {
+        // DEBUG START
+        // pathSystem.storage.isActivated = false
+        // DEBUG END
+        if (pathSystem.storage.isActivated) {
             startPathService()
         }
     }

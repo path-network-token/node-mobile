@@ -20,9 +20,6 @@ import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.dashboard_details.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
 import network.path.mobilenode.library.domain.entity.JobList
@@ -33,9 +30,6 @@ import network.path.mobilenode.utils.observe
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class DashboardFragment : BaseFragment() {
     companion object {
         private const val STATE_OPENGL = "STATE_OPENGL"

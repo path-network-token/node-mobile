@@ -11,25 +11,13 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.ui.MainActivity
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import kotlin.coroutines.CoroutineContext
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
-class ForegroundService : LifecycleService(), CoroutineScope {
+class ForegroundService : LifecycleService() {
     companion object {
         private const val TOGGLE_ACTION = "network.path.mobilenode.service.TOGGLE_ACTION"
 
@@ -40,17 +28,18 @@ class ForegroundService : LifecycleService(), CoroutineScope {
         private const val WAKE_LOCK_TAG = "PathWakeLock::Tag"
     }
 
-    private val job = Job()
-
     private val wakeLock by lazy {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
     }
 
-    private val system by inject<PathSystem>()
+    private val pathSystem by inject<PathSystem>()
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+    private val listener = object : PathSystem.BaseListener() {
+        override fun onRunningChanged(isRunning: Boolean) {
+            startForegroundNotification(isRunning)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -58,14 +47,14 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
         setUpWakeLock()
         setUpNotificationChannelId()
-        createStatusHandler()
-        startForegroundNotification(false)
-        system.start()
+        pathSystem.start()
+        pathSystem.addListener(listener)
+        startForegroundNotification(pathSystem.isRunning)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == TOGGLE_ACTION) {
-            system.toggle()
+            pathSystem.toggle()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -84,12 +73,6 @@ class ForegroundService : LifecycleService(), CoroutineScope {
                     NotificationManager.IMPORTANCE_MIN
             )
             notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun createStatusHandler() = launch {
-        system.isRunning.openSubscription().consumeEach {
-            startForegroundNotification(it)
         }
     }
 
@@ -114,21 +97,13 @@ class ForegroundService : LifecycleService(), CoroutineScope {
 
     override fun onDestroy() {
         Timber.d("PATH SERVICE: onDestroy()")
-        system.stop()
+        pathSystem.stop()
+        pathSystem.removeListener(listener)
         wakeLock.release()
 
         super.onDestroy()
     }
 }
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
-private val Context.foregroundServiceIntent
-    get() = Intent(this, ForegroundService::class.java)
-
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 fun Context.startPathService() =
-        ContextCompat.startForegroundService(this, foregroundServiceIntent)
+        ContextCompat.startForegroundService(this, Intent(this, ForegroundService::class.java))

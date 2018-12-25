@@ -3,30 +3,13 @@ package network.path.mobilenode.ui.main.dashboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
 import network.path.mobilenode.library.domain.entity.JobList
 import java.util.*
 import java.util.zip.Adler32
-import kotlin.coroutines.CoroutineContext
 
-@InternalCoroutinesApi
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
-class DashboardViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
+class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
     private val _nodeId = MutableLiveData<String?>()
     val nodeId: LiveData<String?> = _nodeId
 
@@ -39,46 +22,41 @@ class DashboardViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _isRunning = MutableLiveData<Boolean>()
     val isRunning: LiveData<Boolean> = _isRunning
 
+    private val listener = object : PathSystem.BaseListener() {
+        override fun onNodeId(nodeId: String?) = updateNodeId(nodeId)
+
+        override fun onStatusChanged(status: ConnectionStatus) = updateStatus(status)
+
+        override fun onJobListReceived(jobList: JobList?) = updateJobList(jobList)
+
+        override fun onRunningChanged(isRunning: Boolean) = updateRunning(isRunning)
+    }
+
     fun onViewCreated() {
-        job = Job()
-        registerNodeIdHandler()
-        registerStatusHandler()
-        registerJobListHandler()
-        registerRunningHandler()
+        pathSystem.addListener(listener)
+        updateStatus(pathSystem.status)
+        updateNodeId(pathSystem.nodeId)
+        updateJobList(pathSystem.jobList)
+        updateRunning(pathSystem.isRunning)
     }
 
     fun toggle() {
-        system.toggle()
-    }
-
-    private fun registerNodeIdHandler() = launch {
-        system.nodeId.openSubscription().consumeEach {
-            _nodeId.postValue(it?.toAdler32hex())
-        }
-    }
-
-    private fun registerStatusHandler() = launch {
-        system.status.openSubscription().consumeEach {
-            _status.postValue(it)
-        }
-    }
-
-    private fun registerJobListHandler() = launch {
-        system.jobList.openSubscription().consumeEach {
-            _jobList.postValue(it)
-        }
-    }
-
-    private fun registerRunningHandler() = launch {
-        system.isRunning.openSubscription().consumeEach {
-            _isRunning.postValue(it)
-        }
+        pathSystem.toggle()
     }
 
     override fun onCleared() {
-        job.cancel()
+        pathSystem.removeListener(listener)
         super.onCleared()
     }
+
+    // Private methods
+    private fun updateNodeId(nodeId: String?) = _nodeId.postValue(nodeId?.toAdler32hex())
+
+    private fun updateStatus(status: ConnectionStatus) = _status.postValue(status)
+
+    private fun updateJobList(jobList: JobList?) = _jobList.postValue(jobList)
+
+    private fun updateRunning(isRunning: Boolean) = _isRunning.postValue(isRunning)
 
     private fun String.toAdler32hex(): String {
         val adler32 = Adler32()

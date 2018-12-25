@@ -1,19 +1,23 @@
 package network.path.mobilenode.library.domain
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.BroadcastChannel
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
 import network.path.mobilenode.library.domain.entity.JobList
 import network.path.mobilenode.library.domain.entity.JobRequest
 import network.path.mobilenode.library.domain.entity.JobResult
 
-@ExperimentalCoroutinesApi
 interface PathEngine {
-    val status: BroadcastChannel<ConnectionStatus>
-    val requests: BroadcastChannel<JobRequest>
-    val nodeId: BroadcastChannel<String?>
-    val jobList: BroadcastChannel<JobList>
-    val isRunning: BroadcastChannel<Boolean>
+    interface Listener {
+        fun onStatusChanged(status: ConnectionStatus)
+        fun onRequestReceived(request: JobRequest)
+        fun onNodeId(nodeId: String?)
+        fun onJobListReceived(jobList: JobList?)
+        fun onRunning(isRunning: Boolean)
+    }
+
+    val status: ConnectionStatus
+    val nodeId: String?
+    val jobList: JobList?
+    val isRunning: Boolean
 
     // Initializes connection and starts retrieving (by either listening or polling) jobs
     fun start()
@@ -25,4 +29,7 @@ interface PathEngine {
     fun stop()
 
     fun toggle()
+
+    fun addListener(l: Listener): Boolean
+    fun removeListener(l: Listener): Boolean
 }

@@ -2,10 +2,10 @@ package network.path.mobilenode.library.data.runner
 
 import network.path.mobilenode.library.BuildConfig
 import network.path.mobilenode.library.Constants
-import network.path.mobilenode.library.data.http.getBody
 import network.path.mobilenode.library.domain.PathStorage
 import network.path.mobilenode.library.domain.entity.CheckType
 import network.path.mobilenode.library.domain.entity.JobRequest
+import network.path.mobilenode.library.utils.getBody
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request

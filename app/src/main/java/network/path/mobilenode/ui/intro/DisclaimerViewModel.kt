@@ -1,16 +1,14 @@
 package network.path.mobilenode.ui.intro
 
+import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
-import kotlin.coroutines.CoroutineContext
+import timber.log.Timber
+import java.lang.ref.WeakReference
 
-class DisclaimerViewModel : ViewModel(), CoroutineScope {
+class DisclaimerViewModel : ViewModel() {
     companion object {
         private const val DISCLAIMER_URL = "https://path.net/mobile-node-disclaimer"
         private const val DIV_CLASS = "mobile-node-disclaimer-text"
@@ -22,31 +20,41 @@ class DisclaimerViewModel : ViewModel(), CoroutineScope {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
+    private lateinit var loader: DataLoader
 
     fun onViewCreated() {
         _isLoading.postValue(true)
-        loadDisclaimer()
-    }
-
-    private fun loadDisclaimer() = launch {
-        try {
-            Jsoup.connect(DISCLAIMER_URL).get().run {
-                val el = select("div.$DIV_CLASS").first()
-                _disclaimer.postValue(el.html())
-                _isLoading.postValue(false)
-            }
-        } catch (e: Exception) {
-            _isLoading.postValue(false)
-            _disclaimer.postValue(null)
-        }
+        loader = DataLoader(WeakReference(this))
+        loader.execute()
     }
 
     override fun onCleared() {
-        job.cancel()
+        loader.cancel(true)
         super.onCleared()
+    }
+
+    private class DataLoader(private val ref: WeakReference<DisclaimerViewModel>) : AsyncTask<Void?, Void?, String?>() {
+        private var html: String? = null
+
+        override fun doInBackground(vararg params: Void?): String? {
+            // NO CHANGES TO UI TO BE DONE HERE
+            return try {
+                Jsoup.connect(DISCLAIMER_URL).get().run {
+                    val el = select("div.$DIV_CLASS").first()
+                    el.html()
+                }
+            } catch (e: Exception) {
+                Timber.w("DISCLAIMER: failed to load online content [$e]")
+                null
+            }
+        }
+
+        override fun onPostExecute(result: String?) {
+            val model = ref.get()
+            if (model != null) {
+                model._disclaimer.postValue(result)
+                model._isLoading.postValue(false)
+            }
+        }
     }
 }
