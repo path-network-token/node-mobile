@@ -4,6 +4,8 @@ ext.versions = [
         targetSdk           : 28,
         appVersion          : '1.2.8',
         appVersionCode      : 10208,
+        libVersion          : '1.0',
+        libVersionCode      : 10000,
         androidCoreKtx      : '1.0.1',
         androidFragmentKtx  : '1.0.0',
         androidJunit5       : '1.2.0.0',
