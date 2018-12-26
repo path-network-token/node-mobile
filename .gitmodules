@@ -1,38 +1,35 @@
-[submodule "pathlibrary/src/main/jni/badvpn"]
-	path = pathlibrary/src/main/jni/badvpn
+[submodule "library/src/main/jni/badvpn"]
+	path = library/src/main/jni/badvpn
 	url = https://github.com/shadowsocks/badvpn.git
 	branch = shadowsocks-android
-[submodule "pathlibrary/src/main/jni/libancillary"]
-	path = pathlibrary/src/main/jni/libancillary
+[submodule "library/src/main/jni/libancillary"]
+	path = library/src/main/jni/libancillary
 	url = https://github.com/shadowsocks/libancillary.git
 	branch = shadowsocks-android
-[submodule "pathlibrary/src/main/jni/libev"]
-	path = pathlibrary/src/main/jni/libev
+[submodule "library/src/main/jni/libev"]
+	path = library/src/main/jni/libev
 	url = https://github.com/shadowsocks/libev.git
-[submodule "pathlibrary/src/main/jni/libevent"]
-	path = pathlibrary/src/main/jni/libevent
+[submodule "library/src/main/jni/libevent"]
+	path = library/src/main/jni/libevent
 	url = https://github.com/shadowsocks/libevent.git
 	branch = shadowsocks-android
-[submodule "pathlibrary/src/main/jni/libsodium"]
-	path = pathlibrary/src/main/jni/libsodium
+[submodule "library/src/main/jni/libsodium"]
+	path = library/src/main/jni/libsodium
 	url = https://github.com/jedisct1/libsodium.git
 	branch = stable
-[submodule "pathlibrary/src/main/jni/mbedtls"]
-	path = pathlibrary/src/main/jni/mbedtls
+[submodule "library/src/main/jni/mbedtls"]
+	path = library/src/main/jni/mbedtls
 	url = https://github.com/ARMmbed/mbedtls
-[submodule "pathlibrary/src/main/jni/pcre"]
-	path = pathlibrary/src/main/jni/pcre
+[submodule "library/src/main/jni/pcre"]
+	path = library/src/main/jni/pcre
 	url = https://android.googlesource.com/platform/external/pcre
-[submodule "pathlibrary/src/main/jni/redsocks"]
-	path = pathlibrary/src/main/jni/redsocks
+[submodule "library/src/main/jni/redsocks"]
+	path = library/src/main/jni/redsocks
 	url = https://github.com/shadowsocks/redsocks.git
 	branch = shadowsocks-android
-[submodule "pathlibrary/src/main/jni/shadowsocks-libev"]
-	path = pathlibrary/src/main/jni/shadowsocks-libev
+[submodule "library/src/main/jni/shadowsocks-libev"]
+	path = library/src/main/jni/shadowsocks-libev
 	url = https://github.com/shadowsocks/shadowsocks-libev
-[submodule "pathlibrary/src/overture/src/github.com/shadowsocks/overture"]
-	path = pathlibrary/src/overture/src/github.com/shadowsocks/overture
-	url = https://github.com/shadowsocks/overture.git
-[submodule "pathlibrary/src/main/jni/simple-obfs"]
-	path = pathlibrary/src/main/jni/simple-obfs
+[submodule "library/src/main/jni/simple-obfs"]
+	path = library/src/main/jni/simple-obfs
 	url = https://github.com/shadowsocks/simple-obfs.git
