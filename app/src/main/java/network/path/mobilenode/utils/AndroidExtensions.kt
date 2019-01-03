@@ -38,17 +38,6 @@ fun showToast(context: Context, @StringRes messageResId: Int) {
     Toast.makeText(context, messageResId, Toast.LENGTH_SHORT).show()
 }
 
-/**
- * Wrapper for kotlin.concurrent.thread that tracks uncaught exceptions.
- */
-fun thread(name: String? = null, start: Boolean = true, isDaemon: Boolean = false,
-           contextClassLoader: ClassLoader? = null, priority: Int = -1, block: () -> Unit): Thread {
-    val thread = kotlin.concurrent.thread(false, isDaemon, contextClassLoader, name, priority, block)
-    thread.setUncaughtExceptionHandler { _, t -> Timber.e(t) }
-    if (start) thread.start()
-    return thread
-}
-
 fun Context.launchUrl(url: String) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(url)

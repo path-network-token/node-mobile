@@ -3,16 +3,11 @@ package network.path.mobilenode.ui.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathStorage
-import kotlin.coroutines.CoroutineContext
+import network.path.mobilenode.library.domain.PathSystem
+import java.util.*
 
 
-class SplashViewModel(private val storage: PathStorage) : ViewModel(), CoroutineScope {
+class SplashViewModel(private val pathSystem: PathSystem) : ViewModel() {
     companion object {
         private const val SPLASH_SHOW_TIME_MILLIS = 2000L
     }
@@ -22,28 +17,29 @@ class SplashViewModel(private val storage: PathStorage) : ViewModel(), Coroutine
     private val _nextScreen = MutableLiveData<NextScreen>()
     val nextScreen: LiveData<NextScreen> = _nextScreen
 
-    private val showNextScreenJob = launch(start = CoroutineStart.LAZY) {
-        delay(SPLASH_SHOW_TIME_MILLIS)
-//        val value = NextScreen.INTRO
-        val value = if (storage.isActivated) NextScreen.MAIN else NextScreen.INTRO
-        _nextScreen.postValue(value)
-    }
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+    private var timer: Timer? = null
+    private var timerComplete = false
 
     fun onViewCreated() {
-        showNextScreenJob.start()
+        val timer = Timer("splashTimer")
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                timerComplete = true
+                val value = if (pathSystem.isActivated) NextScreen.MAIN else NextScreen.INTRO
+                _nextScreen.postValue(value)
+            }
+        }, SPLASH_SHOW_TIME_MILLIS)
+        this.timer = timer
     }
 
     fun onResume() {
-        if (showNextScreenJob.isCompleted) {
+        if (timerComplete) {
             _nextScreen.postValue(NextScreen.INTRO)
         }
     }
 
     override fun onCleared() {
-        showNextScreenJob.cancel()
+        timer?.cancel()
         super.onCleared()
     }
 }

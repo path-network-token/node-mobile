@@ -22,7 +22,7 @@
     <include
         android:id="@+id/logo"
         layout="@layout/combined_logo"
-        app:layout_constraintBottom_toTopOf="@id/footerText"
+        app:layout_constraintBottom_toTopOf="@id/details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,9 +34,9 @@
         layout="@layout/dashboard_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_m"
-        android:layout_marginBottom="@dimen/padding_m"
-        app:layout_constraintBottom_toTopOf="@id/disclaimerButton"
+        android:layout_marginTop="@dimen/padding_s"
+        android:layout_marginBottom="@dimen/padding_s"
+        app:layout_constraintBottom_toTopOf="@id/labelUsage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo"
@@ -52,6 +52,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/details"
+        app:layout_constraintBottom_toTopOf="@id/disclaimerButton"
         />
 
     <androidx.constraintlayout.widget.Guideline
@@ -79,6 +80,7 @@
         style="@style/Text.Default.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
         android:layout_marginBottom="@dimen/padding_m"
         android:gravity="center"
         android:stateListAnimator="@animator/button_state_list"
@@ -116,6 +118,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/footerLogo"
+        app:layout_constraintTop_toBottomOf="@id/disclaimerButton"
         app:layout_constraintVertical_bias="1.0"
         tools:text="BY PATH NETWORK"
         />

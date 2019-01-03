@@ -24,13 +24,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
         manifestPlaceholders = [applicationLabel: "Path Mobile"]
-
-        externalNativeBuild {
-            ndkBuild {
-                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
-                arguments "-j${Runtime.runtime.availableProcessors()}"
-            }
-        }
     }
 
     applicationVariants.all { variant ->
@@ -64,7 +57,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'HTTP_SERVER_URL', '"https://jobs-api.path.network/"'
         }
         debug {
             ext.enableCrashlytics = false
@@ -79,11 +71,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
-        }
-    }
 //    lintOptions {
 //        checkReleaseBuilds false
 //        // Or, if you prefer, you can continue to check for errors in release builds,
@@ -94,6 +81,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':library')
 
     // Communication
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
@@ -101,7 +89,6 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-scalars:$versions.retrofit"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$versions.retrofitCoroutines"
 
     // AndroidX
     implementation "androidx.appcompat:appcompat:$versions.androidX"
@@ -117,8 +104,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
 
     // Kotlin
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$versions.coroutines"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     // DI
@@ -134,7 +119,6 @@ dependencies {
     // Misc
     implementation "com.google.android.gms:play-services-location:$versions.location"
     implementation "com.jakewharton.timber:timber:$versions.timber"
-    implementation "com.github.instacart.truetime-android:library-extension-rx:$versions.trueTime"
     implementation "org.jsoup:jsoup:$versions.jsoup"
     implementation "org.web3j:core:$versions.web3j"
 

@@ -4,20 +4,16 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import network.path.mobilenode.domain.PathStorage
+import network.path.mobilenode.library.domain.PathSystem
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class BootCompletedReceiver : BroadcastReceiver(), KoinComponent {
-    private val storage by inject<PathStorage>()
+    private val pathSystem by inject<PathSystem>()
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
-        if (storage.isActivated) {
+        if (pathSystem.isActivated) {
             context.startPathService()
         }
     }

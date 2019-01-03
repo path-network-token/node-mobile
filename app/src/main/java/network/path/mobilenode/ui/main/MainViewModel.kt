@@ -3,43 +3,35 @@ package network.path.mobilenode.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.domain.entity.ConnectionStatus
-import kotlin.coroutines.CoroutineContext
+import network.path.mobilenode.library.domain.PathSystem
+import network.path.mobilenode.library.domain.entity.ConnectionStatus
 
-@ExperimentalCoroutinesApi
-@ObsoleteCoroutinesApi
-class MainViewModel(private val pathSystem: PathSystem) : ViewModel(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
-
+class MainViewModel(private val pathSystem: PathSystem) : ViewModel() {
     private val _isLooking = MutableLiveData<Boolean>()
     val isLooking: LiveData<Boolean> = _isLooking
 
-    private var job: Job? = null
-
-    fun onViewCreated() {
-        job = launch {
-            pathSystem.status.consumeEach {
-                val oldValue = _isLooking.value
-                if (oldValue == false) {
-                    job?.cancel()
-                } else {
-                    _isLooking.postValue(it == ConnectionStatus.LOOKING)
-                }
-            }
+    private val listener = object : PathSystem.BaseListener() {
+        override fun onStatusChanged(status: ConnectionStatus) {
+            updateStatus(status)
         }
     }
 
+    fun onViewCreated() {
+        pathSystem.addListener(listener)
+        updateStatus(pathSystem.status)
+    }
+
     override fun onCleared() {
-        job?.cancel()
+        pathSystem.removeListener(listener)
         super.onCleared()
+    }
+
+    private fun updateStatus(status: ConnectionStatus) {
+        val oldValue = _isLooking.value
+        if (oldValue == false) {
+            pathSystem.removeListener(listener)
+        } else {
+            _isLooking.postValue(status == ConnectionStatus.LOOKING)
+        }
     }
 }
