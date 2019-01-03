@@ -3,28 +3,13 @@ package network.path.mobilenode.ui.main.jobreport
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
-import network.path.mobilenode.domain.PathSystem
-import network.path.mobilenode.domain.entity.CheckType
-import network.path.mobilenode.domain.entity.CheckTypeStatistics
-import kotlin.coroutines.CoroutineContext
+import network.path.mobilenode.library.domain.PathSystem
+import network.path.mobilenode.library.domain.entity.CheckType
+import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
 
-@ExperimentalCoroutinesApi
-@ObsoleteCoroutinesApi
-class JobReportViewModel(private val system: PathSystem) : ViewModel(), CoroutineScope {
-    private lateinit var job: Job
-
+class JobReportViewModel(private val pathSystem: PathSystem) : ViewModel() {
     var firstStats: List<CheckTypeStatistics>? = null
         private set
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
 
     private val _statistics = MutableLiveData<List<CheckTypeStatistics>>()
     val statistics: LiveData<List<CheckTypeStatistics>> = _statistics
@@ -32,29 +17,33 @@ class JobReportViewModel(private val system: PathSystem) : ViewModel(), Coroutin
     private val _selectedType = MutableLiveData<CheckType?>()
     val selectedType: LiveData<CheckType?> = _selectedType
 
+    private val listener = object : PathSystem.BaseListener() {
+        override fun onStatisticsChanged(statistics: List<CheckTypeStatistics>) {
+            postStatistics(statistics)
+        }
+    }
+
     fun onViewCreated() {
-        job = Job()
-        registerHandler()
+        pathSystem.addListener(listener)
+        postStatistics(pathSystem.statistics)
     }
 
     fun select(type: CheckType?) {
-        launch { _selectedType.postValue(type) }
+        _selectedType.postValue(type)
     }
 
     override fun onCleared() {
-        job.cancel()
+        pathSystem.removeListener(listener)
         super.onCleared()
     }
 
-    private fun registerHandler() = launch {
-        system.statistics.openSubscription().consumeEach {
-            _statistics.postValue(it)
-            if (firstStats == null) {
-                firstStats = it
-                _selectedType.postValue(it.maxBy { stat -> stat.count }?.type)
-            } else {
-                _selectedType.postValue(_selectedType.value)
-            }
+    private fun postStatistics(statistics: List<CheckTypeStatistics>) {
+        _statistics.postValue(statistics)
+        if (firstStats == null) {
+            firstStats = statistics
+            _selectedType.postValue(statistics.maxBy { stat -> stat.count }?.type)
+        } else {
+            _selectedType.postValue(_selectedType.value)
         }
     }
 }
