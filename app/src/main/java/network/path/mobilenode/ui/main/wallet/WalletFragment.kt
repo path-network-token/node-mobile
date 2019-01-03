@@ -9,7 +9,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import network.path.mobilenode.R
-import network.path.mobilenode.library.Constants
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
@@ -36,7 +35,7 @@ class WalletFragment : BaseFragment() {
 
         setupEditViews()
         setupViewViews()
-        setMode(!hasAddress())
+        setMode(!pathSystem.hasAddress)
     }
 
     override fun onDestroyView() {
@@ -61,7 +60,7 @@ class WalletFragment : BaseFragment() {
         editButton.visibility = viewVisibility
 
         if (isEdit) {
-            updateEditAddress(pathSystem.storage.walletAddress)
+            updateEditAddress(pathSystem.walletAddress)
             animateEditIn()
         } else {
             animateViewIn()
@@ -90,7 +89,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setupViewViews() {
-        walletAddressTextView.setText(pathSystem.storage.walletAddress)
+        walletAddressTextView.setText(pathSystem.walletAddress)
         editButton.setOnClickListener { setMode(true) }
     }
 
@@ -171,13 +170,11 @@ class WalletFragment : BaseFragment() {
     private fun updatePathWalletAddress() {
         if (linkWalletButton.isEnabled) {
             val newAddress = walletAddressInputEditText.text.toString()
-            pathSystem.storage.walletAddress = newAddress
+            pathSystem.walletAddress = newAddress
             walletAddressTextView.setText(newAddress)
             setMode(false)
         }
     }
-
-    private fun hasAddress() = pathSystem.storage.walletAddress != Constants.PATH_DEFAULT_WALLET_ADDRESS
 
     private fun isValid(address: CharSequence) =
             Numeric.prependHexPrefix(address.toString()) == checkedAddress(address)

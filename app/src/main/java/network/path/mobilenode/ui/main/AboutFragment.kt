@@ -82,13 +82,13 @@ class AboutFragment : BaseFragment() {
         // Specify the layout to use when the list of choices appears
         // adapter.setDropDownViewResource(R.layout.view_spinner_item)
         valueUsage.adapter = adapter
-        valueUsage.setSelection(values.indexOf(pathSystem.storage.wifiSetting))
+        valueUsage.setSelection(values.indexOf(pathSystem.wifiSetting))
         valueUsage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(view: AdapterView<*>?) {
             }
 
             override fun onItemSelected(view: AdapterView<*>?, selectedView: View?, position: Int, id: Long) {
-                pathSystem.storage.wifiSetting = values[position]
+                pathSystem.wifiSetting = values[position]
             }
         }
     }
