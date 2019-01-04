@@ -4,21 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import network.path.mobilenode.library.domain.PathSystem
-import network.path.mobilenode.library.domain.entity.CheckType
-import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
+import network.path.mobilenode.library.domain.entity.JobType
+import network.path.mobilenode.library.domain.entity.JobTypeStatistics
 
 class JobReportViewModel(private val pathSystem: PathSystem) : ViewModel() {
-    var firstStats: List<CheckTypeStatistics>? = null
+    var firstStats: List<JobTypeStatistics>? = null
         private set
 
-    private val _statistics = MutableLiveData<List<CheckTypeStatistics>>()
-    val statistics: LiveData<List<CheckTypeStatistics>> = _statistics
+    private val _statistics = MutableLiveData<List<JobTypeStatistics>>()
+    val statistics: LiveData<List<JobTypeStatistics>> = _statistics
 
-    private val _selectedType = MutableLiveData<CheckType?>()
-    val selectedType: LiveData<CheckType?> = _selectedType
+    private val _selectedType = MutableLiveData<JobType?>()
+    val selectedType: LiveData<JobType?> = _selectedType
 
     private val listener = object : PathSystem.BaseListener() {
-        override fun onStatisticsChanged(statistics: List<CheckTypeStatistics>) {
+        override fun onStatisticsChanged(statistics: List<JobTypeStatistics>) {
             postStatistics(statistics)
         }
     }
@@ -28,7 +28,7 @@ class JobReportViewModel(private val pathSystem: PathSystem) : ViewModel() {
         postStatistics(pathSystem.statistics)
     }
 
-    fun select(type: CheckType?) {
+    fun select(type: JobType?) {
         _selectedType.postValue(type)
     }
 
@@ -37,7 +37,7 @@ class JobReportViewModel(private val pathSystem: PathSystem) : ViewModel() {
         super.onCleared()
     }
 
-    private fun postStatistics(statistics: List<CheckTypeStatistics>) {
+    private fun postStatistics(statistics: List<JobTypeStatistics>) {
         _statistics.postValue(statistics)
         if (firstStats == null) {
             firstStats = statistics

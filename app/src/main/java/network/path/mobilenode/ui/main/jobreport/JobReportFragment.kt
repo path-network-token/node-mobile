@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.main.average_latency_layout.*
 import kotlinx.android.synthetic.main.fragment_job_report.*
 import kotlinx.android.synthetic.main.job_types_layout.*
 import network.path.mobilenode.R
-import network.path.mobilenode.library.domain.entity.CheckType
-import network.path.mobilenode.library.domain.entity.CheckTypeStatistics
+import network.path.mobilenode.library.domain.entity.JobType
+import network.path.mobilenode.library.domain.entity.JobTypeStatistics
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
 import network.path.mobilenode.utils.bounceScale
@@ -82,7 +82,7 @@ class JobReportFragment : BaseFragment() {
         }
     }
 
-    private fun setSelected(checkType: CheckType?) {
+    private fun setSelected(checkType: JobType?) {
         val stats = jobReportViewModel.statistics.value ?: return
 
         val value = stats.find { it.type == checkType } ?: stats.last()
@@ -107,7 +107,7 @@ class JobReportFragment : BaseFragment() {
         progressAnimator = animator
     }
 
-    private fun setStatistics(statistics: List<CheckTypeStatistics>) {
+    private fun setStatistics(statistics: List<JobTypeStatistics>) {
         val maxMillis = statistics.map { it.averageLatency }.max() ?: 10_000L
 
         val first = statistics[0]
@@ -130,7 +130,7 @@ class JobReportFragment : BaseFragment() {
         }
     }
 
-    private fun set(button: RadioButton, chart: LatencyChart, stat: CheckTypeStatistics, maxMillis: Long, after: Animator? = null) {
+    private fun set(button: RadioButton, chart: LatencyChart, stat: JobTypeStatistics, maxMillis: Long, after: Animator? = null) {
         val title = stat.type.title
         button.text = title
 
@@ -147,14 +147,14 @@ class JobReportFragment : BaseFragment() {
         }
     }
 
-    private val CheckType?.title
+    private val JobType?.title
         get() = getString(when (this) {
             null -> R.string.other_checks
-            CheckType.HTTP -> R.string.http_checks
-            CheckType.TCP -> R.string.tcp_checks
-            CheckType.UDP -> R.string.udp_checks
-            CheckType.DNS -> R.string.dns_checks
-            CheckType.TRACEROUTE -> R.string.traceroute_checks
-            CheckType.UNKNOWN -> R.string.unknown_checks
+            JobType.HTTP -> R.string.http_checks
+            JobType.TCP -> R.string.tcp_checks
+            JobType.UDP -> R.string.udp_checks
+            JobType.DNS -> R.string.dns_checks
+            JobType.TRACEROUTE -> R.string.traceroute_checks
+            JobType.UNKNOWN -> R.string.unknown_checks
         }).toUpperCase()
 }

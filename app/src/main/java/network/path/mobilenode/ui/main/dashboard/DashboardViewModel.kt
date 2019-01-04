@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
-import network.path.mobilenode.library.domain.entity.JobList
+import network.path.mobilenode.library.domain.entity.NodeInfo
 import java.util.*
 import java.util.zip.Adler32
 
@@ -16,8 +16,8 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
     private val _status = MutableLiveData<ConnectionStatus>()
     val status: LiveData<ConnectionStatus> = _status
 
-    private val _jobList = MutableLiveData<JobList>()
-    val jobList: LiveData<JobList> = _jobList
+    private val _nodeInfo = MutableLiveData<NodeInfo>()
+    val nodeInfo: LiveData<NodeInfo> = _nodeInfo
 
     private val _isRunning = MutableLiveData<Boolean>()
     val isRunning: LiveData<Boolean> = _isRunning
@@ -27,7 +27,7 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
 
         override fun onStatusChanged(status: ConnectionStatus) = updateStatus(status)
 
-        override fun onJobListReceived(jobList: JobList?) = updateJobList(jobList)
+        override fun onNodeInfoReceived(nodeInfo: NodeInfo?) = updateNodeInfo(nodeInfo)
 
         override fun onRunningChanged(isRunning: Boolean) = updateRunning(isRunning)
     }
@@ -36,7 +36,7 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
         pathSystem.addListener(listener)
         updateStatus(pathSystem.status)
         updateNodeId(pathSystem.nodeId)
-        updateJobList(pathSystem.jobList)
+        updateNodeInfo(pathSystem.nodeInfo)
         updateRunning(pathSystem.isRunning)
     }
 
@@ -54,7 +54,7 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
 
     private fun updateStatus(status: ConnectionStatus) = _status.postValue(status)
 
-    private fun updateJobList(jobList: JobList?) = _jobList.postValue(jobList)
+    private fun updateNodeInfo(nodeInfo: NodeInfo?) = _nodeInfo.postValue(nodeInfo)
 
     private fun updateRunning(isRunning: Boolean) = _isRunning.postValue(isRunning)
 

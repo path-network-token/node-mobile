@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.job_report_button.*
 import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.entity.ConnectionStatus
-import network.path.mobilenode.library.domain.entity.JobList
+import network.path.mobilenode.library.domain.entity.NodeInfo
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
 import network.path.mobilenode.utils.TranslationFractionProperty
@@ -54,13 +54,13 @@ class DashboardFragment : BaseFragment() {
 
         setupClicks()
         setupTexts()
-        setJobList(null)
+        setNodeInfo(null)
 
         dashboardViewModel.let {
             it.onViewCreated()
             it.nodeId.observe(this, ::setNodeId)
             it.status.observe(this, ::setStatus)
-            it.jobList.observe(this, ::setJobList)
+            it.nodeInfo.observe(this, ::setNodeInfo)
             it.isRunning.observe(this, ::setRunning)
         }
 
@@ -219,11 +219,11 @@ class DashboardFragment : BaseFragment() {
         previousStatus = status
     }
 
-    private fun setJobList(jobList: JobList?) {
-        ipWithSubnetAddress.text = jobList?.networkPrefix ?: getString(R.string.n_a)
-        value1.setText(jobList?.asn?.toString().orNoData())
-        value2.setText(jobList?.asOrganization.orNoData())
-        value3.setText(jobList?.location.orNoData())
+    private fun setNodeInfo(nodeInfo: NodeInfo?) {
+        ipWithSubnetAddress.text = nodeInfo?.networkPrefix ?: getString(R.string.n_a)
+        value1.setText(nodeInfo?.asn?.toString().orNoData())
+        value2.setText(nodeInfo?.asOrganization.orNoData())
+        value3.setText(nodeInfo?.location.orNoData())
     }
 
     private fun setRunning(isRunning: Boolean) {
