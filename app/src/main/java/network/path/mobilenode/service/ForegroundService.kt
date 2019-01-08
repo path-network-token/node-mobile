@@ -49,7 +49,7 @@ class ForegroundService : LifecycleService() {
         setUpNotificationChannelId()
         pathSystem.start()
         pathSystem.addListener(listener)
-        startForegroundNotification(pathSystem.isRunning)
+        startForegroundNotification(pathSystem.isJobExecutionRunning)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

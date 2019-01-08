@@ -1,5 +1,6 @@
 package network.path.mobilenode.di
 
+import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.ui.intro.DisclaimerViewModel
 import network.path.mobilenode.ui.intro.IntroViewModel
@@ -18,7 +19,7 @@ val appModule = module {
     single { ObjDataProvider(ObjLoader(androidApplication(), "models/ico.obj", radius = 1f)) }
     single { SphereDataProvider(2, 1.1f) }
 
-    single { PathSystem.create(androidApplication()) }
+    single { PathSystem.create(androidApplication(), BuildConfig.DEBUG) }
 
     viewModel { IntroViewModel(get(), get()) }
     viewModel { SplashViewModel(get()) }

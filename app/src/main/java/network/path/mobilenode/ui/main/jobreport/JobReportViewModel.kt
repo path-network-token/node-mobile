@@ -38,9 +38,17 @@ class JobReportViewModel(private val pathSystem: PathSystem) : ViewModel() {
     }
 
     private fun postStatistics(statistics: List<JobTypeStatistics>) {
-        _statistics.postValue(statistics)
+        val stats = if (statistics.isNotEmpty()) {
+            val otherStats = statistics.subList(2, statistics.size - 1)
+                    .fold(JobTypeStatistics(null, 0, 0)) { total, s ->
+                        total.addOther(s)
+                    }
+
+            listOf(statistics[0], statistics[1], otherStats)
+        } else statistics
+        _statistics.postValue(stats)
         if (firstStats == null) {
-            firstStats = statistics
+            firstStats = stats
             _selectedType.postValue(statistics.maxBy { stat -> stat.count }?.type)
         } else {
             _selectedType.postValue(_selectedType.value)

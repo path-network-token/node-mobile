@@ -10,7 +10,7 @@ class IntroViewModel(
         private val system: PathSystem
 ) : ViewModel() {
     fun onActivateClick() {
-        system.activate()
+        system.autoStart = true
         context.startPathService()
     }
 }

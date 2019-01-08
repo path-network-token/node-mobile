@@ -21,7 +21,7 @@ class PathApplication : Application() {
         // DEBUG START
         // pathSystem.storage.isActivated = false
         // DEBUG END
-        if (pathSystem.isActivated) {
+        if (pathSystem.autoStart) {
             startPathService()
         }
     }

@@ -37,7 +37,7 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
         updateStatus(pathSystem.status)
         updateNodeId(pathSystem.nodeId)
         updateNodeInfo(pathSystem.nodeInfo)
-        updateRunning(pathSystem.isRunning)
+        updateRunning(pathSystem.isJobExecutionRunning)
     }
 
     fun toggle() {
