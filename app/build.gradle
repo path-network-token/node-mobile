@@ -13,6 +13,9 @@ final def commitsOnBranchCount = git.log(includes: ['HEAD']).size()
 
 final def ver = rootProject.ext.versions
 
+final def properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     compileSdkVersion ver.compileSdk
     defaultConfig {
@@ -22,7 +25,6 @@ android {
         versionCode ver.appVersionCode
         versionName ver.appVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'HTTP_SERVER_URL', '"http://jobs-api.dev.udpflood.net/"'
         manifestPlaceholders = [applicationLabel: "Path Mobile"]
     }
 
@@ -44,10 +46,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keystorePath)
-            storePassword keystorePassword
-            keyAlias keyAliasName
-            keyPassword keyAliasPassword
+            storeFile file(properties.getProperty('keystore.path'))
+            storePassword properties.getProperty('keystore.password')
+            keyAlias properties.getProperty('keyalias.name')
+            keyPassword properties.getProperty('keyalias.password')
         }
     }
 
