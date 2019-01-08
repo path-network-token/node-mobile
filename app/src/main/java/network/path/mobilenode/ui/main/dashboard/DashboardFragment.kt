@@ -26,6 +26,7 @@ import network.path.mobilenode.library.domain.entity.NodeInfo
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.ui.opengl.OpenGLSurfaceView
 import network.path.mobilenode.utils.TranslationFractionProperty
+import network.path.mobilenode.utils.navigateFrom
 import network.path.mobilenode.utils.observe
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -149,7 +150,7 @@ class DashboardFragment : BaseFragment() {
     private fun setupClicks() {
         viewJobReportButton.setOnClickListener {
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_mainFragment_to_jobReportFragment)
+                .navigateFrom(R.id.mainFragment, R.id.action_mainFragment_to_jobReportFragment)
         }
 
         toggleButton.setOnClickListener {
@@ -158,7 +159,7 @@ class DashboardFragment : BaseFragment() {
 
         infoButton.setOnClickListener {
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_mainFragment_to_aboutFragment)
+                .navigateFrom(R.id.mainFragment, R.id.action_mainFragment_to_aboutFragment)
         }
     }
 

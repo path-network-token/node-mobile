@@ -15,11 +15,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.FontRes
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.NavController
 import com.google.android.material.textfield.TextInputLayout
-import timber.log.Timber
-
 
 
 fun EditText.onTextChanged(callback: (CharSequence) -> Unit) {
@@ -76,4 +76,10 @@ fun TextInputLayout.setError(error: CharSequence?, @FontRes fontId: Int) {
         }
         s
     } else null
+}
+
+fun NavController.navigateFrom(@IdRes currentId: Int, @IdRes id: Int) {
+    if (currentDestination?.id == currentId) {
+        navigate(id)
+    }
 }

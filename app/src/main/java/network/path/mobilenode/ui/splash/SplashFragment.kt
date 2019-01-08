@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.fragment_splash.*
 import network.path.mobilenode.BuildConfig
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.navigateFrom
 import network.path.mobilenode.utils.observe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,7 +40,7 @@ class SplashFragment : BaseFragment() {
             SplashViewModel.NextScreen.INTRO -> R.id.action_splashFragment_to_introFragment
             SplashViewModel.NextScreen.MAIN -> R.id.action_splashFragment_to_mainFragment
         }
-        NavHostFragment.findNavController(this).navigate(actionId)
+        NavHostFragment.findNavController(this).navigateFrom(R.id.splashFragment, actionId)
     }
 
     private fun animateIn() {

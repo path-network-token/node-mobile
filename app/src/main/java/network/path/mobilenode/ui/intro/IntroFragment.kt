@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.fragment_intro.*
 import network.path.mobilenode.R
 import network.path.mobilenode.ui.base.BaseFragment
 import network.path.mobilenode.utils.TranslationFractionProperty
+import network.path.mobilenode.utils.navigateFrom
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class IntroFragment : BaseFragment() {
@@ -26,12 +27,12 @@ class IntroFragment : BaseFragment() {
         activateButton.setOnClickListener {
             viewModel.onActivateClick()
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_introFragment_to_mainFragment)
+                    .navigateFrom(R.id.introFragment, R.id.action_introFragment_to_mainFragment)
         }
 
         disclaimerButton.setOnClickListener {
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_introFragment_to_disclaimerFragment)
+                    .navigateFrom(R.id.introFragment, R.id.action_introFragment_to_disclaimerFragment)
         }
 
         animateIn()

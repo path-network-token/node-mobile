@@ -22,6 +22,7 @@ import network.path.mobilenode.R
 import network.path.mobilenode.library.domain.PathSystem
 import network.path.mobilenode.library.domain.entity.WifiSetting
 import network.path.mobilenode.ui.base.BaseFragment
+import network.path.mobilenode.utils.navigateFrom
 import network.path.mobilenode.utils.setupFadeTextSwitchers
 import org.koin.android.ext.android.inject
 
@@ -39,7 +40,7 @@ class AboutFragment : BaseFragment() {
 
         disclaimerButton.setOnClickListener {
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_aboutFragment_to_disclaimerFragment)
+                .navigateFrom(R.id.aboutFragment, R.id.action_aboutFragment_to_disclaimerFragment)
         }
 
         setupTexts()
