@@ -11,7 +11,7 @@ class MainViewModel(private val pathSystem: PathSystem) : ViewModel() {
     val isLooking: LiveData<Boolean> = _isLooking
 
     private val listener = object : PathSystem.BaseListener() {
-        override fun onStatusChanged(status: ConnectionStatus) {
+        override fun onConnectionStatusChanged(status: ConnectionStatus) {
             updateStatus(status)
         }
     }

@@ -34,19 +34,14 @@ class DisclaimerViewModel : ViewModel() {
     }
 
     private class DataLoader(private val ref: WeakReference<DisclaimerViewModel>) : AsyncTask<Void?, Void?, String?>() {
-        private var html: String? = null
-
-        override fun doInBackground(vararg params: Void?): String? {
-            // NO CHANGES TO UI TO BE DONE HERE
-            return try {
-                Jsoup.connect(DISCLAIMER_URL).get().run {
-                    val el = select("div.$DIV_CLASS").first()
-                    el.html()
-                }
-            } catch (e: Exception) {
-                Timber.w("DISCLAIMER: failed to load online content [$e]")
-                null
+        override fun doInBackground(vararg params: Void?): String? = try {
+            Jsoup.connect(DISCLAIMER_URL).get().run {
+                val el = select("div.$DIV_CLASS").first()
+                el.html()
             }
+        } catch (e: Exception) {
+            Timber.w("DISCLAIMER: failed to load online content [$e]")
+            null
         }
 
         override fun onPostExecute(result: String?) {

@@ -25,7 +25,7 @@ class SplashViewModel(private val pathSystem: PathSystem) : ViewModel() {
         timer.schedule(object : TimerTask() {
             override fun run() {
                 timerComplete = true
-                val value = if (pathSystem.isActivated) NextScreen.MAIN else NextScreen.INTRO
+                val value = if (pathSystem.autoStart) NextScreen.MAIN else NextScreen.INTRO
                 _nextScreen.postValue(value)
             }
         }, SPLASH_SHOW_TIME_MILLIS)

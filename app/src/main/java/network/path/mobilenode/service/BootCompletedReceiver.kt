@@ -13,7 +13,7 @@ class BootCompletedReceiver : BroadcastReceiver(), KoinComponent {
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
-        if (pathSystem.isActivated) {
+        if (pathSystem.autoStart) {
             context.startPathService()
         }
     }

@@ -185,9 +185,12 @@ class WalletFragment : BaseFragment() {
         val sb = StringBuilder()
         val hash = Hash.sha3String(cleanAddress)
         val hashChars = hash.substring(2).toCharArray()
+        val hashIndices = hashChars.indices
 
         val chars = cleanAddress.toCharArray()
         for (i in chars.indices) {
+            if (!hashIndices.contains(i)) continue
+
             val c = if (Character.digit(hashChars[i], 16) and 0xFF > 7) {
                 Character.toUpperCase(chars[i])
             } else {
