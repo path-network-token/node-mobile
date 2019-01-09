@@ -25,11 +25,11 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
     private val listener = object : PathSystem.BaseListener() {
         override fun onNodeId(nodeId: String?) = updateNodeId(nodeId)
 
-        override fun onStatusChanged(status: ConnectionStatus) = updateStatus(status)
+        override fun onConnectionStatusChanged(status: ConnectionStatus) = updateStatus(status)
 
         override fun onNodeInfoReceived(nodeInfo: NodeInfo?) = updateNodeInfo(nodeInfo)
 
-        override fun onRunningChanged(isRunning: Boolean) = updateRunning(isRunning)
+        override fun onJobExecutionStatusChanged(isRunning: Boolean) = updateRunning(isRunning)
     }
 
     fun onViewCreated() {
@@ -41,7 +41,7 @@ class DashboardViewModel(private val pathSystem: PathSystem) : ViewModel() {
     }
 
     fun toggle() {
-        pathSystem.toggle()
+        pathSystem.toggleJobExecution()
     }
 
     override fun onCleared() {

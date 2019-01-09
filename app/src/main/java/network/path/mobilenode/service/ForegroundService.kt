@@ -36,7 +36,7 @@ class ForegroundService : LifecycleService() {
     private val pathSystem by inject<PathSystem>()
 
     private val listener = object : PathSystem.BaseListener() {
-        override fun onRunningChanged(isRunning: Boolean) {
+        override fun onJobExecutionStatusChanged(isRunning: Boolean) {
             startForegroundNotification(isRunning)
         }
     }
@@ -54,7 +54,7 @@ class ForegroundService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == TOGGLE_ACTION) {
-            pathSystem.toggle()
+            pathSystem.toggleJobExecution()
         }
         return super.onStartCommand(intent, flags, startId)
     }
