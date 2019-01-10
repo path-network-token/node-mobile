@@ -16,8 +16,6 @@ import network.path.mobilenode.utils.onTextChanged
 import network.path.mobilenode.utils.setError
 import network.path.mobilenode.utils.toggleSoftKeyboard
 import org.koin.android.ext.android.inject
-import org.web3j.crypto.Hash
-import org.web3j.utils.Numeric
 
 class WalletFragment : BaseFragment() {
     companion object {
@@ -159,7 +157,7 @@ class WalletFragment : BaseFragment() {
     private fun onWalletAddressChanged(text: CharSequence) {
         val validationError = when {
             text.isBlank() -> getString(R.string.blank_path_wallet_address_error)
-            isValid(text) -> null
+            PathSystem.isWalletAddressValid(text) -> null
             else -> getString(R.string.invalid_path_wallet_address_error)
         }
 
@@ -170,34 +168,10 @@ class WalletFragment : BaseFragment() {
     private fun updatePathWalletAddress() {
         if (linkWalletButton.isEnabled) {
             val newAddress = walletAddressInputEditText.text.toString()
-            pathSystem.walletAddress = newAddress
-            walletAddressTextView.setText(newAddress)
-            setMode(false)
-        }
-    }
-
-    private fun isValid(address: CharSequence) =
-            Numeric.prependHexPrefix(address.toString()) == checkedAddress(address)
-
-    private fun checkedAddress(address: CharSequence): String {
-        val cleanAddress = Numeric.cleanHexPrefix(address.toString()).toLowerCase()
-
-        val sb = StringBuilder()
-        val hash = Hash.sha3String(cleanAddress)
-        val hashChars = hash.substring(2).toCharArray()
-        val hashIndices = hashChars.indices
-
-        val chars = cleanAddress.toCharArray()
-        for (i in chars.indices) {
-            if (!hashIndices.contains(i)) continue
-
-            val c = if (Character.digit(hashChars[i], 16) and 0xFF > 7) {
-                Character.toUpperCase(chars[i])
-            } else {
-                Character.toLowerCase(chars[i])
+            if (pathSystem.setWalletAddress(newAddress)) {
+                walletAddressTextView.setText(newAddress)
+                setMode(false)
             }
-            sb.append(c)
         }
-        return Numeric.prependHexPrefix(sb.toString())
     }
 }
