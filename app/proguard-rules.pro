@@ -13,26 +13,3 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
-
-# org.web3j
-# Proguard configuration for Jackson 2.x
--dontwarn com.fasterxml.jackson.databind.**
--keep class com.fasterxml.jackson.databind.ObjectMapper {
-    public <methods>;
-    protected <methods>;
-}
--keep class com.fasterxml.jackson.databind.ObjectWriter {
-    public ** writeValueAsString(**);
-}
--keepnames class com.fasterxml.jackson.** { *; }
--keepclassmembers class * {
-     @com.fasterxml.jackson.annotation.* *;
-}
-
-# spongycastle
--keep class org.spongycastle.**
--dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
--dontwarn org.spongycastle.x509.util.LDAPStoreHelper
-
--dontwarn jnr.posix.**
--dontwarn org.slf4j.**
