@@ -5,14 +5,14 @@ ext.versions = [
         appVersion          : '1.3.5',
         appVersionCode      : 10305,
 
-        androidPlugin       : '3.2.1',
-        fabricPlugin        : '1.25.4',
+        androidPlugin       : '3.3.0',
+        fabricPlugin        : '1.27.0',
         gitPlugin           : '1.7.2',
         versionsPlugin      : '0.20.0',
         googleServicesPlugin: '4.0.1',
         crashlytics         : '2.9.5',
 
-        pathSdk             : '1.0.8',
+        pathSdk             : '1.0.10',
 
         kotlin              : '1.3.11',
 
