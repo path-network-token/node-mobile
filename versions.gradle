@@ -2,8 +2,8 @@ ext.versions = [
         minSdk              : 21,
         compileSdk          : 28,
         targetSdk           : 28,
-        appVersion          : '1.3.5',
-        appVersionCode      : 10305,
+        appVersion          : '1.3.6',
+        appVersionCode      : 10306,
 
         androidPlugin       : '3.3.0',
         fabricPlugin        : '1.27.0',
@@ -12,7 +12,7 @@ ext.versions = [
         googleServicesPlugin: '4.0.1',
         crashlytics         : '2.9.5',
 
-        pathSdk             : '1.0.10',
+        pathSdk             : '1.0.12',
 
         kotlin              : '1.3.11',
 
