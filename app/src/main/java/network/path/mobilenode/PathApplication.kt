@@ -2,6 +2,7 @@ package network.path.mobilenode
 
 import android.app.Application
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import io.fabric.sdk.android.Fabric
 import network.path.mobilenode.di.appModule
 import network.path.mobilenode.library.domain.PathSystem
@@ -16,7 +17,16 @@ class PathApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initLogging()
+
+        // Set up Crashlytics, disabled for debug builds
+        val crashlyticsKit = Crashlytics.Builder()
+            .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+            .build()
+        // Initialize Fabric with the debug-disabled crashlytics.
+        Fabric.with(this, crashlyticsKit)
+
+        Timber.plant(PathTree())
+
         startKoin(this, listOf(appModule))
         // DEBUG START
         // pathSystem.storage.isActivated = false
@@ -26,12 +36,16 @@ class PathApplication : Application() {
         }
     }
 
-    private fun initLogging() {
-//        Timber.plant(Timber.DebugTree())
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        } else {
-            Fabric.with(this, Crashlytics())
+    private class PathTree : Timber.DebugTree() {
+        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+            if (BuildConfig.DEBUG) {
+                super.log(priority, tag, message, t)
+            } else {
+                Crashlytics.log(priority, tag, message)
+                if (t != null) {
+                    Crashlytics.logException(t)
+                }
+            }
         }
     }
 }

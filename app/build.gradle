@@ -7,9 +7,14 @@ apply plugin: 'io.fabric'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'com.github.ben-manes.versions'
 
-final def git = Grgit.open(currentDir: projectDir)
-final def shortenedCommitHash = git.head().getAbbreviatedId()
-final def commitsOnBranchCount = git.log(includes: ['HEAD']).size()
+def shortenedCommitHash = ""
+def commitsOnBranchCount = ""
+try {
+    final def git = Grgit.open(currentDir: projectDir)
+    commitsOnBranchCount = git.log(includes: ['HEAD']).size()
+    shortenedCommitHash = git.head().getAbbreviatedId()
+} catch (ignored) {
+}
 
 final def ver = rootProject.ext.versions
 
@@ -29,7 +34,7 @@ android {
     }
 
     applicationVariants.all { variant ->
-        if (variant.buildType.isDebuggable()) {
+        if (variant.buildType.isDebuggable() && commitsOnBranchCount != "") {
             variant.outputs.each { output ->
                 output.versionCodeOverride = commitsOnBranchCount
             }
